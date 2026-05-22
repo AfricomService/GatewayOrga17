@@ -1,0 +1,68 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="affectation">
+      <h2 data-cy="affectationDetailsHeading">
+        <span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.detail.title">Affectation</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ affectation.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.type">Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.TypeAffectation.' + affectation.type }}">{{ affectation.type }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ affectation.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.dateAction">Date Action</span></dt>
+        <dd>
+          <span>{{ affectation.dateAction | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.dateFin">Date Fin</span></dt>
+        <dd>
+          <span>{{ affectation.dateFin | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + affectation.etat }}">{{ affectation.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.departement">Departement</span></dt>
+        <dd>
+          <div *ngIf="affectation.departement">
+            <a [routerLink]="['/departement', affectation.departement?.id, 'view']">{{ affectation.departement?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.groupe">Groupe</span></dt>
+        <dd>
+          <div *ngIf="affectation.groupe">
+            <a [routerLink]="['/groupe', affectation.groupe?.id, 'view']">{{ affectation.groupe?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAffectation.societe">Societe</span></dt>
+        <dd>
+          <div *ngIf="affectation.societe">
+            <a [routerLink]="['/societe', affectation.societe?.id, 'view']">{{ affectation.societe?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/affectation', affectation.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

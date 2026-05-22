@@ -1,0 +1,52 @@
+{
+  "name": "Organigramme",
+  "fields": [
+    {
+      "fieldName": "code",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateAction",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateExpiration",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "societe",
+      "otherEntityRelationshipName": "organigramme",
+      "relationshipName": "societe"
+    }
+  ],
+  "entityTableName": "organigramme",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522084547"
+}

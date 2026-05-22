@@ -1,0 +1,156 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-absence-heading"
+        data-cy="AbsenceCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareAbsence.home.createOrEditLabel"
+      >
+        Create or edit a Absence
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateCreation" for="field_dateCreation"
+            >Date Creation</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreation"
+              formControlName="dateCreation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.etat" for="field_etat">Etat</label>
+          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
+          </select>
+          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateDebut" for="field_dateDebut"
+            >Date Debut</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateDebut"
+              data-cy="dateDebut"
+              type="datetime-local"
+              class="form-control"
+              name="dateDebut"
+              formControlName="dateDebut"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateFin" for="field_dateFin">Date Fin</label>
+          <div class="d-flex">
+            <input
+              id="field_dateFin"
+              data-cy="dateFin"
+              type="datetime-local"
+              class="form-control"
+              name="dateFin"
+              formControlName="dateFin"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.motif" for="field_motif">Motif</label>
+          <input type="text" class="form-control" name="motif" id="field_motif" data-cy="motif" formControlName="motif" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneAbscent" for="field_personneAbscent"
+            >Personne Abscent</label
+          >
+          <select
+            class="form-control"
+            id="field_personneAbscent"
+            data-cy="personneAbscent"
+            name="personneAbscent"
+            formControlName="personneAbscent"
+          >
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                personneOption.id === editForm.get('personneAbscent')!.value?.id ? editForm.get('personneAbscent')!.value : personneOption
+              "
+              *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById"
+            >
+              {{ personneOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label
+            class="form-control-label"
+            jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneRemplacant"
+            for="field_personneRemplacant"
+            >Personne Remplacant</label
+          >
+          <select
+            class="form-control"
+            id="field_personneRemplacant"
+            data-cy="personneRemplacant"
+            name="personneRemplacant"
+            formControlName="personneRemplacant"
+          >
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                personneOption.id === editForm.get('personneRemplacant')!.value?.id
+                  ? editForm.get('personneRemplacant')!.value
+                  : personneOption
+              "
+              *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById"
+            >
+              {{ personneOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

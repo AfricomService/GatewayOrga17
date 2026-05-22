@@ -1,0 +1,107 @@
+{
+  "name": "Personne",
+  "fields": [
+    {
+      "fieldName": "matricule",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nomPrenom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "numTelephone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "genre",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "cin",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "etatContractuelle",
+      "fieldType": "EtatContractuelle",
+      "fieldValues": "ACTIF,PASSIF,RETRAITE,DEMISSION",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateDebutContrat",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "idContratActif",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "idTypeContratActif",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "userId",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "contrat",
+      "otherEntityRelationshipName": "personne",
+      "relationshipName": "contrat"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "affectation",
+      "otherEntityRelationshipName": "personne",
+      "relationshipName": "affectation"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "grade",
+      "otherEntityRelationshipName": "personne",
+      "relationshipName": "grade"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "fonction",
+      "otherEntityRelationshipName": "personne",
+      "relationshipName": "fonction"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "departement",
+      "otherEntityRelationshipName": "personne",
+      "relationshipName": "departement",
+      "ownerSide": false
+    }
+  ],
+  "entityTableName": "personne",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522084647"
+}

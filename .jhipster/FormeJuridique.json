@@ -1,0 +1,42 @@
+{
+  "name": "FormeJuridique",
+  "fields": [
+    {
+      "fieldName": "abreviation",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "societe",
+      "otherEntityRelationshipName": "formeJuridiquee",
+      "relationshipName": "societe"
+    }
+  ],
+  "entityTableName": "forme_juridique",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522084247"
+}

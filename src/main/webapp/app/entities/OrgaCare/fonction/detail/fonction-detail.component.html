@@ -1,0 +1,36 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="fonction">
+      <h2 data-cy="fonctionDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareFonction.detail.title">Fonction</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ fonction.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareFonction.code">Code</span></dt>
+        <dd>
+          <span>{{ fonction.code }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareFonction.label">Label</span></dt>
+        <dd>
+          <span>{{ fonction.label }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/fonction', fonction.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

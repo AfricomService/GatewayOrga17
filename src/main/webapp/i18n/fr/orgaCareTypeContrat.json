@@ -1,0 +1,32 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareTypeContrat": {
+      "home": {
+        "title": "TypeContrats",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Type Contrat",
+        "createOrEditLabel": "Créer ou éditer un Type Contrat",
+        "notFound": "Aucun Type Contrat trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Type Contrat {{ id }} ?"
+      },
+      "detail": {
+        "title": "Type Contrat"
+      },
+      "id": "ID",
+      "nom": "Nom",
+      "abreviation": "Abreviation",
+      "dateCreation": "Date Creation",
+      "status": "Status",
+      "contrat": "Contrat"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareTypeContrat": {
+      "created": "Un nouveau Type Contrat a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Type Contrat avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Type Contrat avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

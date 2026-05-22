@@ -1,0 +1,54 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="statusHistory">
+      <h2 data-cy="statusHistoryDetailsHeading">
+        <span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.detail.title">Status History</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ statusHistory.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.dateTransaction">Date Transaction</span></dt>
+        <dd>
+          <span>{{ statusHistory.dateTransaction | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.dateFin">Date Fin</span></dt>
+        <dd>
+          <span>{{ statusHistory.dateFin | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.loginUser">Login User</span></dt>
+        <dd>
+          <span>{{ statusHistory.loginUser }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.transaction">Transaction</span></dt>
+        <dd>
+          <span>{{ statusHistory.transaction }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.transactionReference">Transaction Reference</span></dt>
+        <dd>
+          <span>{{ statusHistory.transactionReference }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.dataObject">Data Object</span></dt>
+        <dd>
+          <span>{{ statusHistory.dataObject }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/status-history', statusHistory.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

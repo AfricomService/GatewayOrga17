@@ -1,0 +1,12 @@
+{
+  "orgacaregatewayApp": {
+    "Etat": {
+      "null": "",
+      "DRAFT": "DRAFT",
+      "ACTIF": "ACTIF",
+      "CLOSED": "CLOSED",
+      "INEXECUTION": "INEXECUTION",
+      "CANCELED": "CANCELED"
+    }
+  }
+}

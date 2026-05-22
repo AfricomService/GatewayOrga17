@@ -1,0 +1,34 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareAbsence": {
+      "home": {
+        "title": "Absences",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Absence",
+        "createOrEditLabel": "Créer ou éditer un Absence",
+        "notFound": "Aucun Absence trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Absence {{ id }} ?"
+      },
+      "detail": {
+        "title": "Absence"
+      },
+      "id": "ID",
+      "dateCreation": "Date Creation",
+      "etat": "Etat",
+      "dateDebut": "Date Debut",
+      "dateFin": "Date Fin",
+      "motif": "Motif",
+      "personneAbscent": "Personne Abscent",
+      "personneRemplacant": "Personne Remplacant"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareAbsence": {
+      "created": "Un nouveau Absence a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Absence avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Absence avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

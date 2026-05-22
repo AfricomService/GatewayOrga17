@@ -1,0 +1,136 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-departement-heading"
+        data-cy="DepartementCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.createOrEditLabel"
+      >
+        Create or edit a Departement
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareDepartement.code" for="field_code">Code</label>
+          <input type="text" class="form-control" name="code" id="field_code" data-cy="code" formControlName="code" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareDepartement.nom" for="field_nom">Nom</label>
+          <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareDepartement.status" for="field_status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
+          </select>
+          <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('status')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareDepartement.email" for="field_email">Email</label>
+          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareDepartement.organigramme" for="field_organigramme"
+            >Organigramme</label
+          >
+          <select class="form-control" id="field_organigramme" data-cy="organigramme" name="organigramme" formControlName="organigramme">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                organigrammeOption.id === editForm.get('organigramme')!.value?.id ? editForm.get('organigramme')!.value : organigrammeOption
+              "
+              *ngFor="let organigrammeOption of organigrammesSharedCollection; trackBy: trackOrganigrammeById"
+            >
+              {{ organigrammeOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareDepartement.site" for="field_site">Site</label>
+          <select class="form-control" id="field_site" data-cy="site" name="site" formControlName="site">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="siteOption.id === editForm.get('site')!.value?.id ? editForm.get('site')!.value : siteOption"
+              *ngFor="let siteOption of sitesSharedCollection; trackBy: trackSiteById"
+            >
+              {{ siteOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label
+            class="form-control-label"
+            jhiTranslate="orgacaregatewayApp.orgaCareDepartement.departementParent"
+            for="field_departementParent"
+            >Departement Parent</label
+          >
+          <select
+            class="form-control"
+            id="field_departementParent"
+            data-cy="departementParent"
+            name="departementParent"
+            formControlName="departementParent"
+          >
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                departementOption.id === editForm.get('departementParent')!.value?.id
+                  ? editForm.get('departementParent')!.value
+                  : departementOption
+              "
+              *ngFor="let departementOption of departementsSharedCollection; trackBy: trackDepartementById"
+            >
+              {{ departementOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label jhiTranslate="orgacaregatewayApp.orgaCareDepartement.personne" for="field_personnes">Personne</label>
+          <select class="form-control" id="field_personnes" data-cy="personne" multiple name="personnes" formControlName="personnes">
+            <option
+              [ngValue]="getSelectedPersonne(personneOption, editForm.get('personnes')!.value)"
+              *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById"
+            >
+              {{ personneOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

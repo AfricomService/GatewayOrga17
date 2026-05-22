@@ -1,0 +1,175 @@
+<div>
+  <h2 id="page-heading" data-cy="PersonneHeading">
+    <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.title">Personnes</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-personne"
+        [routerLink]="['/personne/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.createLabel"> Create a new Personne </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="personnes?.length === 0">
+    <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.notFound">No personnes found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="personnes && personnes.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="matricule">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule">Matricule</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="nomPrenom">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom">Nom Prenom</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="email">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email">Email</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="numTelephone">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone">Num Telephone</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="genre">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre">Genre</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="cin">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin">Cin</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="etat">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat">Etat</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="etatContractuelle">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etatContractuelle">Etat Contractuelle</span>
+            <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dateCreation">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateCreation">Date Creation</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dateDebutContrat">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateDebutContrat">Date Debut Contrat</span>
+            <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="idContratActif">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idContratActif">Id Contrat Actif</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="idTypeContratActif">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idTypeContratActif">Id Type Contrat Actif</span>
+            <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="userId">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.userId">User Id</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="affectation.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.affectation">Affectation</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="grade.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade">Grade</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="fonction.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction">Fonction</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let personne of personnes; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/personne', personne.id, 'view']">{{ personne.id }}</a>
+          </td>
+          <td>{{ personne.matricule }}</td>
+          <td>{{ personne.nomPrenom }}</td>
+          <td>{{ personne.email }}</td>
+          <td>{{ personne.numTelephone }}</td>
+          <td>{{ personne.genre }}</td>
+          <td>{{ personne.cin }}</td>
+          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + personne.etat }}">{{ personne.etat }}</td>
+          <td jhiTranslate="{{ 'orgacaregatewayApp.EtatContractuelle.' + personne.etatContractuelle }}">
+            {{ personne.etatContractuelle }}
+          </td>
+          <td>{{ personne.dateCreation | formatMediumDatetime }}</td>
+          <td>{{ personne.dateDebutContrat | formatMediumDatetime }}</td>
+          <td>{{ personne.idContratActif }}</td>
+          <td>{{ personne.idTypeContratActif }}</td>
+          <td>{{ personne.userId }}</td>
+          <td>
+            <div *ngIf="personne.affectation">
+              <a [routerLink]="['/affectation', personne.affectation?.id, 'view']">{{ personne.affectation?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="personne.grade">
+              <a [routerLink]="['/grade', personne.grade?.id, 'view']">{{ personne.grade?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="personne.fonction">
+              <a [routerLink]="['/fonction', personne.fonction?.id, 'view']">{{ personne.fonction?.id }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/personne', personne.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/personne', personne.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(personne)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="personnes && personnes.length > 0">
+    <div class="row justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="row justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareEmployeCreatedEvent": {
+      "home": {
+        "title": "EmployeCreatedEvents",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Employe Created Event",
+        "createOrEditLabel": "Créer ou éditer un Employe Created Event",
+        "notFound": "Aucun Employe Created Event trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Employe Created Event {{ id }} ?"
+      },
+      "detail": {
+        "title": "Employe Created Event"
+      },
+      "id": "ID",
+      "matricule": "Matricule",
+      "nomPrenom": "Nom Prenom",
+      "email": "Email",
+      "userId": "User Id"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareEmployeCreatedEvent": {
+      "created": "Un nouveau Employe Created Event a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Employe Created Event avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Employe Created Event avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

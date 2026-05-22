@@ -1,0 +1,29 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareGrade": {
+      "home": {
+        "title": "Grades",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Grade",
+        "createOrEditLabel": "Créer ou éditer un Grade",
+        "notFound": "Aucun Grade trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Grade {{ id }} ?"
+      },
+      "detail": {
+        "title": "Grade"
+      },
+      "id": "ID",
+      "code": "Code",
+      "label": "Label"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareGrade": {
+      "created": "Un nouveau Grade a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Grade avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Grade avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

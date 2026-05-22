@@ -1,0 +1,45 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCarePersonne": {
+      "home": {
+        "title": "Personnes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Personne",
+        "createOrEditLabel": "Create or edit a Personne",
+        "notFound": "No Personnes found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Personne {{ id }}?"
+      },
+      "detail": {
+        "title": "Personne"
+      },
+      "id": "ID",
+      "matricule": "Matricule",
+      "nomPrenom": "Nom Prenom",
+      "email": "Email",
+      "numTelephone": "Num Telephone",
+      "genre": "Genre",
+      "cin": "Cin",
+      "etat": "Etat",
+      "etatContractuelle": "Etat Contractuelle",
+      "dateCreation": "Date Creation",
+      "dateDebutContrat": "Date Debut Contrat",
+      "idContratActif": "Id Contrat Actif",
+      "idTypeContratActif": "Id Type Contrat Actif",
+      "userId": "User Id",
+      "contrat": "Contrat",
+      "affectation": "Affectation",
+      "grade": "Grade",
+      "fonction": "Fonction",
+      "departement": "Departement"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCarePersonne": {
+      "created": "A new Personne is created with identifier {{ param }}",
+      "updated": "A Personne is updated with identifier {{ param }}",
+      "deleted": "A Personne is deleted with identifier {{ param }}"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareContrat": {
+      "home": {
+        "title": "Contrats",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Contrat",
+        "createOrEditLabel": "Créer ou éditer un Contrat",
+        "notFound": "Aucun Contrat trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Contrat {{ id }} ?"
+      },
+      "detail": {
+        "title": "Contrat"
+      },
+      "id": "ID",
+      "dateDebut": "Date Debut",
+      "dateFin": "Date Fin",
+      "type": "Type",
+      "status": "Status",
+      "societe": "Societe",
+      "typeContrat": "Type Contrat",
+      "personne": "Personne"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareContrat": {
+      "created": "Un nouveau Contrat a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Contrat avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Contrat avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

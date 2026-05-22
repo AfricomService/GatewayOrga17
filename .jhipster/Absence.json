@@ -1,0 +1,54 @@
+{
+  "name": "Absence",
+  "fields": [
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dateDebut",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateFin",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "motif",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "personne",
+      "otherEntityRelationshipName": "absence",
+      "relationshipName": "personneAbscent"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "personne",
+      "otherEntityRelationshipName": "absence",
+      "relationshipName": "personneRemplacant"
+    }
+  ],
+  "entityTableName": "absence",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522083647"
+}

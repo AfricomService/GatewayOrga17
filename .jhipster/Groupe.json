@@ -1,0 +1,48 @@
+{
+  "name": "Groupe",
+  "fields": [
+    {
+      "fieldName": "code",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateActivation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "organigramme",
+      "otherEntityRelationshipName": "groupe",
+      "relationshipName": "organigramme"
+    }
+  ],
+  "entityTableName": "groupe",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522084447"
+}

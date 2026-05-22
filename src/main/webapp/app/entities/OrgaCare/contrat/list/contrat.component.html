@@ -1,0 +1,134 @@
+<div>
+  <h2 id="page-heading" data-cy="ContratHeading">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.title">Contrats</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-contrat"
+        [routerLink]="['/contrat/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.createLabel"> Create a new Contrat </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="contrats?.length === 0">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.notFound">No contrats found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="contrats && contrats.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="dateDebut">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut">Date Debut</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dateFin">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="type">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.type">Type</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="status">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.status">Status</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="societe.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.societe">Societe</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="typeContrat.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.typeContrat">Type Contrat</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="personne.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contrat of contrats; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/contrat', contrat.id, 'view']">{{ contrat.id }}</a>
+          </td>
+          <td>{{ contrat.dateDebut | formatMediumDatetime }}</td>
+          <td>{{ contrat.dateFin | formatMediumDatetime }}</td>
+          <td>{{ contrat.type }}</td>
+          <td>{{ contrat.status }}</td>
+          <td>
+            <div *ngIf="contrat.societe">
+              <a [routerLink]="['/societe', contrat.societe?.id, 'view']">{{ contrat.societe?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="contrat.typeContrat">
+              <a [routerLink]="['/type-contrat', contrat.typeContrat?.id, 'view']">{{ contrat.typeContrat?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="contrat.personne">
+              <a [routerLink]="['/personne', contrat.personne?.id, 'view']">{{ contrat.personne?.id }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/contrat', contrat.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/contrat', contrat.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(contrat)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="contrats && contrats.length > 0">
+    <div class="row justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="row justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

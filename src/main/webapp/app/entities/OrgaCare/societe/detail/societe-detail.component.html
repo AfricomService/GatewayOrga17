@@ -1,0 +1,147 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="societe">
+      <h2 data-cy="societeDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.detail.title">Societe</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ societe.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.raisonSociale">Raison Sociale</span></dt>
+        <dd>
+          <span>{{ societe.raisonSociale }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.abreviation">Abreviation</span></dt>
+        <dd>
+          <span>{{ societe.abreviation }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.activite">Activite</span></dt>
+        <dd>
+          <span>{{ societe.activite }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.formeJuridique">Forme Juridique</span></dt>
+        <dd>
+          <span>{{ societe.formeJuridique }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.adresse">Adresse</span></dt>
+        <dd>
+          <span>{{ societe.adresse }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.codePostale">Code Postale</span></dt>
+        <dd>
+          <span>{{ societe.codePostale }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.ville">Ville</span></dt>
+        <dd>
+          <span>{{ societe.ville }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.pays">Pays</span></dt>
+        <dd>
+          <span>{{ societe.pays }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.region">Region</span></dt>
+        <dd>
+          <span>{{ societe.region }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.tel">Tel</span></dt>
+        <dd>
+          <span>{{ societe.tel }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.fax">Fax</span></dt>
+        <dd>
+          <span>{{ societe.fax }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.mail">Mail</span></dt>
+        <dd>
+          <span>{{ societe.mail }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.siteInternet">Site Internet</span></dt>
+        <dd>
+          <span>{{ societe.siteInternet }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.matriculeFiscale">Matricule Fiscale</span></dt>
+        <dd>
+          <span>{{ societe.matriculeFiscale }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.logo">Logo</span></dt>
+        <dd>
+          <div *ngIf="societe.logo">
+            <a (click)="openFile(societe.logo, societe.logoContentType)">
+              <img [src]="'data:' + societe.logoContentType + ';base64,' + societe.logo" style="max-width: 100%" alt="societe image" />
+            </a>
+            {{ societe.logoContentType }}, {{ byteSize(societe.logo) }}
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.imagesSitePrincipale">Images Site Principale</span></dt>
+        <dd>
+          <div *ngIf="societe.imagesSitePrincipale">
+            <a (click)="openFile(societe.imagesSitePrincipale, societe.imagesSitePrincipaleContentType)">
+              <img
+                [src]="'data:' + societe.imagesSitePrincipaleContentType + ';base64,' + societe.imagesSitePrincipale"
+                style="max-width: 100%"
+                alt="societe image"
+              />
+            </a>
+            {{ societe.imagesSitePrincipaleContentType }}, {{ byteSize(societe.imagesSitePrincipale) }}
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.holding">Holding</span></dt>
+        <dd>
+          <span>{{ societe.holding }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + societe.etat }}">{{ societe.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ societe.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.dateActivation">Date Activation</span></dt>
+        <dd>
+          <span>{{ societe.dateActivation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.dateCloture">Date Cloture</span></dt>
+        <dd>
+          <span>{{ societe.dateCloture | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.importTemplate">Import Template</span></dt>
+        <dd>
+          <div *ngIf="societe.importTemplate">
+            <a (click)="openFile(societe.importTemplate, societe.importTemplateContentType)" jhiTranslate="entity.action.open">open</a>
+            {{ societe.importTemplateContentType }}, {{ byteSize(societe.importTemplate) }}
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.codeSociete">Code Societe</span></dt>
+        <dd>
+          <span>{{ societe.codeSociete }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.codeOrganigramme">Code Organigramme</span></dt>
+        <dd>
+          <span>{{ societe.codeOrganigramme }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSociete.formeJuridiquee">Forme Juridiquee</span></dt>
+        <dd>
+          <div *ngIf="societe.formeJuridiquee">
+            <a [routerLink]="['/forme-juridique', societe.formeJuridiquee?.id, 'view']">{{ societe.formeJuridiquee?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/societe', societe.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+{
+  "orgacaregatewayApp": {
+    "EtatContractuelle": {
+      "null": "",
+      "ACTIF": "ACTIF",
+      "PASSIF": "PASSIF",
+      "RETRAITE": "RETRAITE",
+      "DEMISSION": "DEMISSION"
+    }
+  }
+}

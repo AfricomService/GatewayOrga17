@@ -1,0 +1,35 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareDepartement": {
+      "home": {
+        "title": "Departements",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Departement",
+        "createOrEditLabel": "Créer ou éditer un Departement",
+        "notFound": "Aucun Departement trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Departement {{ id }} ?"
+      },
+      "detail": {
+        "title": "Departement"
+      },
+      "id": "ID",
+      "code": "Code",
+      "nom": "Nom",
+      "status": "Status",
+      "email": "Email",
+      "organigramme": "Organigramme",
+      "site": "Site",
+      "departementParent": "Departement Parent",
+      "personne": "Personne"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareDepartement": {
+      "created": "Un nouveau Departement a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Departement avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Departement avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

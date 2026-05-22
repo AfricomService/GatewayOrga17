@@ -1,0 +1,54 @@
+{
+  "name": "Contrat",
+  "fields": [
+    {
+      "fieldName": "dateDebut",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateFin",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "societe",
+      "otherEntityRelationshipName": "contrat",
+      "relationshipName": "societe"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "typeContrat",
+      "otherEntityRelationshipName": "contrat",
+      "relationshipName": "typeContrat"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "personne",
+      "otherEntityRelationshipName": "contrat",
+      "relationshipName": "personne"
+    }
+  ],
+  "entityTableName": "contrat",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522083847"
+}

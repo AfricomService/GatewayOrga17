@@ -1,0 +1,33 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareGroupe": {
+      "home": {
+        "title": "Groupes",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Groupe",
+        "createOrEditLabel": "Créer ou éditer un Groupe",
+        "notFound": "Aucun Groupe trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Groupe {{ id }} ?"
+      },
+      "detail": {
+        "title": "Groupe"
+      },
+      "id": "ID",
+      "code": "Code",
+      "nom": "Nom",
+      "dateCreation": "Date Creation",
+      "dateActivation": "Date Activation",
+      "etat": "Etat",
+      "organigramme": "Organigramme"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareGroupe": {
+      "created": "Un nouveau Groupe a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Groupe avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Groupe avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

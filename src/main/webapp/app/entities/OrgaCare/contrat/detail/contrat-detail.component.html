@@ -1,0 +1,62 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="contrat">
+      <h2 data-cy="contratDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.detail.title">Contrat</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ contrat.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut">Date Debut</span></dt>
+        <dd>
+          <span>{{ contrat.dateDebut | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</span></dt>
+        <dd>
+          <span>{{ contrat.dateFin | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.type">Type</span></dt>
+        <dd>
+          <span>{{ contrat.type }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.status">Status</span></dt>
+        <dd>
+          <span>{{ contrat.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.societe">Societe</span></dt>
+        <dd>
+          <div *ngIf="contrat.societe">
+            <a [routerLink]="['/societe', contrat.societe?.id, 'view']">{{ contrat.societe?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.typeContrat">Type Contrat</span></dt>
+        <dd>
+          <div *ngIf="contrat.typeContrat">
+            <a [routerLink]="['/type-contrat', contrat.typeContrat?.id, 'view']">{{ contrat.typeContrat?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span></dt>
+        <dd>
+          <div *ngIf="contrat.personne">
+            <a [routerLink]="['/personne', contrat.personne?.id, 'view']">{{ contrat.personne?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/contrat', contrat.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

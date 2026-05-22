@@ -1,0 +1,45 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCarePersonne": {
+      "home": {
+        "title": "Personnes",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Personne",
+        "createOrEditLabel": "Créer ou éditer un Personne",
+        "notFound": "Aucun Personne trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Personne {{ id }} ?"
+      },
+      "detail": {
+        "title": "Personne"
+      },
+      "id": "ID",
+      "matricule": "Matricule",
+      "nomPrenom": "Nom Prenom",
+      "email": "Email",
+      "numTelephone": "Num Telephone",
+      "genre": "Genre",
+      "cin": "Cin",
+      "etat": "Etat",
+      "etatContractuelle": "Etat Contractuelle",
+      "dateCreation": "Date Creation",
+      "dateDebutContrat": "Date Debut Contrat",
+      "idContratActif": "Id Contrat Actif",
+      "idTypeContratActif": "Id Type Contrat Actif",
+      "userId": "User Id",
+      "contrat": "Contrat",
+      "affectation": "Affectation",
+      "grade": "Grade",
+      "fonction": "Fonction",
+      "departement": "Departement"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCarePersonne": {
+      "created": "Un nouveau Personne a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Personne avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Personne avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

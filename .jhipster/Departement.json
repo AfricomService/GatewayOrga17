@@ -1,0 +1,63 @@
+{
+  "name": "Departement",
+  "fields": [
+    {
+      "fieldName": "code",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nom",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "organigramme",
+      "otherEntityRelationshipName": "departement",
+      "relationshipName": "organigramme"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "site",
+      "otherEntityRelationshipName": "departement",
+      "relationshipName": "site"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "departement",
+      "otherEntityRelationshipName": "departement",
+      "relationshipName": "departementParent"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "personne",
+      "otherEntityRelationshipName": "departement",
+      "relationshipName": "personne",
+      "ownerSide": true
+    }
+  ],
+  "entityTableName": "departement",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522083947"
+}

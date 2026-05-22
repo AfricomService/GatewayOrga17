@@ -1,0 +1,71 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="departement">
+      <h2 data-cy="departementDetailsHeading">
+        <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.detail.title">Departement</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ departement.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.code">Code</span></dt>
+        <dd>
+          <span>{{ departement.code }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.nom">Nom</span></dt>
+        <dd>
+          <span>{{ departement.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + departement.status }}">{{ departement.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.email">Email</span></dt>
+        <dd>
+          <span>{{ departement.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.organigramme">Organigramme</span></dt>
+        <dd>
+          <div *ngIf="departement.organigramme">
+            <a [routerLink]="['/organigramme', departement.organigramme?.id, 'view']">{{ departement.organigramme?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.site">Site</span></dt>
+        <dd>
+          <div *ngIf="departement.site">
+            <a [routerLink]="['/site', departement.site?.id, 'view']">{{ departement.site?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.departementParent">Departement Parent</span></dt>
+        <dd>
+          <div *ngIf="departement.departementParent">
+            <a [routerLink]="['/departement', departement.departementParent?.id, 'view']">{{ departement.departementParent?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.personne">Personne</span></dt>
+        <dd>
+          <span *ngFor="let personne of departement.personnes; let last = last">
+            <a [routerLink]="['/personne', personne?.id, 'view']">{{ personne.id }}</a
+            >{{ last ? '' : ', ' }}
+          </span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/departement', departement.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

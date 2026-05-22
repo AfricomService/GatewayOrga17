@@ -1,0 +1,449 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-societe-heading"
+        data-cy="SocieteCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareSociete.home.createOrEditLabel"
+      >
+        Create or edit a Societe
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.raisonSociale" for="field_raisonSociale"
+            >Raison Sociale</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="raisonSociale"
+            id="field_raisonSociale"
+            data-cy="raisonSociale"
+            formControlName="raisonSociale"
+          />
+          <div
+            *ngIf="
+              editForm.get('raisonSociale')!.invalid && (editForm.get('raisonSociale')!.dirty || editForm.get('raisonSociale')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('raisonSociale')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.abreviation" for="field_abreviation"
+            >Abreviation</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="abreviation"
+            id="field_abreviation"
+            data-cy="abreviation"
+            formControlName="abreviation"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.activite" for="field_activite">Activite</label>
+          <input type="text" class="form-control" name="activite" id="field_activite" data-cy="activite" formControlName="activite" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.formeJuridique" for="field_formeJuridique"
+            >Forme Juridique</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="formeJuridique"
+            id="field_formeJuridique"
+            data-cy="formeJuridique"
+            formControlName="formeJuridique"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.adresse" for="field_adresse">Adresse</label>
+          <input type="text" class="form-control" name="adresse" id="field_adresse" data-cy="adresse" formControlName="adresse" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.codePostale" for="field_codePostale"
+            >Code Postale</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="codePostale"
+            id="field_codePostale"
+            data-cy="codePostale"
+            formControlName="codePostale"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.ville" for="field_ville">Ville</label>
+          <input type="text" class="form-control" name="ville" id="field_ville" data-cy="ville" formControlName="ville" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.pays" for="field_pays">Pays</label>
+          <input type="text" class="form-control" name="pays" id="field_pays" data-cy="pays" formControlName="pays" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.region" for="field_region">Region</label>
+          <input type="text" class="form-control" name="region" id="field_region" data-cy="region" formControlName="region" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.tel" for="field_tel">Tel</label>
+          <input type="text" class="form-control" name="tel" id="field_tel" data-cy="tel" formControlName="tel" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.fax" for="field_fax">Fax</label>
+          <input type="text" class="form-control" name="fax" id="field_fax" data-cy="fax" formControlName="fax" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.mail" for="field_mail">Mail</label>
+          <input type="text" class="form-control" name="mail" id="field_mail" data-cy="mail" formControlName="mail" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.siteInternet" for="field_siteInternet"
+            >Site Internet</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="siteInternet"
+            id="field_siteInternet"
+            data-cy="siteInternet"
+            formControlName="siteInternet"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.matriculeFiscale" for="field_matriculeFiscale"
+            >Matricule Fiscale</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="matriculeFiscale"
+            id="field_matriculeFiscale"
+            data-cy="matriculeFiscale"
+            formControlName="matriculeFiscale"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.logo" for="field_logo">Logo</label>
+          <div>
+            <img
+              [src]="'data:' + editForm.get('logoContentType')!.value + ';base64,' + editForm.get('logo')!.value"
+              style="max-height: 100px"
+              *ngIf="editForm.get('logo')!.value"
+              alt="societe image"
+            />
+            <div *ngIf="editForm.get('logo')!.value" class="form-text text-danger clearfix">
+              <span class="pull-left">{{ editForm.get('logoContentType')!.value }}, {{ byteSize(editForm.get('logo')!.value) }}</span>
+              <button
+                type="button"
+                (click)="clearInputImage('logo', 'logoContentType', 'file_logo')"
+                class="btn btn-secondary btn-xs pull-right"
+              >
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <input
+              type="file"
+              id="file_logo"
+              data-cy="logo"
+              (change)="setFileData($event, 'logo', true)"
+              accept="image/*"
+              jhiTranslate="entity.action.addimage"
+            />
+          </div>
+          <input type="hidden" class="form-control" name="logo" id="field_logo" data-cy="logo" formControlName="logo" />
+          <input type="hidden" class="form-control" name="logoContentType" id="field_logoContentType" formControlName="logoContentType" />
+        </div>
+
+        <div class="form-group">
+          <label
+            class="form-control-label"
+            jhiTranslate="orgacaregatewayApp.orgaCareSociete.imagesSitePrincipale"
+            for="field_imagesSitePrincipale"
+            >Images Site Principale</label
+          >
+          <div>
+            <img
+              [src]="
+                'data:' + editForm.get('imagesSitePrincipaleContentType')!.value + ';base64,' + editForm.get('imagesSitePrincipale')!.value
+              "
+              style="max-height: 100px"
+              *ngIf="editForm.get('imagesSitePrincipale')!.value"
+              alt="societe image"
+            />
+            <div *ngIf="editForm.get('imagesSitePrincipale')!.value" class="form-text text-danger clearfix">
+              <span class="pull-left"
+                >{{ editForm.get('imagesSitePrincipaleContentType')!.value }},
+                {{ byteSize(editForm.get('imagesSitePrincipale')!.value) }}</span
+              >
+              <button
+                type="button"
+                (click)="clearInputImage('imagesSitePrincipale', 'imagesSitePrincipaleContentType', 'file_imagesSitePrincipale')"
+                class="btn btn-secondary btn-xs pull-right"
+              >
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <input
+              type="file"
+              id="file_imagesSitePrincipale"
+              data-cy="imagesSitePrincipale"
+              (change)="setFileData($event, 'imagesSitePrincipale', true)"
+              accept="image/*"
+              jhiTranslate="entity.action.addimage"
+            />
+          </div>
+          <input
+            type="hidden"
+            class="form-control"
+            name="imagesSitePrincipale"
+            id="field_imagesSitePrincipale"
+            data-cy="imagesSitePrincipale"
+            formControlName="imagesSitePrincipale"
+          />
+          <input
+            type="hidden"
+            class="form-control"
+            name="imagesSitePrincipaleContentType"
+            id="field_imagesSitePrincipaleContentType"
+            formControlName="imagesSitePrincipaleContentType"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.holding" for="field_holding">Holding</label>
+          <input type="text" class="form-control" name="holding" id="field_holding" data-cy="holding" formControlName="holding" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.etat" for="field_etat">Etat</label>
+          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
+          </select>
+          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.dateCreation" for="field_dateCreation"
+            >Date Creation</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreation"
+              formControlName="dateCreation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.dateActivation" for="field_dateActivation"
+            >Date Activation</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateActivation"
+              data-cy="dateActivation"
+              type="datetime-local"
+              class="form-control"
+              name="dateActivation"
+              formControlName="dateActivation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.dateCloture" for="field_dateCloture"
+            >Date Cloture</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateCloture"
+              data-cy="dateCloture"
+              type="datetime-local"
+              class="form-control"
+              name="dateCloture"
+              formControlName="dateCloture"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.importTemplate" for="field_importTemplate"
+            >Import Template</label
+          >
+          <div>
+            <div *ngIf="editForm.get('importTemplate')!.value" class="form-text text-danger clearfix">
+              <a
+                class="pull-left"
+                (click)="openFile(editForm.get('importTemplate')!.value, editForm.get('importTemplateContentType')!.value)"
+                jhiTranslate="entity.action.open"
+                >open</a
+              ><br />
+              <span class="pull-left"
+                >{{ editForm.get('importTemplateContentType')!.value }}, {{ byteSize(editForm.get('importTemplate')!.value) }}</span
+              >
+              <button
+                type="button"
+                (click)="editForm.patchValue({ importTemplate: null }); editForm.patchValue({ importTemplateContentType: null })"
+                class="btn btn-secondary btn-xs pull-right"
+              >
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <input
+              type="file"
+              id="file_importTemplate"
+              data-cy="importTemplate"
+              (change)="setFileData($event, 'importTemplate', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
+          <input
+            type="hidden"
+            class="form-control"
+            name="importTemplate"
+            id="field_importTemplate"
+            data-cy="importTemplate"
+            formControlName="importTemplate"
+          />
+          <input
+            type="hidden"
+            class="form-control"
+            name="importTemplateContentType"
+            id="field_importTemplateContentType"
+            formControlName="importTemplateContentType"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.codeSociete" for="field_codeSociete"
+            >Code Societe</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="codeSociete"
+            id="field_codeSociete"
+            data-cy="codeSociete"
+            formControlName="codeSociete"
+          />
+          <div
+            *ngIf="editForm.get('codeSociete')!.invalid && (editForm.get('codeSociete')!.dirty || editForm.get('codeSociete')!.touched)"
+          ></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.codeOrganigramme" for="field_codeOrganigramme"
+            >Code Organigramme</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="codeOrganigramme"
+            id="field_codeOrganigramme"
+            data-cy="codeOrganigramme"
+            formControlName="codeOrganigramme"
+          />
+          <div
+            *ngIf="
+              editForm.get('codeOrganigramme')!.invalid &&
+              (editForm.get('codeOrganigramme')!.dirty || editForm.get('codeOrganigramme')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('codeOrganigramme')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSociete.formeJuridiquee" for="field_formeJuridiquee"
+            >Forme Juridiquee</label
+          >
+          <select
+            class="form-control"
+            id="field_formeJuridiquee"
+            data-cy="formeJuridiquee"
+            name="formeJuridiquee"
+            formControlName="formeJuridiquee"
+          >
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                formeJuridiqueOption.id === editForm.get('formeJuridiquee')!.value?.id
+                  ? editForm.get('formeJuridiquee')!.value
+                  : formeJuridiqueOption
+              "
+              *ngFor="let formeJuridiqueOption of formeJuridiquesSharedCollection; trackBy: trackFormeJuridiqueById"
+            >
+              {{ formeJuridiqueOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

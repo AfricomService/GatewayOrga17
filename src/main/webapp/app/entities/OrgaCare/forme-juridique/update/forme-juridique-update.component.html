@@ -1,0 +1,79 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-forme-juridique-heading"
+        data-cy="FormeJuridiqueCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.createOrEditLabel"
+      >
+        Create or edit a Forme Juridique
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.abreviation" for="field_abreviation"
+            >Abreviation</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="abreviation"
+            id="field_abreviation"
+            data-cy="abreviation"
+            formControlName="abreviation"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.nom" for="field_nom">Nom</label>
+          <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.dateCreation" for="field_dateCreation"
+            >Date Creation</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreation"
+              formControlName="dateCreation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.etat" for="field_etat">Etat</label>
+          <input type="text" class="form-control" name="etat" id="field_etat" data-cy="etat" formControlName="etat" />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="absence">
+      <h2 data-cy="absenceDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.detail.title">Absence</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ absence.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ absence.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + absence.etat }}">{{ absence.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateDebut">Date Debut</span></dt>
+        <dd>
+          <span>{{ absence.dateDebut | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateFin">Date Fin</span></dt>
+        <dd>
+          <span>{{ absence.dateFin | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.motif">Motif</span></dt>
+        <dd>
+          <span>{{ absence.motif }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneAbscent">Personne Abscent</span></dt>
+        <dd>
+          <div *ngIf="absence.personneAbscent">
+            <a [routerLink]="['/personne', absence.personneAbscent?.id, 'view']">{{ absence.personneAbscent?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneRemplacant">Personne Remplacant</span></dt>
+        <dd>
+          <div *ngIf="absence.personneRemplacant">
+            <a [routerLink]="['/personne', absence.personneRemplacant?.id, 'view']">{{ absence.personneRemplacant?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/absence', absence.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

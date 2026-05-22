@@ -1,0 +1,127 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-status-history-heading"
+        data-cy="StatusHistoryCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.home.createOrEditLabel"
+      >
+        Create or edit a Status History
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label
+            class="form-control-label"
+            jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.dateTransaction"
+            for="field_dateTransaction"
+            >Date Transaction</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateTransaction"
+              data-cy="dateTransaction"
+              type="datetime-local"
+              class="form-control"
+              name="dateTransaction"
+              formControlName="dateTransaction"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.dateFin" for="field_dateFin"
+            >Date Fin</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateFin"
+              data-cy="dateFin"
+              type="datetime-local"
+              class="form-control"
+              name="dateFin"
+              formControlName="dateFin"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.loginUser" for="field_loginUser"
+            >Login User</label
+          >
+          <input type="text" class="form-control" name="loginUser" id="field_loginUser" data-cy="loginUser" formControlName="loginUser" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.transaction" for="field_transaction"
+            >Transaction</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="transaction"
+            id="field_transaction"
+            data-cy="transaction"
+            formControlName="transaction"
+          />
+        </div>
+
+        <div class="form-group">
+          <label
+            class="form-control-label"
+            jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.transactionReference"
+            for="field_transactionReference"
+            >Transaction Reference</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="transactionReference"
+            id="field_transactionReference"
+            data-cy="transactionReference"
+            formControlName="transactionReference"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareStatusHistory.dataObject" for="field_dataObject"
+            >Data Object</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="dataObject"
+            id="field_dataObject"
+            data-cy="dataObject"
+            formControlName="dataObject"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

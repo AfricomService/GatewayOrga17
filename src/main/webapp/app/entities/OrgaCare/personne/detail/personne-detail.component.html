@@ -1,0 +1,100 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="personne">
+      <h2 data-cy="personneDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.detail.title">Personne</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ personne.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule">Matricule</span></dt>
+        <dd>
+          <span>{{ personne.matricule }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom">Nom Prenom</span></dt>
+        <dd>
+          <span>{{ personne.nomPrenom }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email">Email</span></dt>
+        <dd>
+          <span>{{ personne.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone">Num Telephone</span></dt>
+        <dd>
+          <span>{{ personne.numTelephone }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre">Genre</span></dt>
+        <dd>
+          <span>{{ personne.genre }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin">Cin</span></dt>
+        <dd>
+          <span>{{ personne.cin }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + personne.etat }}">{{ personne.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etatContractuelle">Etat Contractuelle</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.EtatContractuelle.' + personne.etatContractuelle }}">{{
+            personne.etatContractuelle
+          }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ personne.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateDebutContrat">Date Debut Contrat</span></dt>
+        <dd>
+          <span>{{ personne.dateDebutContrat | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idContratActif">Id Contrat Actif</span></dt>
+        <dd>
+          <span>{{ personne.idContratActif }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idTypeContratActif">Id Type Contrat Actif</span></dt>
+        <dd>
+          <span>{{ personne.idTypeContratActif }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.userId">User Id</span></dt>
+        <dd>
+          <span>{{ personne.userId }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.affectation">Affectation</span></dt>
+        <dd>
+          <div *ngIf="personne.affectation">
+            <a [routerLink]="['/affectation', personne.affectation?.id, 'view']">{{ personne.affectation?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade">Grade</span></dt>
+        <dd>
+          <div *ngIf="personne.grade">
+            <a [routerLink]="['/grade', personne.grade?.id, 'view']">{{ personne.grade?.id }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction">Fonction</span></dt>
+        <dd>
+          <div *ngIf="personne.fonction">
+            <a [routerLink]="['/fonction', personne.fonction?.id, 'view']">{{ personne.fonction?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/personne', personne.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

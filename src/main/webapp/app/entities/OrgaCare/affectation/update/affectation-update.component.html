@@ -1,0 +1,162 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-affectation-heading"
+        data-cy="AffectationCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareAffectation.home.createOrEditLabel"
+      >
+        Create or edit a Affectation
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.type" for="field_type">Type</label>
+          <select class="form-control" name="type" formControlName="type" id="field_type" data-cy="type">
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.TypeAffectation.null' | translate }}</option>
+            <option *ngFor="let typeAffectation of typeAffectationValues" [value]="typeAffectation">
+              {{ 'orgacaregatewayApp.TypeAffectation.' + typeAffectation | translate }}
+            </option>
+          </select>
+          <div *ngIf="editForm.get('type')!.invalid && (editForm.get('type')!.dirty || editForm.get('type')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('type')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.dateCreation" for="field_dateCreation"
+            >Date Creation</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateCreation"
+              data-cy="dateCreation"
+              type="datetime-local"
+              class="form-control"
+              name="dateCreation"
+              formControlName="dateCreation"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.dateAction" for="field_dateAction"
+            >Date Action</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateAction"
+              data-cy="dateAction"
+              type="datetime-local"
+              class="form-control"
+              name="dateAction"
+              formControlName="dateAction"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.dateFin" for="field_dateFin"
+            >Date Fin</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateFin"
+              data-cy="dateFin"
+              type="datetime-local"
+              class="form-control"
+              name="dateFin"
+              formControlName="dateFin"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.etat" for="field_etat">Etat</label>
+          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
+          </select>
+          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
+              This field is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.departement" for="field_departement"
+            >Departement</label
+          >
+          <select class="form-control" id="field_departement" data-cy="departement" name="departement" formControlName="departement">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="
+                departementOption.id === editForm.get('departement')!.value?.id ? editForm.get('departement')!.value : departementOption
+              "
+              *ngFor="let departementOption of departementsSharedCollection; trackBy: trackDepartementById"
+            >
+              {{ departementOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.groupe" for="field_groupe">Groupe</label>
+          <select class="form-control" id="field_groupe" data-cy="groupe" name="groupe" formControlName="groupe">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="groupeOption.id === editForm.get('groupe')!.value?.id ? editForm.get('groupe')!.value : groupeOption"
+              *ngFor="let groupeOption of groupesSharedCollection; trackBy: trackGroupeById"
+            >
+              {{ groupeOption.id }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAffectation.societe" for="field_societe"
+            >Societe</label
+          >
+          <select class="form-control" id="field_societe" data-cy="societe" name="societe" formControlName="societe">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
+              *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
+            >
+              {{ societeOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

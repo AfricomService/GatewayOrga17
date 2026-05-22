@@ -1,0 +1,35 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareAffectation": {
+      "home": {
+        "title": "Affectations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Affectation",
+        "createOrEditLabel": "Create or edit a Affectation",
+        "notFound": "No Affectations found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Affectation {{ id }}?"
+      },
+      "detail": {
+        "title": "Affectation"
+      },
+      "id": "ID",
+      "type": "Type",
+      "dateCreation": "Date Creation",
+      "dateAction": "Date Action",
+      "dateFin": "Date Fin",
+      "etat": "Etat",
+      "departement": "Departement",
+      "groupe": "Groupe",
+      "societe": "Societe"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareAffectation": {
+      "created": "A new Affectation is created with identifier {{ param }}",
+      "updated": "A Affectation is updated with identifier {{ param }}",
+      "deleted": "A Affectation is deleted with identifier {{ param }}"
+    }
+  }
+}

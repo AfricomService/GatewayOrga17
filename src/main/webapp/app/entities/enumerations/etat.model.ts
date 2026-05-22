@@ -1,0 +1,11 @@
+export enum Etat {
+  DRAFT = 'DRAFT',
+
+  ACTIF = 'ACTIF',
+
+  CLOSED = 'CLOSED',
+
+  INEXECUTION = 'INEXECUTION',
+
+  CANCELED = 'CANCELED',
+}

@@ -1,0 +1,60 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="organigramme">
+      <h2 data-cy="organigrammeDetailsHeading">
+        <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.detail.title">Organigramme</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ organigramme.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">Code</span></dt>
+        <dd>
+          <span>{{ organigramme.code }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">Nom</span></dt>
+        <dd>
+          <span>{{ organigramme.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ organigramme.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateAction">Date Action</span></dt>
+        <dd>
+          <span>{{ organigramme.dateAction | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateExpiration">Date Expiration</span></dt>
+        <dd>
+          <span>{{ organigramme.dateExpiration | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + organigramme.etat }}">{{ organigramme.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">Societe</span></dt>
+        <dd>
+          <div *ngIf="organigramme.societe">
+            <a [routerLink]="['/societe', organigramme.societe?.id, 'view']">{{ organigramme.societe?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/organigramme', organigramme.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

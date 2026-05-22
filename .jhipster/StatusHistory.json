@@ -1,0 +1,43 @@
+{
+  "name": "StatusHistory",
+  "fields": [
+    {
+      "fieldName": "dateTransaction",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateFin",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "loginUser",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "transaction",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "transactionReference",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dataObject",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "entityTableName": "status_history",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522084947"
+}

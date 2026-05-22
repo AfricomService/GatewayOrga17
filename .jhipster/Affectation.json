@@ -1,0 +1,62 @@
+{
+  "name": "Affectation",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "TypeAffectation",
+      "fieldValues": "MEMBRE,CHEF,ASSISTANT,INTERIM",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateAction",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateFin",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "departement",
+      "otherEntityRelationshipName": "affectation",
+      "relationshipName": "departement"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "groupe",
+      "otherEntityRelationshipName": "affectation",
+      "relationshipName": "groupe"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "societe",
+      "otherEntityRelationshipName": "affectation",
+      "relationshipName": "societe"
+    }
+  ],
+  "entityTableName": "affectation",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522083747"
+}

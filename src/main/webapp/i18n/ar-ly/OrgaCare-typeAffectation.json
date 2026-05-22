@@ -1,0 +1,11 @@
+{
+  "orgacaregatewayApp": {
+    "TypeAffectation": {
+      "null": "",
+      "MEMBRE": "MEMBRE",
+      "CHEF": "CHEF",
+      "ASSISTANT": "ASSISTANT",
+      "INTERIM": "INTERIM"
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "name": "Societe",
+  "fields": [
+    {
+      "fieldName": "raisonSociale",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "abreviation",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "activite",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "formeJuridique",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "adresse",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "codePostale",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "ville",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "pays",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "region",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "tel",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fax",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "mail",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "siteInternet",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "matriculeFiscale",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "logo",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "image"
+    },
+    {
+      "fieldName": "imagesSitePrincipale",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "image"
+    },
+    {
+      "fieldName": "holding",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "Etat",
+      "fieldValues": "DRAFT,ACTIF,CLOSED,INEXECUTION,CANCELED",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateActivation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateCloture",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "importTemplate",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "codeSociete",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "codeOrganigramme",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "organigramme",
+      "otherEntityRelationshipName": "societe",
+      "relationshipName": "organigramme"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "site",
+      "otherEntityRelationshipName": "societe",
+      "relationshipName": "site"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "contrat",
+      "otherEntityRelationshipName": "societe",
+      "relationshipName": "contrat"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "formeJuridique",
+      "otherEntityRelationshipName": "societe",
+      "relationshipName": "formeJuridiquee"
+    }
+  ],
+  "entityTableName": "societe",
+  "dto": "mapstruct",
+  "pagination": "pagination",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": ["orgacaregateway", "OrgaCare"],
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "changelogDate": "20260522084847"
+}

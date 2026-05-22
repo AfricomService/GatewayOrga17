@@ -1,0 +1,127 @@
+<div>
+  <h2 id="page-heading" data-cy="OrganigrammeHeading">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.title">Organigrammes</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-organigramme"
+        [routerLink]="['/organigramme/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.createLabel"> Create a new Organigramme </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="organigrammes?.length === 0">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.notFound">No organigrammes found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="organigrammes && organigrammes.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="code">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">Code</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="nom">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">Nom</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dateCreation">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateCreation">Date Creation</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dateAction">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateAction">Date Action</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="dateExpiration">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateExpiration">Date Expiration</span>
+            <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="etat">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.etat">Etat</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="societe.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">Societe</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let organigramme of organigrammes; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/organigramme', organigramme.id, 'view']">{{ organigramme.id }}</a>
+          </td>
+          <td>{{ organigramme.code }}</td>
+          <td>{{ organigramme.nom }}</td>
+          <td>{{ organigramme.dateCreation | formatMediumDatetime }}</td>
+          <td>{{ organigramme.dateAction | formatMediumDatetime }}</td>
+          <td>{{ organigramme.dateExpiration | formatMediumDatetime }}</td>
+          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + organigramme.etat }}">{{ organigramme.etat }}</td>
+          <td>
+            <div *ngIf="organigramme.societe">
+              <a [routerLink]="['/societe', organigramme.societe?.id, 'view']">{{ organigramme.societe?.id }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/organigramme', organigramme.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/organigramme', organigramme.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(organigramme)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="organigrammes && organigrammes.length > 0">
+    <div class="row justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="row justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

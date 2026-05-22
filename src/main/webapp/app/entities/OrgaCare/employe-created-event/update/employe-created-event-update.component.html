@@ -1,0 +1,66 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-employe-created-event-heading"
+        data-cy="EmployeCreatedEventCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCareEmployeCreatedEvent.home.createOrEditLabel"
+      >
+        Create or edit a Employe Created Event
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareEmployeCreatedEvent.matricule" for="field_matricule"
+            >Matricule</label
+          >
+          <input type="text" class="form-control" name="matricule" id="field_matricule" data-cy="matricule" formControlName="matricule" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareEmployeCreatedEvent.nomPrenom" for="field_nomPrenom"
+            >Nom Prenom</label
+          >
+          <input type="text" class="form-control" name="nomPrenom" id="field_nomPrenom" data-cy="nomPrenom" formControlName="nomPrenom" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareEmployeCreatedEvent.email" for="field_email"
+            >Email</label
+          >
+          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareEmployeCreatedEvent.userId" for="field_userId"
+            >User Id</label
+          >
+          <input type="number" class="form-control" name="userId" id="field_userId" data-cy="userId" formControlName="userId" />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

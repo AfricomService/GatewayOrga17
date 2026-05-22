@@ -1,0 +1,54 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="groupe">
+      <h2 data-cy="groupeDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.detail.title">Groupe</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ groupe.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.code">Code</span></dt>
+        <dd>
+          <span>{{ groupe.code }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.nom">Nom</span></dt>
+        <dd>
+          <span>{{ groupe.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ groupe.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.dateActivation">Date Activation</span></dt>
+        <dd>
+          <span>{{ groupe.dateActivation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + groupe.etat }}">{{ groupe.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareGroupe.organigramme">Organigramme</span></dt>
+        <dd>
+          <div *ngIf="groupe.organigramme">
+            <a [routerLink]="['/organigramme', groupe.organigramme?.id, 'view']">{{ groupe.organigramme?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/groupe', groupe.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

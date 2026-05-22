@@ -1,0 +1,135 @@
+<div>
+  <h2 id="page-heading" data-cy="DepartementHeading">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.title">Departements</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-departement"
+        [routerLink]="['/departement/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.createLabel"> Create a new Departement </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="departements?.length === 0">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.notFound">No departements found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="departements && departements.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+          <th scope="col" jhiSortBy="code">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.code">Code</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="nom">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.nom">Nom</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="status">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.status">Status</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="email">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.email">Email</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="organigramme.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.organigramme">Organigramme</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="site.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.site">Site</span> <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col" jhiSortBy="departementParent.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.departementParent">Departement Parent</span>
+            <fa-icon icon="sort"></fa-icon>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let departement of departements; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/departement', departement.id, 'view']">{{ departement.id }}</a>
+          </td>
+          <td>{{ departement.code }}</td>
+          <td>{{ departement.nom }}</td>
+          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + departement.status }}">{{ departement.status }}</td>
+          <td>{{ departement.email }}</td>
+          <td>
+            <div *ngIf="departement.organigramme">
+              <a [routerLink]="['/organigramme', departement.organigramme?.id, 'view']">{{ departement.organigramme?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="departement.site">
+              <a [routerLink]="['/site', departement.site?.id, 'view']">{{ departement.site?.id }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="departement.departementParent">
+              <a [routerLink]="['/departement', departement.departementParent?.id, 'view']">{{ departement.departementParent?.id }}</a>
+            </div>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/departement', departement.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/departement', departement.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(departement)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="departements && departements.length > 0">
+    <div class="row justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="row justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [(page)]="ngbPaginationPage"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="loadPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

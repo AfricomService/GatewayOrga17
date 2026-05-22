@@ -1,0 +1,55 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareSociete": {
+      "home": {
+        "title": "Societes",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Societe",
+        "createOrEditLabel": "Créer ou éditer un Societe",
+        "notFound": "Aucun Societe trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Societe {{ id }} ?"
+      },
+      "detail": {
+        "title": "Societe"
+      },
+      "id": "ID",
+      "raisonSociale": "Raison Sociale",
+      "abreviation": "Abreviation",
+      "activite": "Activite",
+      "formeJuridique": "Forme Juridique",
+      "adresse": "Adresse",
+      "codePostale": "Code Postale",
+      "ville": "Ville",
+      "pays": "Pays",
+      "region": "Region",
+      "tel": "Tel",
+      "fax": "Fax",
+      "mail": "Mail",
+      "siteInternet": "Site Internet",
+      "matriculeFiscale": "Matricule Fiscale",
+      "logo": "Logo",
+      "imagesSitePrincipale": "Images Site Principale",
+      "holding": "Holding",
+      "etat": "Etat",
+      "dateCreation": "Date Creation",
+      "dateActivation": "Date Activation",
+      "dateCloture": "Date Cloture",
+      "importTemplate": "Import Template",
+      "codeSociete": "Code Societe",
+      "codeOrganigramme": "Code Organigramme",
+      "organigramme": "Organigramme",
+      "site": "Site",
+      "contrat": "Contrat",
+      "formeJuridiquee": "Forme Juridiquee"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareSociete": {
+      "created": "Un nouveau Societe a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Societe avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Societe avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareOrganigramme": {
+      "home": {
+        "title": "Organigrammes",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Organigramme",
+        "createOrEditLabel": "Créer ou éditer un Organigramme",
+        "notFound": "Aucun Organigramme trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Organigramme {{ id }} ?"
+      },
+      "detail": {
+        "title": "Organigramme"
+      },
+      "id": "ID",
+      "code": "Code",
+      "nom": "Nom",
+      "dateCreation": "Date Creation",
+      "dateAction": "Date Action",
+      "dateExpiration": "Date Expiration",
+      "etat": "Etat",
+      "societe": "Societe"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareOrganigramme": {
+      "created": "Un nouveau Organigramme a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Organigramme avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Organigramme avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

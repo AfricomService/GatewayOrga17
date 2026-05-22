@@ -1,0 +1,32 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareFormeJuridique": {
+      "home": {
+        "title": "Forme Juridiques",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Forme Juridique",
+        "createOrEditLabel": "Create or edit a Forme Juridique",
+        "notFound": "No Forme Juridiques found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Forme Juridique {{ id }}?"
+      },
+      "detail": {
+        "title": "Forme Juridique"
+      },
+      "id": "ID",
+      "abreviation": "Abreviation",
+      "nom": "Nom",
+      "dateCreation": "Date Creation",
+      "etat": "Etat",
+      "societe": "Societe"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareFormeJuridique": {
+      "created": "A new Forme Juridique is created with identifier {{ param }}",
+      "updated": "A Forme Juridique is updated with identifier {{ param }}",
+      "deleted": "A Forme Juridique is deleted with identifier {{ param }}"
+    }
+  }
+}

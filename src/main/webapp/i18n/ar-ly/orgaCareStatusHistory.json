@@ -1,0 +1,33 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareStatusHistory": {
+      "home": {
+        "title": "Status Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Status History",
+        "createOrEditLabel": "Create or edit a Status History",
+        "notFound": "No Status Histories found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Status History {{ id }}?"
+      },
+      "detail": {
+        "title": "Status History"
+      },
+      "id": "ID",
+      "dateTransaction": "Date Transaction",
+      "dateFin": "Date Fin",
+      "loginUser": "Login User",
+      "transaction": "Transaction",
+      "transactionReference": "Transaction Reference",
+      "dataObject": "Data Object"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareStatusHistory": {
+      "created": "A new Status History is created with identifier {{ param }}",
+      "updated": "A Status History is updated with identifier {{ param }}",
+      "deleted": "A Status History is deleted with identifier {{ param }}"
+    }
+  }
+}

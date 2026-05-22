@@ -1,0 +1,40 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareSite": {
+      "home": {
+        "title": "Sites",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Site",
+        "createOrEditLabel": "Créer ou éditer un Site",
+        "notFound": "Aucun Site trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Site {{ id }} ?"
+      },
+      "detail": {
+        "title": "Site"
+      },
+      "id": "ID",
+      "code": "Code",
+      "nom": "Nom",
+      "etat": "Etat",
+      "adresse": "Adresse",
+      "codePostale": "Code Postale",
+      "ville": "Ville",
+      "tel": "Tel",
+      "fax": "Fax",
+      "email": "Email",
+      "dateCreation": "Date Creation",
+      "dateActivation": "Date Activation",
+      "dateCloture": "Date Cloture",
+      "societe": "Societe"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareSite": {
+      "created": "Un nouveau Site a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Site avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Site avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

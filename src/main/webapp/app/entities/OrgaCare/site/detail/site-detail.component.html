@@ -1,0 +1,82 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="site">
+      <h2 data-cy="siteDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareSite.detail.title">Site</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ site.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.code">Code</span></dt>
+        <dd>
+          <span>{{ site.code }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.nom">Nom</span></dt>
+        <dd>
+          <span>{{ site.nom }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.etat">Etat</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + site.etat }}">{{ site.etat }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse">Adresse</span></dt>
+        <dd>
+          <span>{{ site.adresse }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.codePostale">Code Postale</span></dt>
+        <dd>
+          <span>{{ site.codePostale }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.ville">Ville</span></dt>
+        <dd>
+          <span>{{ site.ville }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.tel">Tel</span></dt>
+        <dd>
+          <span>{{ site.tel }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.fax">Fax</span></dt>
+        <dd>
+          <span>{{ site.fax }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.email">Email</span></dt>
+        <dd>
+          <span>{{ site.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCreation">Date Creation</span></dt>
+        <dd>
+          <span>{{ site.dateCreation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateActivation">Date Activation</span></dt>
+        <dd>
+          <span>{{ site.dateActivation | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCloture">Date Cloture</span></dt>
+        <dd>
+          <span>{{ site.dateCloture | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.societe">Societe</span></dt>
+        <dd>
+          <div *ngIf="site.societe">
+            <a [routerLink]="['/societe', site.societe?.id, 'view']">{{ site.societe?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/site', site.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>
