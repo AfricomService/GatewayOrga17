@@ -1,28 +1,25 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-version: '3.8'
+# Keycloak pour JHipster 7 — remplace jboss/keycloak:15 (obsolète)
+# Image: quay.io/keycloak/keycloak:20.0.5 (compatible realm-config JHipster 7)
 services:
   keycloak:
-    image: jboss/keycloak:15.0.2
-    command:
-      [
-        '-b',
-        '0.0.0.0',
-        '-Dkeycloak.migration.action=import',
-        '-Dkeycloak.migration.provider=dir',
-        '-Dkeycloak.migration.dir=/opt/jboss/keycloak/realm-config',
-        '-Dkeycloak.migration.strategy=OVERWRITE_EXISTING',
-        '-Djboss.socket.binding.port-offset=1000',
-        '-Dkeycloak.profile.feature.upload_scripts=enabled',
-      ]
+    image: quay.io/keycloak/keycloak:20.0.5
+    command: start-dev --import-realm
     volumes:
-      - ./realm-config:/opt/jboss/keycloak/realm-config
+      - ./realm-config:/opt/keycloak/data/import
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - DB_VENDOR=h2
-    # If you want to expose these ports outside your dev PC,
-    # remove the "127.0.0.1:" prefix
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HTTP_PORT=9080
+      - KC_HTTPS_PORT=9443
+      - KC_HEALTH_ENABLED=true
+      - KC_DB=dev-file
+    # Retirez le préfixe "127.0.0.1:" pour exposer hors de votre PC
     ports:
       - 127.0.0.1:9080:9080
       - 127.0.0.1:9443:9443
-      - 127.0.0.1:10990:10990
+    healthcheck:
+      test: ['CMD-SHELL', 'exec 3<>/dev/tcp/127.0.0.1/9080']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
