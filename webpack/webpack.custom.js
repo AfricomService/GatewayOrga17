@@ -19,21 +19,21 @@ module.exports = async (config, options, targetOptions) => {
     files: { include: ['*.json'] },
   });
 
-  config.cache = {
-    // 1. Set cache type to filesystem
-    type: 'filesystem',
-    cacheDirectory: path.resolve(__dirname, '../target/webpack'),
-    buildDependencies: {
-      // 2. Add your config as buildDependency to get cache invalidation on config change
-      config: [
-        __filename,
-        path.resolve(__dirname, 'webpack.custom.js'),
-        path.resolve(__dirname, '../angular.json'),
-        path.resolve(__dirname, '../tsconfig.app.json'),
-        path.resolve(__dirname, '../tsconfig.json'),
-      ],
-    },
-  };
+  // config.cache = {
+  //   // 1. Set cache type to filesystem
+  //   type: 'filesystem',
+  //   cacheDirectory: path.resolve(__dirname, '../target/webpack'),
+  //   buildDependencies: {
+  //     // 2. Add your config as buildDependency to get cache invalidation on config change
+  //     config: [
+  //       __filename,
+  //       path.resolve(__dirname, 'webpack.custom.js'),
+  //       path.resolve(__dirname, '../angular.json'),
+  //       path.resolve(__dirname, '../tsconfig.app.json'),
+  //       path.resolve(__dirname, '../tsconfig.json'),
+  //     ],
+  //   },
+  // };
 
   // PLUGINS
   if (config.mode === 'development') {
@@ -61,10 +61,13 @@ module.exports = async (config, options, targetOptions) => {
           host: 'localhost',
           port: 9000,
           https: tls,
+          open: false,
+          notify: false,
           proxy: {
             target: `http${tls ? 's' : ''}://localhost:${targetOptions.target === 'serve' ? '4200' : '8080'}`,
+            ws: true,
             proxyOptions: {
-              changeOrigin: false, //pass the Host header to the backend unchanged  https://github.com/Browsersync/browser-sync/issues/430
+              changeOrigin: true,
             },
           },
           socket: {
@@ -72,17 +75,15 @@ module.exports = async (config, options, targetOptions) => {
               heartbeatTimeout: 60000,
             },
           },
-          /*
-          ghostMode: { // uncomment this part to disable BrowserSync ghostMode; https://github.com/jhipster/generator-jhipster/issues/11116
+          ghostMode: {
             clicks: false,
             location: false,
             forms: false,
             scroll: false,
           },
-          */
         },
         {
-          reload: targetOptions.target === 'build', // enabled for build --watch
+          reload: targetOptions.target === 'build',
         }
       )
     );

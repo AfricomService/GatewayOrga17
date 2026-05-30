@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { SharedLibsModule } from './shared-libs.module';
+import { DxDataGridModule, DxLoadPanelModule } from 'devextreme-angular';
 import { FindLanguageFromKeyPipe } from './language/find-language-from-key.pipe';
 import { TranslateDirective } from './language/translate.directive';
 import { AlertComponent } from './alert/alert.component';
@@ -14,7 +15,7 @@ import { SortDirective } from './sort/sort.directive';
 import { ItemCountComponent } from './pagination/item-count.component';
 
 @NgModule({
-  imports: [SharedLibsModule],
+  imports: [SharedLibsModule, DxDataGridModule, DxLoadPanelModule],
   declarations: [
     FindLanguageFromKeyPipe,
     TranslateDirective,
@@ -30,6 +31,8 @@ import { ItemCountComponent } from './pagination/item-count.component';
   ],
   exports: [
     SharedLibsModule,
+    DxDataGridModule,
+    DxLoadPanelModule,
     FindLanguageFromKeyPipe,
     TranslateDirective,
     AlertComponent,

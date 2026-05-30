@@ -1,0 +1,454 @@
+// ═══════════════════════════════════════════════════
+//  personne-update.component.scss
+//  Design: Corporate Refined — bleu marine + accents teal
+// ═══════════════════════════════════════════════════
+
+// ── Tokens ──────────────────────────────────────────
+$primary: #1a3a5c;
+$primary-light: #2563a8;
+$accent: #0ea5a0;
+$accent-light: #e0f7f6;
+$danger: #e53e3e;
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$border: #cbd5e1;
+$border-focus: #0ea5a0;
+$bg-page: #f1f5f9;
+$bg-card: #ffffff;
+$bg-input: #f8fafc;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 16px rgba(26, 58, 92, 0.1);
+$shadow-lg: 0 8px 32px rgba(26, 58, 92, 0.15);
+$transition: all 0.2s ease;
+
+// ── Search / filter helpers (conservés de votre ancien CSS) ─
+.search-container {
+  position: relative;
+  width: 100%;
+
+  .search-input {
+    width: 100%;
+    padding-right: 40px;
+  }
+
+  .pivot-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    // background-image: url('');
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: $transition;
+
+    &:hover {
+      opacity: 1;
+      transform: translateY(-50%) scale(1.1);
+    }
+  }
+}
+
+.input-group-text {
+  border: none;
+  background: transparent;
+
+  .fas {
+    font-size: 16px;
+    color: $text-muted;
+    cursor: pointer;
+  }
+}
+
+.custom-icon {
+  width: 24px;
+  height: 24px;
+  // background-image: url('../../../content/menuIcons/filter1.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.custom-align-left {
+  justify-content: flex-start !important;
+}
+
+// ── Page wrapper ────────────────────────────────────
+.personne-page {
+  background: $bg-page;
+  min-height: 100vh;
+  padding: 1.75rem 2rem 3rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+// ── Page header ─────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: 1.25rem 1.75rem;
+  box-shadow: $shadow-md;
+  border-left: 4px solid $accent;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    background: linear-gradient(135deg, $primary, $primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+    box-shadow: $shadow-sm;
+    flex-shrink: 0;
+  }
+
+  .page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .page-subtitle {
+    font-size: 0.82rem;
+    color: $text-muted;
+    margin: 0.15rem 0 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}
+
+// ── Action buttons ───────────────────────────────────
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: $transition;
+  white-space: nowrap;
+
+  fa-icon {
+    font-size: 0.85rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary-action {
+  background: linear-gradient(135deg, $primary, $primary-light);
+  color: #fff;
+  border-color: $primary;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, darken($primary, 5%), $primary);
+    box-shadow: 0 4px 12px rgba(26, 58, 92, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-secondary-action {
+  background: #fff;
+  color: $primary;
+  border-color: $border;
+
+  &:hover:not(:disabled) {
+    background: $bg-page;
+    border-color: $primary;
+    transform: translateY(-1px);
+  }
+}
+
+// ── Accordion ───────────────────────────────────────
+.personne-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  // Reset ngb-accordion default borders
+  .card {
+    border: none !important;
+    border-radius: $radius-lg !important;
+    box-shadow: $shadow-md;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .card-body {
+    padding: 0 !important;
+  }
+}
+
+// ── Accordion button header ──────────────────────────
+.accordion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: $bg-card;
+  border: none;
+  cursor: pointer;
+  transition: $transition;
+  border-bottom: 2px solid transparent;
+
+  &.opened {
+    border-bottom-color: $accent;
+    background: linear-gradient(to right, $accent-light, $bg-card);
+  }
+
+  &:hover {
+    background: linear-gradient(to right, $accent-light, $bg-card);
+  }
+
+  .panel-header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $primary;
+  }
+
+  .chevron {
+    color: $text-muted;
+    font-size: 0.85rem;
+    transition: transform 0.25s ease;
+  }
+
+  &.opened .chevron {
+    transform: rotate(180deg);
+  }
+}
+
+// ── Panel icons ──────────────────────────────────────
+.panel-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+
+  &.general {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: $primary-light;
+  }
+
+  &.contractual {
+    background: linear-gradient(135deg, $accent-light, #b2f0ed);
+    color: darken($accent, 10%);
+  }
+}
+
+// ── Panel body ───────────────────────────────────────
+.panel-body {
+  background: $bg-card;
+  padding: 1.75rem;
+}
+
+// ── Form grid ────────────────────────────────────────
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem 1.5rem;
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Field group ──────────────────────────────────────
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  &.required .field-label::after {
+    content: ' *';
+    color: $danger;
+    font-weight: 700;
+  }
+}
+
+// ── Field label ──────────────────────────────────────
+.field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $text-muted;
+}
+
+// ── Input wrapper ────────────────────────────────────
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input-prefix {
+    position: absolute;
+    left: 0.75rem;
+    color: $text-muted;
+    font-size: 0.85rem;
+    pointer-events: none;
+    z-index: 1;
+    transition: color 0.2s;
+  }
+
+  &:focus-within .input-prefix {
+    color: $accent;
+  }
+}
+
+// ── Field input ──────────────────────────────────────
+.field-input {
+  width: 100%;
+  height: 40px;
+  padding: 0.45rem 0.85rem;
+  background: $bg-input;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  font-size: 0.9rem;
+  color: $text-dark;
+  transition: $transition;
+  appearance: none;
+
+  &.with-prefix {
+    padding-left: 2.4rem;
+  }
+
+  &::placeholder {
+    color: lighten($text-muted, 15%);
+    font-size: 0.85rem;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $border-focus;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba($accent, 0.15);
+  }
+
+  &:read-only {
+    background: darken($bg-input, 2%);
+    cursor: not-allowed;
+    color: $text-muted;
+  }
+}
+
+// ── Select ───────────────────────────────────────────
+.select-wrapper {
+  &::after {
+    // chevron géré par fa-icon dans le template
+    content: '';
+  }
+}
+
+.field-select {
+  cursor: pointer;
+  background-image: none; // on désactive la flèche native Bootstrap
+
+  option {
+    color: $text-dark;
+    background: #fff;
+  }
+}
+
+// ── Field error ──────────────────────────────────────
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: $danger;
+  font-size: 0.78rem;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease;
+
+  fa-icon {
+    font-size: 0.75rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Spinner ──────────────────────────────────────────
+.spinner-border-sm {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-width: 0.15em;
+}
+
+// ── Responsive tweaks ────────────────────────────────
+@media (max-width: 768px) {
+  .personne-page {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .accordion-btn {
+    padding: 0.85rem 1rem;
+  }
+
+  .panel-body {
+    padding: 1.25rem 1rem;
+  }
+}

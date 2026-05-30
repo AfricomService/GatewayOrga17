@@ -22,21 +22,33 @@ import { EtatContractuelle } from 'app/entities/enumerations/etat-contractuelle.
 @Component({
   selector: 'jhi-personne-update',
   templateUrl: './personne-update.component.html',
+  styleUrls: ['./personne-update.component.scss'],
 })
 export class PersonneUpdateComponent implements OnInit {
   isSaving = false;
+
+  // Enumerations exposées au template
   etatValues = Object.keys(Etat);
   etatContractuelleValues = Object.keys(EtatContractuelle);
 
+  // Collections pour les selects
   affectationsSharedCollection: IAffectation[] = [];
   gradesSharedCollection: IGrade[] = [];
   fonctionsSharedCollection: IFonction[] = [];
 
+  // Logique métier conservée de l'ancienne version
+  generateMatriculeAutomatically = false;
+
+  // Accordion / panels (conservé de l'ancienne version)
+  personItems = ['Section Générale', 'Informations Contractuelles'];
+  activePanels: string[] = ['panel-0'];
+  disablePanelTitle: boolean[] = [];
+
   editForm = this.fb.group({
     id: [],
     matricule: [],
-    nomPrenom: [],
-    email: [],
+    nomPrenom: [null, [Validators.required]],
+    email: [null, [Validators.email]],
     numTelephone: [],
     genre: [],
     cin: [],
@@ -70,8 +82,14 @@ export class PersonneUpdateComponent implements OnInit {
       }
 
       this.updateForm(personne);
-
       this.loadRelationshipsOptions();
+
+      // Logique de génération automatique du matricule (conservée)
+      if (this.generateMatriculeAutomatically && personne.id === undefined) {
+        this.personneService.generateNextMatricule('Empl-').subscribe(nextCode => {
+          this.editForm.get('matricule')?.setValue(nextCode);
+        });
+      }
     });
   }
 
@@ -113,7 +131,7 @@ export class PersonneUpdateComponent implements OnInit {
   }
 
   protected onSaveError(): void {
-    // Api for inheritance.
+    // Héritage API
   }
 
   protected onSaveFinalize(): void {

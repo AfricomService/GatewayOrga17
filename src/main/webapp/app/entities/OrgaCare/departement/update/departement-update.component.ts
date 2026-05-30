@@ -18,22 +18,34 @@ import { Etat } from 'app/entities/enumerations/etat.model';
 @Component({
   selector: 'jhi-departement-update',
   templateUrl: './departement-update.component.html',
+  styleUrls: ['./departement-update.component.scss'],
 })
 export class DepartementUpdateComponent implements OnInit {
   isSaving = false;
+
+  // Enum exposé au template (pattern JHipster 7)
   etatValues = Object.keys(Etat);
 
+  // Collections pour les selects
   organigrammesSharedCollection: IOrganigramme[] = [];
   sitesSharedCollection: ISite[] = [];
   departementsSharedCollection: IDepartement[] = [];
   personnesSharedCollection: IPersonne[] = [];
+
+  // Accordion / panels (même pattern que personne-update)
+  sectionItems = ['Informations Générales', 'Relations & Hiérarchie'];
+  activePanels: string[] = ['panel-0'];
+  disablePanelTitle: boolean[] = [];
+
+  // Logique métier de l'ancienne version : génération automatique du code
+  generateCodeAutomatically = false;
 
   editForm = this.fb.group({
     id: [],
     code: [],
     nom: [],
     status: [null, [Validators.required]],
-    email: [],
+    email: [null],
     organigramme: [],
     site: [],
     departementParent: [],
@@ -52,8 +64,14 @@ export class DepartementUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ departement }) => {
       this.updateForm(departement);
-
       this.loadRelationshipsOptions();
+
+      // Génération automatique du code (logique conservée de l'ancienne version)
+      if (this.generateCodeAutomatically && departement.id === undefined) {
+        this.departementService.generateNextCode('DEPT-').subscribe(nextCode => {
+          this.editForm.get('code')?.setValue(nextCode);
+        });
+      }
     });
   }
 
@@ -71,6 +89,8 @@ export class DepartementUpdateComponent implements OnInit {
     }
   }
 
+  // ── TrackBy ──────────────────────────────────────────────────────────────
+
   trackOrganigrammeById(index: number, item: IOrganigramme): number {
     return item.id!;
   }
@@ -87,6 +107,8 @@ export class DepartementUpdateComponent implements OnInit {
     return item.id!;
   }
 
+  // ── Sélection multiple (logique conservée + modernisée) ──────────────────
+
   getSelectedPersonne(option: IPersonne, selectedVals?: IPersonne[]): IPersonne {
     if (selectedVals) {
       for (const selectedVal of selectedVals) {
@@ -97,6 +119,8 @@ export class DepartementUpdateComponent implements OnInit {
     }
     return option;
   }
+
+  // ── Save helpers ─────────────────────────────────────────────────────────
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IDepartement>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
@@ -110,12 +134,14 @@ export class DepartementUpdateComponent implements OnInit {
   }
 
   protected onSaveError(): void {
-    // Api for inheritance.
+    // Héritage API
   }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;
   }
+
+  // ── Form ─────────────────────────────────────────────────────────────────
 
   protected updateForm(departement: IDepartement): void {
     this.editForm.patchValue({

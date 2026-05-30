@@ -169,5 +169,282 @@ ui bootstrap tweaks
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* ══════════════════════════════════════════════════════════════════
+   OrgaCare — Layout global : sidebar + main
+   ══════════════════════════════════════════════════════════════════ */
 
+$oc-sidebar-w: 240px;
+$oc-sidebar-w-col: 64px;
+$oc-topbar-h: 60px;
+$oc-blue: #2563eb;
+$oc-text-main: #0f172a;
+$oc-bg-page: #f1f5f9;
+$oc-transition: 0.22s ease;
+
+.oc-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $oc-bg-page;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.oc-main {
+  flex: 1;
+  margin-left: $oc-sidebar-w;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left $oc-transition;
+  background: $oc-bg-page;
+}
+
+.oc-main.no-sidebar {
+  margin-left: 0;
+}
+
+.oc-layout.sidebar-collapsed .oc-main {
+  margin-left: $oc-sidebar-w-col;
+}
+
+.oc-page-content {
+  flex: 1;
+  padding: 0;
+}
+
+.oc-sidebar {
+  width: $oc-sidebar-w;
+  min-height: 100vh;
+  background: $oc-text-main;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 200;
+  transition: width $oc-transition;
+  overflow: hidden;
+}
+
+.oc-sidebar.collapsed {
+  width: $oc-sidebar-w-col;
+}
+
+.oc-sidebar__logo {
+  height: $oc-topbar-h;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+.oc-sidebar__logo.collapsed,
+.oc-sidebar.collapsed .oc-sidebar__logo {
+  justify-content: center;
+  padding: 0 8px;
+}
+
+.oc-sidebar__logo-icon svg {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.oc-sidebar__logo-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  flex: 1;
+  transition: opacity $oc-transition;
+}
+
+.oc-sidebar.collapsed .oc-sidebar__logo-text {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+}
+
+.oc-sidebar__toggle {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.oc-sidebar__toggle:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.oc-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+.oc-sidebar__user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: $oc-blue;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.oc-sidebar__user-info {
+  overflow: hidden;
+  transition: opacity $oc-transition;
+}
+
+.oc-sidebar.collapsed .oc-sidebar__user-info {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+}
+
+.oc-sidebar__user-name {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.oc-sidebar__user-role {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.oc-sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 8px;
+  scrollbar-width: none;
+}
+
+.oc-sidebar__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.oc-sidebar__section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 12px 8px 4px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity $oc-transition;
+}
+
+.oc-sidebar.collapsed .oc-sidebar__section-label {
+  opacity: 0;
+}
+
+.oc-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.oc-sidebar__item i {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.oc-sidebar__item span {
+  transition: opacity $oc-transition;
+  overflow: hidden;
+}
+
+.oc-sidebar.collapsed .oc-sidebar__item span {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+.oc-sidebar__item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  text-decoration: none;
+}
+
+.oc-sidebar__item.active {
+  background: $oc-blue;
+  color: white;
+}
+
+.oc-sidebar__item--danger {
+  color: rgba(248, 113, 113, 0.8);
+}
+
+.oc-sidebar__item--danger:hover {
+  background: rgba(220, 38, 38, 0.15);
+  color: #f87171;
+}
+
+.oc-sidebar__footer {
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .oc-sidebar {
+    width: $oc-sidebar-w-col;
+  }
+  .oc-sidebar .oc-sidebar__logo-text,
+  .oc-sidebar .oc-sidebar__user-info,
+  .oc-sidebar .oc-sidebar__section-label,
+  .oc-sidebar .oc-sidebar__item span {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+  }
+  .oc-main {
+    margin-left: $oc-sidebar-w-col;
+  }
+}
+
+/* jhipster-needle-scss-add-main JHipster will add new css style */
 /* jhipster-needle-scss-add-main JHipster will add new css style */

@@ -1,45 +1,61 @@
 {
-  "orgacaregatewayApp": {
+  "orgaCareGatewayApp": {
     "orgaCarePersonne": {
       "home": {
-        "title": "Personnes",
+        "title": "Persons",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Personne",
-        "createOrEditLabel": "Create or edit a Personne",
-        "notFound": "No Personnes found"
+        "createLabel": "Create a new Person",
+        "createOrEditLabel": "Create or edit a Person",
+        "notFound": "No Persons found",
+        "importer": "Import"
       },
       "delete": {
-        "question": "Are you sure you want to delete Personne {{ id }}?"
+        "question": "Are you sure you want to delete Person {{ id }}?"
       },
       "detail": {
-        "title": "Personne"
+        "title": "Person"
       },
       "id": "ID",
       "matricule": "Matricule",
-      "nomPrenom": "Nom Prenom",
+      "nomPrenom": "Full Name",
       "email": "Email",
-      "numTelephone": "Num Telephone",
-      "genre": "Genre",
-      "cin": "Cin",
-      "etat": "Etat",
-      "etatContractuelle": "Etat Contractuelle",
-      "dateCreation": "Date Creation",
-      "dateDebutContrat": "Date Debut Contrat",
-      "idContratActif": "Id Contrat Actif",
-      "idTypeContratActif": "Id Type Contrat Actif",
-      "userId": "User Id",
-      "contrat": "Contrat",
-      "affectation": "Affectation",
+      "numTelephone": "Phone Number",
+      "genre": "Gender",
+      "masculin": "Male",
+      "féminin": "Female",
+      "cin": "ID Card Number",
+      "etat": "Status",
+      "etatContractuelle": "Contractual Status",
+      "dateCreation": "Creation Date",
+      "dateDebutContrat": "Contract Start Date",
+      "idContratActif": "Active Contract ID",
+      "idTypeContratActif": "Active Contract Type ID",
+      "userId": "User ID",
+      "contrat": "Contract",
+      "affectation": "Assignment",
       "grade": "Grade",
-      "fonction": "Fonction",
-      "departement": "Departement"
+      "fonction": "Function",
+      "departement": "Department"
+    },
+    "Etat": {
+      "null": "— Select —",
+      "ACTIF": "Active",
+      "INACTIF": "Inactive",
+      "SUSPENDU": "Suspended"
+    },
+    "EtatContractuelle": {
+      "null": "— Select —",
+      "CDI": "Permanent Contract",
+      "CDD": "Fixed-Term Contract",
+      "STAGE": "Internship",
+      "FREELANCE": "Freelance"
     }
   },
   "orgaCareApp": {
     "orgaCarePersonne": {
-      "created": "A new Personne is created with identifier {{ param }}",
-      "updated": "A Personne is updated with identifier {{ param }}",
-      "deleted": "A Personne is deleted with identifier {{ param }}"
+      "created": "A new Person has been created with identifier {{ param }}",
+      "updated": "Person with identifier {{ param }} has been updated",
+      "deleted": "Person with identifier {{ param }} has been deleted"
     }
   }
 }

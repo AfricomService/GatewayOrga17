@@ -1,0 +1,571 @@
+// ── Design Tokens ─────────────────────────────────────────────────────────────
+$primary: #2563eb;
+$primary-light: #eff6ff;
+$primary-dark: #1e40af;
+
+$success: #16a34a;
+$success-light: #f0fdf4;
+
+$warning: #d97706;
+$warning-light: #fffbeb;
+
+$danger: #dc2626;
+$danger-light: #fef2f2;
+
+$info: #0891b2;
+$info-light: #ecfeff;
+
+$gray-900: #111827;
+$gray-700: #374151;
+$gray-500: #6b7280;
+$gray-300: #d1d5db;
+$gray-100: #f3f4f6;
+$gray-50: #f9fafb;
+
+$border-color: #e5e7eb;
+$radius-sm: 6px;
+$radius: 10px;
+$radius-lg: 14px;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+
+// ── Layout principal ──────────────────────────────────────────────────────────
+.personne-container {
+  padding: 2rem 1.75rem;
+  max-width: 100%;
+  background: $gray-50;
+  min-height: 100vh;
+}
+
+// ── En-tête ───────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.page-title-block {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: $primary-light;
+  color: $primary;
+  border-radius: $radius;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: $gray-900;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.page-subtitle {
+  font-size: 0.8rem;
+  color: $gray-500;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+// ── Boutons d'action header ───────────────────────────────────────────────────
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  white-space: nowrap;
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &--primary {
+    background: $primary;
+    color: #fff;
+    &:hover {
+      background: $primary-dark;
+      box-shadow: $shadow-sm;
+      color: #fff;
+    }
+  }
+  &--secondary {
+    background: #fff;
+    color: $gray-700;
+    border: 1px solid $border-color;
+    &:hover {
+      background: $gray-50;
+      box-shadow: $shadow-sm;
+    }
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+  }
+  &--success {
+    background: $success;
+    color: #fff;
+    &:hover {
+      background: darken($success, 6%);
+      box-shadow: $shadow-sm;
+      color: #fff;
+    }
+  }
+}
+
+.btn-label {
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+// ── Recherche ─────────────────────────────────────────────────────────────────
+.search-section {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: $shadow-sm;
+}
+
+.search-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  color: $gray-500;
+  pointer-events: none;
+  font-size: 0.875rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem 120px 0.6rem 40px;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  color: $gray-900;
+  background: $gray-50;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+
+  &::placeholder {
+    color: $gray-500;
+  }
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.12);
+    background: #fff;
+  }
+}
+
+.filter-toggle {
+  position: absolute;
+  right: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: $gray-100;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  color: $gray-700;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover,
+  &.active {
+    background: $primary-light;
+    color: $primary;
+    border-color: $primary;
+  }
+}
+
+.filter-label-btn {
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
+// ── Filtres avancés ───────────────────────────────────────────────────────────
+.advanced-filters {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid $border-color;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.filter-label {
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: $gray-500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// Surcharge Bootstrap pour les inputs dans les filtres
+.advanced-filters .form-control,
+.advanced-filters .form-select {
+  font-size: 0.85rem;
+  border-color: $border-color;
+  border-radius: $radius-sm;
+  padding: 0.45rem 0.75rem;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.12);
+  }
+}
+
+// ── Loading bar ───────────────────────────────────────────────────────────────
+.loading-bar {
+  height: 3px;
+  background: $gray-100;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+
+  &__inner {
+    height: 100%;
+    width: 40%;
+    background: $primary;
+    border-radius: 2px;
+    animation: loadingSlide 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes loadingSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+
+// ── État vide ─────────────────────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  text-align: center;
+  box-shadow: $shadow-sm;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: $gray-300;
+  margin-bottom: 1rem;
+}
+
+.empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $gray-700;
+  margin: 0 0 0.35rem;
+}
+
+.empty-sub {
+  font-size: 0.85rem;
+  color: $gray-500;
+  margin: 0;
+}
+
+// ── Grille ────────────────────────────────────────────────────────────────────
+.grid-wrapper {
+  background: #fff;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+
+  // Surcharges DevExtreme
+  ::ng-deep {
+    .dx-datagrid {
+      font-family: inherit;
+      color: $gray-700;
+    }
+
+    .dx-datagrid-headers {
+      background: $gray-50;
+      border-bottom: 1px solid $border-color;
+
+      .dx-datagrid-table .dx-row > td {
+        font-size: 0.73rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $gray-500;
+        padding: 0.75rem 1rem;
+        border: none;
+        background: $gray-50;
+      }
+    }
+
+    .dx-datagrid-rowsview {
+      .dx-row {
+        td {
+          padding: 0.7rem 1rem;
+          border: none;
+          border-bottom: 1px solid $gray-100;
+          font-size: 0.875rem;
+          color: $gray-700;
+          vertical-align: middle;
+        }
+
+        &.dx-row-alt td {
+          background: $gray-50;
+        }
+
+        &:hover td {
+          background: $primary-light !important;
+          cursor: pointer;
+        }
+
+        &:last-child td {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
+// ── Badges & cellules custom ──────────────────────────────────────────────────
+.tag-matricule {
+  display: inline-block;
+  padding: 0.2em 0.65em;
+  background: $primary-light;
+  color: $primary;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+.badge-etat {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25em 0.7em;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+
+  &.etat--actif {
+    background: $success-light;
+    color: $success;
+  }
+  &.etat--draft {
+    background: $warning-light;
+    color: $warning;
+  }
+  &.etat--canceled {
+    background: $danger-light;
+    color: $danger;
+  }
+  &.etat--inexecution {
+    background: $gray-100;
+    color: $gray-500;
+    border: 1px solid $border-color;
+  }
+}
+
+.compte-cell {
+  display: flex;
+  justify-content: center;
+}
+
+.badge-compte {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.25em 0.65em;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--actif {
+    background: $success-light;
+    color: $success;
+  }
+  &--none {
+    background: $gray-100;
+    color: $gray-500;
+    border: 1px solid $border-color;
+  }
+}
+
+// ── Boutons d'action dans la grille ──────────────────────────────────────────
+.action-buttons {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: $radius-sm;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.15s;
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &--view {
+    background: $info-light;
+    color: $info;
+    &:hover {
+      background: $info;
+      color: #fff;
+    }
+  }
+  &--edit {
+    background: $primary-light;
+    color: $primary;
+    &:hover {
+      background: $primary;
+      color: #fff;
+    }
+  }
+  &--delete {
+    background: $danger-light;
+    color: $danger;
+    &:hover {
+      background: $danger;
+      color: #fff;
+    }
+  }
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+.pagination-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.25rem 0 0.5rem;
+
+  ::ng-deep {
+    .page-item.active .page-link {
+      background: $primary;
+      border-color: $primary;
+    }
+    .page-link {
+      color: $primary;
+      border-radius: $radius-sm;
+      margin: 0 2px;
+      &:hover {
+        background: $primary-light;
+      }
+    }
+  }
+}
+
+// ── Modal suppression ─────────────────────────────────────────────────────────
+.modal-title-block {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.modal-icon-danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: $danger-light;
+  color: $danger;
+  border-radius: $radius-sm;
+  font-size: 1rem;
+}
+
+.delete-target {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: $gray-50;
+  border: 1px solid $border-color;
+  border-radius: $radius-sm;
+  font-size: 0.9rem;
+  color: $gray-900;
+  margin-top: 0.5rem;
+}

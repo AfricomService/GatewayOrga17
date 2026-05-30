@@ -6,16 +6,24 @@ import * as dayjs from 'dayjs';
 
 import { AccountService } from 'app/core/auth/account.service';
 import { FindLanguageFromKeyPipe } from 'app/shared/language/find-language-from-key.pipe';
+import { LoginService } from 'app/login/login.service';
+import { Account } from 'app/core/auth/account.model';
 
 @Component({
   selector: 'jhi-main',
   templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
 })
 export class MainComponent implements OnInit {
+  // ── Public avant private (règle ESLint member-ordering) ──────────
+  account: Account | null = null;
+  sidebarCollapsed = false;
+
   private renderer: Renderer2;
 
   constructor(
     private accountService: AccountService,
+    private loginService: LoginService,
     private titleService: Title,
     private router: Router,
     private findLanguageFromKeyPipe: FindLanguageFromKeyPipe,
@@ -26,8 +34,16 @@ export class MainComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // try to log in automatically
     this.accountService.identity().subscribe();
+
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.account = account;
+    });
+
+    const saved = localStorage.getItem('oc-sidebar-collapsed');
+    if (saved !== null) {
+      this.sidebarCollapsed = saved === 'true';
+    }
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -39,9 +55,18 @@ export class MainComponent implements OnInit {
       this.updateTitle();
       dayjs.locale(langChangeEvent.lang);
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
-
       this.updatePageDirection();
     });
+  }
+
+  toggleSidebar(): void {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+    localStorage.setItem('oc-sidebar-collapsed', String(this.sidebarCollapsed));
+  }
+
+  logout(): void {
+    this.loginService.logout();
+    this.router.navigate(['']);
   }
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {

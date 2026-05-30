@@ -1,175 +1,229 @@
-<div>
-  <h2 id="page-heading" data-cy="PersonneHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.title">Personnes</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.refreshListLabel">Refresh List</span>
-      </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-personne"
-        [routerLink]="['/personne/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.createLabel"> Create a new Personne </span>
-      </button>
+<div class="personne-container">
+  <!-- ── En-tête ── -->
+  <div class="page-header">
+    <div class="page-title-block">
+      <span class="page-icon">
+        <fa-icon icon="users"></fa-icon>
+      </span>
+      <div>
+        <h2 class="page-title" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.title">Personnes</h2>
+        <p class="page-subtitle">{{ totalItems }} enregistrement{{ totalItems !== 1 ? 's' : '' }}</p>
+      </div>
     </div>
-  </h2>
+
+    <div class="header-actions">
+      <button class="btn-action btn-action--secondary" (click)="loadPage()" [disabled]="isLoading" title="Actualiser">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span class="btn-label">Actualiser</span>
+      </button>
+
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept=".xls,.xlsx" style="display: none" />
+      <button class="btn-action btn-action--success" (click)="triggerFileInput(fileInput)" title="Importer Excel">
+        <fa-icon icon="file-upload"></fa-icon>
+        <span class="btn-label">Importer</span>
+      </button>
+
+      <a class="btn-action btn-action--primary" [routerLink]="['/personne/new']" title="Nouvelle personne">
+        <fa-icon icon="plus"></fa-icon>
+        <span class="btn-label">Nouveau</span>
+      </a>
+    </div>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
-
   <jhi-alert></jhi-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="personnes?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.notFound">No personnes found</span>
-  </div>
-
-  <div class="table-responsive" id="entities" *ngIf="personnes && personnes.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="matricule">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule">Matricule</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="nomPrenom">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom">Nom Prenom</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="email">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email">Email</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="numTelephone">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone">Num Telephone</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="genre">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre">Genre</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="cin">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin">Cin</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="etat">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat">Etat</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="etatContractuelle">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etatContractuelle">Etat Contractuelle</span>
-            <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="dateCreation">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateCreation">Date Creation</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="dateDebutContrat">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateDebutContrat">Date Debut Contrat</span>
-            <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="idContratActif">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idContratActif">Id Contrat Actif</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="idTypeContratActif">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idTypeContratActif">Id Type Contrat Actif</span>
-            <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="userId">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.userId">User Id</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="affectation.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.affectation">Affectation</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="grade.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade">Grade</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="fonction.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction">Fonction</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let personne of personnes; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/personne', personne.id, 'view']">{{ personne.id }}</a>
-          </td>
-          <td>{{ personne.matricule }}</td>
-          <td>{{ personne.nomPrenom }}</td>
-          <td>{{ personne.email }}</td>
-          <td>{{ personne.numTelephone }}</td>
-          <td>{{ personne.genre }}</td>
-          <td>{{ personne.cin }}</td>
-          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + personne.etat }}">{{ personne.etat }}</td>
-          <td jhiTranslate="{{ 'orgacaregatewayApp.EtatContractuelle.' + personne.etatContractuelle }}">
-            {{ personne.etatContractuelle }}
-          </td>
-          <td>{{ personne.dateCreation | formatMediumDatetime }}</td>
-          <td>{{ personne.dateDebutContrat | formatMediumDatetime }}</td>
-          <td>{{ personne.idContratActif }}</td>
-          <td>{{ personne.idTypeContratActif }}</td>
-          <td>{{ personne.userId }}</td>
-          <td>
-            <div *ngIf="personne.affectation">
-              <a [routerLink]="['/affectation', personne.affectation?.id, 'view']">{{ personne.affectation?.id }}</a>
-            </div>
-          </td>
-          <td>
-            <div *ngIf="personne.grade">
-              <a [routerLink]="['/grade', personne.grade?.id, 'view']">{{ personne.grade?.id }}</a>
-            </div>
-          </td>
-          <td>
-            <div *ngIf="personne.fonction">
-              <a [routerLink]="['/fonction', personne.fonction?.id, 'view']">{{ personne.fonction?.id }}</a>
-            </div>
-          </td>
-          <td class="text-right">
-            <div class="btn-group">
-              <button
-                type="submit"
-                [routerLink]="['/personne', personne.id, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </button>
-
-              <button
-                type="submit"
-                [routerLink]="['/personne', personne.id, 'edit']"
-                class="btn btn-primary btn-sm"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
-
-              <button type="submit" (click)="delete(personne)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="personnes && personnes.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+  <!-- ── Barre de recherche ── -->
+  <div class="search-section">
+    <div class="search-row">
+      <div class="search-input-wrapper">
+        <fa-icon icon="search" class="search-icon"></fa-icon>
+        <input
+          class="search-input"
+          type="text"
+          [(ngModel)]="searchField"
+          (ngModelChange)="search1()"
+          placeholder="Recherche rapide par nom, matricule, email…"
+        />
+        <button class="filter-toggle" (click)="showMoreSearch = !showMoreSearch" [class.active]="showMoreSearch" title="Filtres avancés">
+          <fa-icon icon="filter"></fa-icon>
+          <span class="filter-label-btn">Filtres</span>
+        </button>
+      </div>
     </div>
 
-    <div class="row justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [(page)]="ngbPaginationPage"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="loadPage($event)"
-      ></ngb-pagination>
+    <!-- Filtres avancés -->
+    <div class="advanced-filters" *ngIf="showMoreSearch">
+      <div class="filters-grid">
+        <div class="filter-field">
+          <label class="filter-label">Matricule</label>
+          <input class="form-control" type="text" [(ngModel)]="matricule" (ngModelChange)="loadPage()" placeholder="Ex: EMP001" />
+        </div>
+
+        <div class="filter-field">
+          <label class="filter-label">Nom & Prénom</label>
+          <input class="form-control" type="text" [(ngModel)]="nomPrenom" (ngModelChange)="loadPage()" placeholder="Ex: Ben Ali" />
+        </div>
+
+        <div class="filter-field">
+          <label class="filter-label">Téléphone</label>
+          <input class="form-control" type="text" [(ngModel)]="numTelephone" (ngModelChange)="loadPage()" placeholder="Ex: 21 000 000" />
+        </div>
+
+        <div class="filter-field">
+          <label class="filter-label">CIN</label>
+          <input class="form-control" type="text" [(ngModel)]="cin" (ngModelChange)="loadPage()" placeholder="Ex: 12345678" />
+        </div>
+
+        <div class="filter-field">
+          <label class="filter-label">Type de contrat</label>
+          <select class="form-select" [(ngModel)]="typeContratId" (change)="loadPage()">
+            <option value="">— Tous les types —</option>
+            <option *ngFor="let type of typesContrat" [value]="type.id">{{ type.nom }}</option>
+          </select>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- ── État vide ── -->
+  <div class="empty-state" *ngIf="personnes?.length === 0 && !isLoading">
+    <fa-icon icon="user-slash" class="empty-icon"></fa-icon>
+    <p class="empty-title" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.notFound">Aucune personne trouvée</p>
+    <p class="empty-sub">Modifiez vos critères de recherche ou ajoutez une nouvelle personne.</p>
+  </div>
+
+  <!-- ── Loader ── -->
+  <div class="loading-bar" *ngIf="isLoading">
+    <div class="loading-bar__inner"></div>
+  </div>
+
+  <!-- ── Grille DevExtreme ── -->
+  <div class="grid-wrapper" *ngIf="personnes && personnes.length > 0">
+    <dx-data-grid
+      #dataGrid
+      [dataSource]="personnes"
+      [rowAlternationEnabled]="true"
+      [allowColumnReordering]="true"
+      [showBorders]="false"
+      [columnResizingMode]="columnResizingMode"
+      [allowColumnResizing]="true"
+      [showRowLines]="true"
+      [showColumnLines]="false"
+      [columnAutoWidth]="true"
+      keyExpr="id"
+      (onRowDblClick)="onRowDblClick($event)"
+    >
+      <dxo-load-panel [enabled]="false"></dxo-load-panel>
+      <dxo-selection mode="single"></dxo-selection>
+      <dxo-column-fixing [enabled]="false"></dxo-column-fixing>
+      <dxo-scrolling mode="standard"></dxo-scrolling>
+
+      <!-- ── Colonnes de données ── -->
+      <dxi-column dataField="matricule" caption="Matricule" dataType="string" [width]="130" cellTemplate="matriculeTemplate"></dxi-column>
+      <dxi-column dataField="nomPrenom" caption="Nom & Prénom" dataType="string" [minWidth]="160"></dxi-column>
+      <dxi-column dataField="email" caption="Email" dataType="string" [minWidth]="180"></dxi-column>
+      <dxi-column dataField="numTelephone" caption="Téléphone" dataType="string" [width]="140"></dxi-column>
+      <dxi-column dataField="cin" caption="CIN" dataType="string" [width]="120"></dxi-column>
+      <dxi-column dataField="etat" caption="État" dataType="string" [width]="130" cellTemplate="etatTemplate"></dxi-column>
+
+      <!-- Colonne Compte -->
+      <dxi-column caption="Compte" alignment="center" [width]="100" cellTemplate="compteTemplate"></dxi-column>
+
+      <!-- Colonne Actions — non fixée pour éviter la duplication DevExtreme -->
+      <dxi-column
+        caption="Actions"
+        alignment="center"
+        [width]="130"
+        [allowSorting]="false"
+        [allowReordering]="false"
+        [allowResizing]="false"
+        cellTemplate="actionTemplate"
+      >
+      </dxi-column>
+
+      <!-- ── Templates ── -->
+
+      <div *dxTemplate="let d of 'matriculeTemplate'">
+        <span class="tag-matricule">{{ d.data.matricule }}</span>
+      </div>
+
+      <div *dxTemplate="let d of 'etatTemplate'">
+        <span
+          class="badge-etat"
+          [ngClass]="{
+            'etat--actif': d.data.etat === 'ACTIF',
+            'etat--draft': d.data.etat === 'DRAFT',
+            'etat--canceled': d.data.etat === 'CANCELED',
+            'etat--inexecution': d.data.etat === 'INEXECUTION'
+          }"
+        >
+          {{ d.data.etat }}
+        </span>
+      </div>
+
+      <div *dxTemplate="let d of 'compteTemplate'" class="compte-cell">
+        <span *ngIf="hasAccount(d.data.email)" class="badge-compte badge-compte--actif">
+          <fa-icon icon="check-circle"></fa-icon> Actif
+        </span>
+        <span *ngIf="!hasAccount(d.data.email)" class="badge-compte badge-compte--none"> Aucun </span>
+      </div>
+
+      <div *dxTemplate="let d of 'actionTemplate'" class="action-buttons">
+        <button class="btn-icon btn-icon--view" [routerLink]="['/personne', d.data.id, 'view']" title="Voir la fiche">
+          <fa-icon icon="eye"></fa-icon>
+        </button>
+        <button class="btn-icon btn-icon--edit" [routerLink]="['/personne', d.data.id, 'edit']" title="Modifier">
+          <fa-icon icon="pencil-alt"></fa-icon>
+        </button>
+        <button class="btn-icon btn-icon--delete" (click)="OnDeleteBtnClicked(d, deleteModal)" title="Supprimer">
+          <fa-icon icon="trash"></fa-icon>
+        </button>
+      </div>
+
+      <dxo-editing>
+        <dxo-texts confirmDeleteMessage=""></dxo-texts>
+      </dxo-editing>
+    </dx-data-grid>
+  </div>
+
+  <!-- ── Pagination ── -->
+  <div class="pagination-section" *ngIf="personnes && personnes.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"> </jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    >
+    </ngb-pagination>
   </div>
 </div>
+
+<!-- ── Modal suppression ── -->
+<ng-template #deleteModal let-deleteModal>
+  <div class="modal-header">
+    <div class="modal-title-block">
+      <span class="modal-icon-danger"><fa-icon icon="exclamation-triangle"></fa-icon></span>
+      <h5 class="modal-title">Confirmer la suppression</h5>
+    </div>
+    <button type="button" class="btn-close" (click)="deleteModal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <p>Voulez-vous vraiment supprimer la personne :</p>
+    <div class="delete-target">
+      <fa-icon icon="user"></fa-icon>
+      <strong>{{ personne?.nomPrenom }}</strong>
+    </div>
+    <p class="text-muted small mt-2">Cette action est irréversible.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="deleteModal.close('Close click')">Annuler</button>
+    <button type="button" class="btn btn-danger" (click)="confirmDelete(deleteModal)">
+      <fa-icon icon="trash" class="me-1"></fa-icon> Supprimer
+    </button>
+  </div>
+</ng-template>

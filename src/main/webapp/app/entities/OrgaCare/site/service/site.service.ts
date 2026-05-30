@@ -18,6 +18,7 @@ export class SiteService {
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+  // POST /sites
   create(site: ISite): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(site);
     return this.http
@@ -25,6 +26,7 @@ export class SiteService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PUT /sites/{id}
   update(site: ISite): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(site);
     return this.http
@@ -32,6 +34,7 @@ export class SiteService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PATCH /sites/{id}
   partialUpdate(site: ISite): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(site);
     return this.http
@@ -39,12 +42,14 @@ export class SiteService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /sites/{id}
   find(id: number): Observable<EntityResponseType> {
     return this.http
       .get<ISite>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /sites (paginée)
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
@@ -52,8 +57,16 @@ export class SiteService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
+  // DELETE /sites/{id}
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  // GET /sites/by-societe/{societeId}
+  findBySocieteId(societeId: number): Observable<ISite[]> {
+    return this.http
+      .get<ISite[]>(`${this.resourceUrl}/by-societe/${societeId}`)
+      .pipe(map((sites: ISite[]) => this.convertDateArrayFromList(sites)));
   }
 
   addSiteToCollectionIfMissing(siteCollection: ISite[], ...sitesToCheck: (ISite | null | undefined)[]): ISite[] {
@@ -99,5 +112,14 @@ export class SiteService {
       });
     }
     return res;
+  }
+
+  protected convertDateArrayFromList(sites: ISite[]): ISite[] {
+    sites.forEach((site: ISite) => {
+      site.dateCreation = site.dateCreation ? dayjs(site.dateCreation) : undefined;
+      site.dateActivation = site.dateActivation ? dayjs(site.dateActivation) : undefined;
+      site.dateCloture = site.dateCloture ? dayjs(site.dateCloture) : undefined;
+    });
+    return sites;
   }
 }

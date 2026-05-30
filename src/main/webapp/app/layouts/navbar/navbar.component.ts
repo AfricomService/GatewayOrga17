@@ -16,12 +16,18 @@ import { ProfileService } from 'app/layouts/profiles/profile.service';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
+  // ── Propriétés identiques à l'original ──────────────────────────
   inProduction?: boolean;
   isNavbarCollapsed = true;
   languages = LANGUAGES;
   openAPIEnabled?: boolean;
   version = '';
   account: Account | null = null;
+
+  // ✅ Langue courante — utilisée dans le template pour afficher le code langue
+  get currentLang(): string {
+    return this.translateService.currentLang || 'fr';
+  }
 
   constructor(
     private loginService: LoginService,
@@ -37,6 +43,7 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Logique identique à l'original — aucun changement
     this.profileService.getProfileInfo().subscribe(profileInfo => {
       this.inProduction = profileInfo.inProduction;
       this.openAPIEnabled = profileInfo.openAPIEnabled;

@@ -15,9 +15,11 @@ export type EntityArrayResponseType = HttpResponse<IOrganigramme[]>;
 @Injectable({ providedIn: 'root' })
 export class OrganigrammeService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/organigrammes', 'orgacare');
+  protected resourceListUrl = this.applicationConfigService.getEndpointFor('api/organigrammesList', 'orgacare');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+  // POST /organigrammes
   create(organigramme: IOrganigramme): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(organigramme);
     return this.http
@@ -25,6 +27,7 @@ export class OrganigrammeService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PUT /organigrammes/{id}
   update(organigramme: IOrganigramme): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(organigramme);
     return this.http
@@ -32,6 +35,7 @@ export class OrganigrammeService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PATCH /organigrammes/{id}
   partialUpdate(organigramme: IOrganigramme): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(organigramme);
     return this.http
@@ -39,12 +43,14 @@ export class OrganigrammeService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /organigrammes/{id}
   find(id: number): Observable<EntityResponseType> {
     return this.http
       .get<IOrganigramme>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /organigrammes  (paginée)
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
@@ -52,6 +58,21 @@ export class OrganigrammeService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
+  // GET /organigrammesList  (liste complète sans pagination)
+  findAllList(): Observable<IOrganigramme[]> {
+    return this.http
+      .get<IOrganigramme[]>(this.resourceListUrl)
+      .pipe(map((organigrammes: IOrganigramme[]) => this.convertDateArrayFromList(organigrammes)));
+  }
+
+  // GET /organigrammes/by-societe/{societeId}
+  findBySocieteId(societeId: number): Observable<IOrganigramme[]> {
+    return this.http
+      .get<IOrganigramme[]>(`${this.resourceUrl}/by-societe/${societeId}`)
+      .pipe(map((organigrammes: IOrganigramme[]) => this.convertDateArrayFromList(organigrammes)));
+  }
+
+  // DELETE /organigrammes/{id}
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
@@ -104,5 +125,15 @@ export class OrganigrammeService {
       });
     }
     return res;
+  }
+
+  // Helper pour les méthodes retournant directement IOrganigramme[] (sans HttpResponse)
+  protected convertDateArrayFromList(organigrammes: IOrganigramme[]): IOrganigramme[] {
+    organigrammes.forEach((organigramme: IOrganigramme) => {
+      organigramme.dateCreation = organigramme.dateCreation ? dayjs(organigramme.dateCreation) : undefined;
+      organigramme.dateAction = organigramme.dateAction ? dayjs(organigramme.dateAction) : undefined;
+      organigramme.dateExpiration = organigramme.dateExpiration ? dayjs(organigramme.dateExpiration) : undefined;
+    });
+    return organigrammes;
   }
 }

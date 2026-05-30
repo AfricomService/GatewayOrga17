@@ -1,4 +1,7 @@
 import {
+  faFileUpload,
+  faFilter,
+  faTrash,
   faArrowLeft,
   faAsterisk,
   faBan,
@@ -37,10 +40,14 @@ import {
   faUsers,
   faUsersCog,
   faWrench,
+  faCheckCircle,
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
+  faFileUpload,
+  faFilter,
+  faTrash,
   faArrowLeft,
   faAsterisk,
   faBan,
@@ -79,5 +86,6 @@ export const fontAwesomeIcons = [
   faUsers,
   faUsersCog,
   faWrench,
+  faCheckCircle,
   // jhipster-needle-add-icon-import
 ];

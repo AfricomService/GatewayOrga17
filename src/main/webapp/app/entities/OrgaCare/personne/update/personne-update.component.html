@@ -1,244 +1,350 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-personne-heading"
-        data-cy="PersonneCreateUpdateHeading"
-        jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.createOrEditLabel"
-      >
-        Create or edit a Personne
-      </h2>
-
-      <div>
-        <jhi-alert-error></jhi-alert-error>
-
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule" for="field_matricule"
-            >Matricule</label
-          >
-          <input type="text" class="form-control" name="matricule" id="field_matricule" data-cy="matricule" formControlName="matricule" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom" for="field_nomPrenom"
-            >Nom Prenom</label
-          >
-          <input type="text" class="form-control" name="nomPrenom" id="field_nomPrenom" data-cy="nomPrenom" formControlName="nomPrenom" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email" for="field_email">Email</label>
-          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone" for="field_numTelephone"
-            >Num Telephone</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            name="numTelephone"
-            id="field_numTelephone"
-            data-cy="numTelephone"
-            formControlName="numTelephone"
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre" for="field_genre">Genre</label>
-          <input type="text" class="form-control" name="genre" id="field_genre" data-cy="genre" formControlName="genre" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin" for="field_cin">Cin</label>
-          <input type="text" class="form-control" name="cin" id="field_cin" data-cy="cin" formControlName="cin" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat" for="field_etat">Etat</label>
-          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
-            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
-            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label
-            class="form-control-label"
-            jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etatContractuelle"
-            for="field_etatContractuelle"
-            >Etat Contractuelle</label
-          >
-          <select
-            class="form-control"
-            name="etatContractuelle"
-            formControlName="etatContractuelle"
-            id="field_etatContractuelle"
-            data-cy="etatContractuelle"
-          >
-            <option [ngValue]="null">{{ 'orgacaregatewayApp.EtatContractuelle.null' | translate }}</option>
-            <option *ngFor="let etatContractuelle of etatContractuelleValues" [value]="etatContractuelle">
-              {{ 'orgacaregatewayApp.EtatContractuelle.' + etatContractuelle | translate }}
-            </option>
-          </select>
-          <div
-            *ngIf="
-              editForm.get('etatContractuelle')!.invalid &&
-              (editForm.get('etatContractuelle')!.dirty || editForm.get('etatContractuelle')!.touched)
-            "
-          >
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('etatContractuelle')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              This field is required.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateCreation" for="field_dateCreation"
-            >Date Creation</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateCreation"
-              data-cy="dateCreation"
-              type="datetime-local"
-              class="form-control"
-              name="dateCreation"
-              formControlName="dateCreation"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateDebutContrat" for="field_dateDebutContrat"
-            >Date Debut Contrat</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateDebutContrat"
-              data-cy="dateDebutContrat"
-              type="datetime-local"
-              class="form-control"
-              name="dateDebutContrat"
-              formControlName="dateDebutContrat"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idContratActif" for="field_idContratActif"
-            >Id Contrat Actif</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="idContratActif"
-            id="field_idContratActif"
-            data-cy="idContratActif"
-            formControlName="idContratActif"
-          />
-        </div>
-
-        <div class="form-group">
-          <label
-            class="form-control-label"
-            jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idTypeContratActif"
-            for="field_idTypeContratActif"
-            >Id Type Contrat Actif</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="idTypeContratActif"
-            id="field_idTypeContratActif"
-            data-cy="idTypeContratActif"
-            formControlName="idTypeContratActif"
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.userId" for="field_userId">User Id</label>
-          <input type="number" class="form-control" name="userId" id="field_userId" data-cy="userId" formControlName="userId" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.affectation" for="field_affectation"
-            >Affectation</label
-          >
-          <select class="form-control" id="field_affectation" data-cy="affectation" name="affectation" formControlName="affectation">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="
-                affectationOption.id === editForm.get('affectation')!.value?.id ? editForm.get('affectation')!.value : affectationOption
-              "
-              *ngFor="let affectationOption of affectationsSharedCollection; trackBy: trackAffectationById"
-            >
-              {{ affectationOption.id }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade" for="field_grade">Grade</label>
-          <select class="form-control" id="field_grade" data-cy="grade" name="grade" formControlName="grade">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="gradeOption.id === editForm.get('grade')!.value?.id ? editForm.get('grade')!.value : gradeOption"
-              *ngFor="let gradeOption of gradesSharedCollection; trackBy: trackGradeById"
-            >
-              {{ gradeOption.id }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction" for="field_fonction"
-            >Fonction</label
-          >
-          <select class="form-control" id="field_fonction" data-cy="fonction" name="fonction" formControlName="fonction">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="fonctionOption.id === editForm.get('fonction')!.value?.id ? editForm.get('fonction')!.value : fonctionOption"
-              *ngFor="let fonctionOption of fonctionsSharedCollection; trackBy: trackFonctionById"
-            >
-              {{ fonctionOption.id }}
-            </option>
-          </select>
-        </div>
+<div class="personne-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="user-plus"></fa-icon>
       </div>
-
       <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
+        <h2 class="page-title" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.home.createOrEditLabel">Créer / Modifier une Personne</h2>
+        <p class="page-subtitle">Remplissez les informations ci-dessous</p>
       </div>
-    </form>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" class="btn-action btn-primary-action" [disabled]="editForm.invalid || isSaving" (click)="save()">
+        <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+        <span jhiTranslate="entity.action.save">Enregistrer</span>
+      </button>
+    </div>
   </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <!-- ══════════════ ACCORDION ══════════════ -->
+  <form [formGroup]="editForm" (ngSubmit)="save()">
+    <ngb-accordion #acc="ngbAccordion" [closeOthers]="false" [activeIds]="activePanels" class="personne-accordion">
+      <!-- ─── Panel 0 : Section Générale ─── -->
+      <ngb-panel id="panel-0">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon general">
+                <fa-icon icon="id-card"></fa-icon>
+              </div>
+              <span>Section Générale</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid">
+              <!-- Matricule -->
+              <div class="field-group">
+                <label class="field-label" for="field_matricule" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.matricule">
+                  Matricule
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="hashtag"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_matricule"
+                    type="text"
+                    formControlName="matricule"
+                    placeholder="Ex: Empl-0001"
+                  />
+                </div>
+              </div>
+
+              <!-- Nom et Prénom -->
+              <div class="field-group required">
+                <label class="field-label" for="field_nomPrenom" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.nomPrenom">
+                  Nom et Prénom
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="user"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_nomPrenom"
+                    type="text"
+                    formControlName="nomPrenom"
+                    placeholder="Prénom NOM"
+                  />
+                </div>
+                <div
+                  class="field-error"
+                  *ngIf="editForm.get('nomPrenom')!.invalid && (editForm.get('nomPrenom')!.dirty || editForm.get('nomPrenom')!.touched)"
+                >
+                  <fa-icon icon="exclamation-circle"></fa-icon>
+                  <small jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="field-group">
+                <label class="field-label" for="field_email" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.email"> Email </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="envelope"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_email"
+                    type="email"
+                    formControlName="email"
+                    placeholder="nom@exemple.com"
+                  />
+                </div>
+                <div
+                  class="field-error"
+                  *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)"
+                >
+                  <fa-icon icon="exclamation-circle"></fa-icon>
+                  <small *ngIf="editForm.get('email')?.errors?.email">Adresse e-mail invalide.</small>
+                </div>
+              </div>
+
+              <!-- Num Téléphone -->
+              <div class="field-group">
+                <label class="field-label" for="field_numTelephone" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.numTelephone">
+                  Numéro de téléphone
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="phone"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_numTelephone"
+                    type="text"
+                    formControlName="numTelephone"
+                    placeholder="+216 XX XXX XXX"
+                  />
+                </div>
+              </div>
+
+              <!-- Genre -->
+              <div class="field-group">
+                <label class="field-label" for="field_genre" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.genre"> Genre </label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="venus-mars"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_genre" formControlName="genre">
+                    <option value="">— Sélectionner —</option>
+                    <option value="Masculin">{{ 'orgaCareGatewayApp.orgaCarePersonne.masculin' | translate }}</option>
+                    <option value="Feminin">{{ 'orgaCareGatewayApp.orgaCarePersonne.féminin' | translate }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- CIN -->
+              <div class="field-group">
+                <label class="field-label" for="field_cin" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.cin"> CIN </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="id-badge"></fa-icon></span>
+                  <input class="field-input with-prefix" id="field_cin" type="text" formControlName="cin" placeholder="XXXXXXXX" />
+                </div>
+              </div>
+
+              <!-- Etat -->
+              <div class="field-group required">
+                <label class="field-label" for="field_etat" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.etat"> État </label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="check-circle"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_etat" formControlName="etat">
+                    <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+                    <option *ngFor="let etat of etatValues" [value]="etat">
+                      {{ 'orgacaregatewayApp.Etat.' + etat | translate }}
+                    </option>
+                  </select>
+                </div>
+                <div
+                  class="field-error"
+                  *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)"
+                >
+                  <fa-icon icon="exclamation-circle"></fa-icon>
+                  <small jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+                </div>
+              </div>
+
+              <!-- Grade -->
+              <div class="field-group">
+                <label class="field-label" for="field_grade" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.grade"> Grade </label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="layer-group"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_grade" formControlName="grade">
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option
+                      [ngValue]="gradeOption.id === editForm.get('grade')!.value?.id ? editForm.get('grade')!.value : gradeOption"
+                      *ngFor="let gradeOption of gradesSharedCollection; trackBy: trackGradeById"
+                    >
+                      {{ gradeOption.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Fonction -->
+              <div class="field-group">
+                <label class="field-label" for="field_fonction" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.fonction">
+                  Fonction
+                </label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="briefcase"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_fonction" formControlName="fonction">
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option
+                      [ngValue]="
+                        fonctionOption.id === editForm.get('fonction')!.value?.id ? editForm.get('fonction')!.value : fonctionOption
+                      "
+                      *ngFor="let fonctionOption of fonctionsSharedCollection; trackBy: trackFonctionById"
+                    >
+                      {{ fonctionOption.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Affectation -->
+              <div class="field-group">
+                <label class="field-label" for="field_affectation" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.affectation">
+                  Affectation
+                </label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="map-marker-alt"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_affectation" formControlName="affectation">
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option
+                      [ngValue]="
+                        affectationOption.id === editForm.get('affectation')!.value?.id
+                          ? editForm.get('affectation')!.value
+                          : affectationOption
+                      "
+                      *ngFor="let affectationOption of affectationsSharedCollection; trackBy: trackAffectationById"
+                    >
+                      {{ affectationOption.id }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+
+      <!-- ─── Panel 1 : Informations Contractuelles ─── -->
+      <ngb-panel id="panel-1">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon contractual">
+                <fa-icon icon="file-contract"></fa-icon>
+              </div>
+              <span>Informations Contractuelles</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid">
+              <!-- État Contractuelle -->
+              <div class="field-group required">
+                <label
+                  class="field-label"
+                  for="field_etatContractuelle"
+                  jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.etatContractuelle"
+                >
+                  État Contractuel
+                </label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="file-alt"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_etatContractuelle" formControlName="etatContractuelle">
+                    <option [ngValue]="null">{{ 'orgacaregatewayApp.EtatContractuelle.null' | translate }}</option>
+                    <option *ngFor="let etatContractuelle of etatContractuelleValues" [value]="etatContractuelle">
+                      {{ 'orgacaregatewayApp.EtatContractuelle.' + etatContractuelle | translate }}
+                    </option>
+                  </select>
+                </div>
+                <div
+                  class="field-error"
+                  *ngIf="
+                    editForm.get('etatContractuelle')!.invalid &&
+                    (editForm.get('etatContractuelle')!.dirty || editForm.get('etatContractuelle')!.touched)
+                  "
+                >
+                  <fa-icon icon="exclamation-circle"></fa-icon>
+                  <small jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+                </div>
+              </div>
+
+              <!-- Date Création -->
+              <div class="field-group">
+                <label class="field-label" for="field_dateCreation" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.dateCreation">
+                  Date de Création
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="calendar-plus"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_dateCreation"
+                    type="datetime-local"
+                    formControlName="dateCreation"
+                    placeholder="YYYY-MM-DD HH:mm"
+                  />
+                </div>
+              </div>
+
+              <!-- Date Début Contrat -->
+              <div class="field-group">
+                <label class="field-label" for="field_dateDebutContrat" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.dateDebutContrat">
+                  Date Début Contrat
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="calendar-check"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_dateDebutContrat"
+                    type="datetime-local"
+                    formControlName="dateDebutContrat"
+                    placeholder="YYYY-MM-DD HH:mm"
+                  />
+                </div>
+              </div>
+
+              <!-- ID Contrat Actif -->
+              <div class="field-group" [hidden]="editForm.get('id')!.value == null">
+                <label class="field-label" for="field_idContratActif" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.idContratActif">
+                  ID Contrat Actif
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="file-signature"></fa-icon></span>
+                  <input class="field-input with-prefix" id="field_idContratActif" type="number" formControlName="idContratActif" />
+                </div>
+              </div>
+
+              <!-- ID Type Contrat Actif -->
+              <div class="field-group" [hidden]="editForm.get('id')!.value == null">
+                <label
+                  class="field-label"
+                  for="field_idTypeContratActif"
+                  jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.idTypeContratActif"
+                >
+                  ID Type Contrat Actif
+                </label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="tag"></fa-icon></span>
+                  <input class="field-input with-prefix" id="field_idTypeContratActif" type="number" formControlName="idTypeContratActif" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+  </form>
 </div>

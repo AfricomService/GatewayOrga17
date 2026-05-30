@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as dayjs from 'dayjs';
@@ -12,12 +12,15 @@ import { IAffectation, getAffectationIdentifier } from '../affectation.model';
 export type EntityResponseType = HttpResponse<IAffectation>;
 export type EntityArrayResponseType = HttpResponse<IAffectation[]>;
 
+export type TypeAffectation = 'PRINCIPALE' | 'SECONDAIRE' | string; // à adapter selon votre enum Java
+
 @Injectable({ providedIn: 'root' })
 export class AffectationService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/affectations', 'orgacare');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+  // POST /affectations
   create(affectation: IAffectation): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(affectation);
     return this.http
@@ -25,6 +28,7 @@ export class AffectationService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PUT /affectations/{id}
   update(affectation: IAffectation): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(affectation);
     return this.http
@@ -32,6 +36,7 @@ export class AffectationService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PATCH /affectations/{id}
   partialUpdate(affectation: IAffectation): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(affectation);
     return this.http
@@ -39,12 +44,14 @@ export class AffectationService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /affectations/{id}
   find(id: number): Observable<EntityResponseType> {
     return this.http
       .get<IAffectation>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /affectations (paginée)
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
@@ -52,8 +59,29 @@ export class AffectationService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
+  // DELETE /affectations/{id}
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  // GET /affectations/by-departement/{departementId}
+  findByDepartementId(departementId: number): Observable<IAffectation[]> {
+    return this.http
+      .get<IAffectation[]>(`${this.resourceUrl}/by-departement/${departementId}`)
+      .pipe(map((affectations: IAffectation[]) => this.convertDateArrayFromList(affectations)));
+  }
+
+  // GET /affectations/by-personne/{personneId}
+  findByPersonneId(personneId: number): Observable<IAffectation[]> {
+    return this.http
+      .get<IAffectation[]>(`${this.resourceUrl}/by-personne/${personneId}`)
+      .pipe(map((affectations: IAffectation[]) => this.convertDateArrayFromList(affectations)));
+  }
+
+  // GET /affectations/emails-by-departement-and-type?departementId=&type=
+  findEmailsByDepartementAndType(departementId: number, type: TypeAffectation): Observable<string[]> {
+    const params = new HttpParams().set('departementId', departementId.toString()).set('type', type);
+    return this.http.get<string[]>(`${this.resourceUrl}/emails-by-departement-and-type`, { params });
   }
 
   addAffectationToCollectionIfMissing(
@@ -102,5 +130,14 @@ export class AffectationService {
       });
     }
     return res;
+  }
+
+  protected convertDateArrayFromList(affectations: IAffectation[]): IAffectation[] {
+    affectations.forEach((affectation: IAffectation) => {
+      affectation.dateCreation = affectation.dateCreation ? dayjs(affectation.dateCreation) : undefined;
+      affectation.dateAction = affectation.dateAction ? dayjs(affectation.dateAction) : undefined;
+      affectation.dateFin = affectation.dateFin ? dayjs(affectation.dateFin) : undefined;
+    });
+    return affectations;
   }
 }

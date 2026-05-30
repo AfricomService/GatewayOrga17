@@ -1,13 +1,101 @@
 <jhi-page-ribbon></jhi-page-ribbon>
 
-<div>
-  <router-outlet name="navbar"></router-outlet>
-</div>
+<div class="oc-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <!-- ════════════════ SIDEBAR ════════════════ -->
+  <aside class="oc-sidebar" [class.collapsed]="sidebarCollapsed" *ngIf="account !== null">
+    <!-- Logo + toggle -->
+    <div class="oc-sidebar__logo" [class.collapsed]="sidebarCollapsed">
+      <div class="oc-sidebar__logo-icon">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#2563eb" />
+          <path d="M16 8C11.6 8 8 11.6 8 16s3.6 8 8 8 8-3.6 8-8" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" />
+          <circle cx="16" cy="16" r="3.5" fill="white" />
+        </svg>
+      </div>
+      <span class="oc-sidebar__logo-text">OrgaCare</span>
+      <button class="oc-sidebar__toggle" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+        <i class="ti ti-layout-sidebar-left-collapse" *ngIf="!sidebarCollapsed"></i>
+        <i class="ti ti-layout-sidebar-left-expand" *ngIf="sidebarCollapsed"></i>
+      </button>
+    </div>
 
-<div class="container-fluid">
-  <div class="card jh-card">
-    <router-outlet></router-outlet>
+    <!-- User info -->
+    <div class="oc-sidebar__user">
+      <div class="oc-sidebar__user-avatar">
+        {{ (account?.firstName || account?.login || '?').charAt(0).toUpperCase() }}
+      </div>
+      <div class="oc-sidebar__user-info">
+        <p class="oc-sidebar__user-name">{{ account?.firstName || account?.login }}</p>
+        <p class="oc-sidebar__user-role">
+          {{ account?.authorities && account.authorities.indexOf('ROLE_ADMIN') !== -1 ? 'Administrateur' : 'Utilisateur' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="oc-sidebar__nav">
+      <p class="oc-sidebar__section-label">Principal</p>
+      <a class="oc-sidebar__item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="ti ti-home"></i><span>Tableau de bord</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active"> <i class="ti ti-users"></i><span>Employés</span> </a>
+      <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active"> <i class="ti ti-file-text"></i><span>Contrats</span> </a>
+      <a class="oc-sidebar__item" routerLink="/absence" routerLinkActive="active">
+        <i class="ti ti-calendar-off"></i><span>Absences</span>
+      </a>
+
+      <p class="oc-sidebar__section-label">Organisation</p>
+      <a class="oc-sidebar__item" routerLink="/societe" routerLinkActive="active"> <i class="ti ti-building"></i><span>Sociétés</span> </a>
+      <a class="oc-sidebar__item" routerLink="/site" routerLinkActive="active"> <i class="ti ti-map-pin"></i><span>Sites</span> </a>
+      <a class="oc-sidebar__item" routerLink="/departement" routerLinkActive="active">
+        <i class="ti ti-briefcase"></i><span>Départements</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/organigramme" routerLinkActive="active">
+        <i class="ti ti-sitemap"></i><span>Organigramme</span>
+      </a>
+
+      <p class="oc-sidebar__section-label">Référentiels</p>
+      <a class="oc-sidebar__item" routerLink="/affectation" routerLinkActive="active">
+        <i class="ti ti-user-check"></i><span>Affectations</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/grade" routerLinkActive="active"> <i class="ti ti-award"></i><span>Grades</span> </a>
+      <a class="oc-sidebar__item" routerLink="/fonction" routerLinkActive="active"> <i class="ti ti-tool"></i><span>Fonctions</span> </a>
+      <a class="oc-sidebar__item" routerLink="/type-contrat" routerLinkActive="active">
+        <i class="ti ti-clipboard-list"></i><span>Types contrat</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/forme-juridique" routerLinkActive="active">
+        <i class="ti ti-scale"></i><span>Formes juridiques</span>
+      </a>
+
+      <ng-container *jhiHasAnyAuthority="'ROLE_ADMIN'">
+        <p class="oc-sidebar__section-label">Administration</p>
+        <a class="oc-sidebar__item" routerLink="admin/metrics" routerLinkActive="active">
+          <i class="ti ti-chart-bar"></i><span>Métriques</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="admin/health" routerLinkActive="active">
+          <i class="ti ti-heart-rate-monitor"></i><span>Santé système</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="admin/logs" routerLinkActive="active"> <i class="ti ti-terminal"></i><span>Logs</span> </a>
+      </ng-container>
+    </nav>
+
+    <!-- Footer : déconnexion -->
+    <div class="oc-sidebar__footer">
+      <button class="oc-sidebar__item oc-sidebar__item--danger" (click)="logout()">
+        <i class="ti ti-logout"></i><span>Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ════════════════ CONTENU PRINCIPAL ════════════════ -->
+  <div class="oc-main" [class.no-sidebar]="account === null">
+    <!-- navbar supprimée : sidebar gère le logo -->
+
+    <!-- Contenu de la page -->
+    <div class="oc-page-content">
+      <router-outlet></router-outlet>
+    </div>
+
+    <jhi-footer></jhi-footer>
   </div>
-
-  <jhi-footer></jhi-footer>
 </div>

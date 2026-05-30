@@ -12,12 +12,20 @@ import { ISociete, getSocieteIdentifier } from '../societe.model';
 export type EntityResponseType = HttpResponse<ISociete>;
 export type EntityArrayResponseType = HttpResponse<ISociete[]>;
 
+// Interface pour OrgacareFeignDTO (à adapter selon votre modèle réel)
+export interface OrgacareFeignDTO {
+  code?: string;
+  libelle?: string;
+  [key: string]: any;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SocieteService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/societes', 'orgacare');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
+  // POST /societes
   create(societe: ISociete): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(societe);
     return this.http
@@ -25,6 +33,7 @@ export class SocieteService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PUT /societes/{id}
   update(societe: ISociete): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(societe);
     return this.http
@@ -32,6 +41,7 @@ export class SocieteService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // PATCH /societes/{id}
   partialUpdate(societe: ISociete): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(societe);
     return this.http
@@ -39,12 +49,14 @@ export class SocieteService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /societes/{id}
   find(id: number): Observable<EntityResponseType> {
     return this.http
       .get<ISociete>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  // GET /societes (paginée)
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http
@@ -52,8 +64,24 @@ export class SocieteService {
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
   }
 
+  // DELETE /societes/{id}
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  // GET /societes/by-matricule/{matricule}
+  findByMatricule(matricule: string): Observable<Map<string, object>[]> {
+    return this.http.get<Map<string, object>[]>(`${this.resourceUrl}/by-matricule/${matricule}`);
+  }
+
+  // GET /societes/list  (id + raisonSociale uniquement)
+  findAllIdAndRaisonSociale(): Observable<Map<string, object>[]> {
+    return this.http.get<Map<string, object>[]>(`${this.resourceUrl}/list`);
+  }
+
+  // GET /societes/organigramme-codes
+  getAllOrganigrammesCodes(): Observable<OrgacareFeignDTO[]> {
+    return this.http.get<OrgacareFeignDTO[]>(`${this.resourceUrl}/organigramme-codes`);
   }
 
   addSocieteToCollectionIfMissing(societeCollection: ISociete[], ...societesToCheck: (ISociete | null | undefined)[]): ISociete[] {

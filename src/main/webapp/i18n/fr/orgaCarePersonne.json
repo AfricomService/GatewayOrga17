@@ -1,38 +1,54 @@
 {
-  "orgacaregatewayApp": {
+  "orgaCareGatewayApp": {
     "orgaCarePersonne": {
       "home": {
         "title": "Personnes",
         "refreshListLabel": "Actualiser la liste",
         "createLabel": "Créer un nouveau Personne",
         "createOrEditLabel": "Créer ou éditer un Personne",
-        "notFound": "Aucun Personne trouvé"
+        "notFound": "Aucun Personne trouvé",
+        "importer": "Importer"
       },
       "delete": {
-        "question": "Etes-vous certain de vouloir supprimer le Personne {{ id }} ?"
+        "question": "Êtes-vous certain de vouloir supprimer le Personne {{ id }} ?"
       },
       "detail": {
         "title": "Personne"
       },
       "id": "ID",
       "matricule": "Matricule",
-      "nomPrenom": "Nom Prenom",
+      "nomPrenom": "Nom et Prénom",
       "email": "Email",
-      "numTelephone": "Num Telephone",
+      "numTelephone": "Numéro de téléphone",
       "genre": "Genre",
-      "cin": "Cin",
-      "etat": "Etat",
-      "etatContractuelle": "Etat Contractuelle",
-      "dateCreation": "Date Creation",
-      "dateDebutContrat": "Date Debut Contrat",
-      "idContratActif": "Id Contrat Actif",
-      "idTypeContratActif": "Id Type Contrat Actif",
-      "userId": "User Id",
+      "masculin": "Masculin",
+      "féminin": "Féminin",
+      "cin": "CIN",
+      "etat": "État",
+      "etatContractuelle": "État Contractuel",
+      "dateCreation": "Date de Création",
+      "dateDebutContrat": "Date Début Contrat",
+      "idContratActif": "ID Contrat Actif",
+      "idTypeContratActif": "ID Type Contrat Actif",
+      "userId": "Identifiant Utilisateur",
       "contrat": "Contrat",
       "affectation": "Affectation",
       "grade": "Grade",
       "fonction": "Fonction",
-      "departement": "Departement"
+      "departement": "Département"
+    },
+    "Etat": {
+      "null": "— Sélectionner —",
+      "ACTIF": "Actif",
+      "INACTIF": "Inactif",
+      "SUSPENDU": "Suspendu"
+    },
+    "EtatContractuelle": {
+      "null": "— Sélectionner —",
+      "CDI": "CDI",
+      "CDD": "CDD",
+      "STAGE": "Stage",
+      "FREELANCE": "Freelance"
     }
   },
   "orgaCareApp": {
