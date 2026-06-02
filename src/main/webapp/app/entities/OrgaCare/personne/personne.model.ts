@@ -21,7 +21,7 @@ export interface IPersonne {
   dateDebutContrat?: dayjs.Dayjs | null;
   idContratActif?: number | null;
   idTypeContratActif?: number | null;
-  userId?: number | null;
+  userId?: string | null;
   contrats?: IContrat[] | null;
   affectation?: IAffectation | null;
   grade?: IGrade | null;
@@ -44,7 +44,7 @@ export class Personne implements IPersonne {
     public dateDebutContrat?: dayjs.Dayjs | null,
     public idContratActif?: number | null,
     public idTypeContratActif?: number | null,
-    public userId?: number | null,
+    public userId?: string | null,
     public contrats?: IContrat[] | null,
     public affectation?: IAffectation | null,
     public grade?: IGrade | null,

@@ -13,6 +13,11 @@ export interface IOrganigramme {
   societe?: ISociete | null;
 }
 
+export interface IOrganigrammeCode {
+  id?: number;
+  code?: string | null;
+}
+
 export class Organigramme implements IOrganigramme {
   constructor(
     public id?: number,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -18,6 +18,9 @@ import { IFonction } from 'app/entities/OrgaCare/fonction/fonction.model';
 import { FonctionService } from 'app/entities/OrgaCare/fonction/service/fonction.service';
 import { Etat } from 'app/entities/enumerations/etat.model';
 import { EtatContractuelle } from 'app/entities/enumerations/etat-contractuelle.model';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/user.service';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -43,6 +46,19 @@ export class PersonneUpdateComponent implements OnInit {
   personItems = ['Section Générale', 'Informations Contractuelles'];
   activePanels: string[] = ['panel-0'];
   disablePanelTitle: boolean[] = [];
+  // Propriétés pour la modal d'affectation user
+  availableUsers: IUser[] = [];
+  filteredUsers: IUser[] = [];
+  selectedUser: IUser | null = null;
+  isLoadingUsers = false;
+  isAssigning = false;
+  userSearchKeyword = '';
+
+  // Pagination users dans la modal
+  userPage = 1;
+  userItemsPerPage = 5;
+  userTotalItems = 0;
+  keycloakAdminUrl = 'http://localhost:9080/admin/Africom/console/#/Africom/users/add-user';
 
   editForm = this.fb.group({
     id: [],
@@ -63,6 +79,7 @@ export class PersonneUpdateComponent implements OnInit {
     grade: [],
     fonction: [],
   });
+  private assignModalRef?: NgbModalRef;
 
   constructor(
     protected personneService: PersonneService,
@@ -70,7 +87,10 @@ export class PersonneUpdateComponent implements OnInit {
     protected gradeService: GradeService,
     protected fonctionService: FonctionService,
     protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    protected modalService: NgbModal,
+    protected userService: UserService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -83,11 +103,13 @@ export class PersonneUpdateComponent implements OnInit {
 
       this.updateForm(personne);
       this.loadRelationshipsOptions();
+      this.cdr.markForCheck();
 
       // Logique de génération automatique du matricule (conservée)
       if (this.generateMatriculeAutomatically && personne.id === undefined) {
         this.personneService.generateNextMatricule('Empl-').subscribe(nextCode => {
           this.editForm.get('matricule')?.setValue(nextCode);
+          this.cdr.markForCheck();
         });
       }
     });
@@ -105,6 +127,87 @@ export class PersonneUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.personneService.create(personne));
     }
+  }
+
+  openKeycloakCreateUser(): void {
+    window.open(this.keycloakAdminUrl, '_blank');
+  }
+
+  openAssignUserModal(content: unknown): void {
+    this.selectedUser = null;
+    this.userSearchKeyword = '';
+    this.userPage = 1;
+    this.loadAvailableUsers();
+    this.assignModalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  loadAvailableUsers(): void {
+    this.isLoadingUsers = true;
+    // Charge tous les users publics + les userIds déjà assignés en parallèle
+    this.userService.query({ page: 0, size: 100, sort: ['id,asc'] }).subscribe(
+      (usersRes: HttpResponse<IUser[]>) => {
+        const allUsers = usersRes.body ?? [];
+        this.personneService.getAssignedUserIds().subscribe(
+          (assignedIds: string[]) => {
+            // Filtre les users déjà assignés
+            this.availableUsers = allUsers.filter(u => u.id && !assignedIds.includes(u.id));
+            this.applyUserFilter();
+            this.isLoadingUsers = false;
+          },
+          () => {
+            this.availableUsers = allUsers;
+            this.applyUserFilter();
+            this.isLoadingUsers = false;
+          }
+        );
+      },
+      () => {
+        this.isLoadingUsers = false;
+      }
+    );
+  }
+
+  applyUserFilter(): void {
+    const kw = this.userSearchKeyword.toLowerCase().trim();
+    const filtered = kw
+      ? this.availableUsers.filter(
+          u =>
+            (u.login ?? '').toLowerCase().includes(kw) ||
+            (u.email ?? '').toLowerCase().includes(kw) ||
+            ((u.firstName ?? '') + ' ' + (u.lastName ?? '')).toLowerCase().includes(kw)
+        )
+      : this.availableUsers;
+    this.userTotalItems = filtered.length;
+    const start = (this.userPage - 1) * this.userItemsPerPage;
+    this.filteredUsers = filtered.slice(start, start + this.userItemsPerPage);
+  }
+
+  selectUser(user: IUser): void {
+    this.selectedUser = this.selectedUser?.id === user.id ? null : user;
+  }
+
+  confirmAssignUser(): void {
+    if (!this.selectedUser?.id) {
+      return;
+    }
+    const personneId = this.editForm.get('id')!.value as number;
+    this.isAssigning = true;
+    this.personneService.assignUser(personneId, this.selectedUser.id).subscribe(
+      res => {
+        this.isAssigning = false;
+        if (res.body) {
+          this.editForm.patchValue({ userId: res.body.userId });
+        }
+        this.assignModalRef?.close();
+      },
+      () => {
+        this.isAssigning = false;
+      }
+    );
   }
 
   trackAffectationById(index: number, item: IAffectation): number {
@@ -147,8 +250,6 @@ export class PersonneUpdateComponent implements OnInit {
       numTelephone: personne.numTelephone,
       genre: personne.genre,
       cin: personne.cin,
-      etat: personne.etat,
-      etatContractuelle: personne.etatContractuelle,
       dateCreation: personne.dateCreation ? personne.dateCreation.format(DATE_TIME_FORMAT) : null,
       dateDebutContrat: personne.dateDebutContrat ? personne.dateDebutContrat.format(DATE_TIME_FORMAT) : null,
       idContratActif: personne.idContratActif,
@@ -158,6 +259,15 @@ export class PersonneUpdateComponent implements OnInit {
       grade: personne.grade,
       fonction: personne.fonction,
     });
+
+    // Patch les selects enum dans un setTimeout pour forcer le rendu Angular
+    setTimeout(() => {
+      this.editForm.patchValue({
+        etat: personne.etat,
+        etatContractuelle: personne.etatContractuelle,
+      });
+      this.cdr.markForCheck();
+    }, 0);
 
     this.affectationsSharedCollection = this.affectationService.addAffectationToCollectionIfMissing(
       this.affectationsSharedCollection,

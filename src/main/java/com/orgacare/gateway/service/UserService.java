@@ -51,8 +51,14 @@ public class UserService {
      * @param imageUrl  image URL of user.
      * @return a completed {@link Mono}.
      */
+    // NOUVEAU — surcharge avec activated
     @Transactional
     public Mono<Void> updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+        return updateUser(firstName, lastName, email, langKey, imageUrl, null);
+    }
+
+    @Transactional
+    public Mono<Void> updateUser(String firstName, String lastName, String email, String langKey, String imageUrl, Boolean activated) {
         return SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
@@ -64,6 +70,10 @@ public class UserService {
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
+                // NOUVEAU : met à jour activated si fourni
+                if (activated != null) {
+                    user.setActivated(activated);
+                }
                 return saveUser(user);
             })
             .doOnNext(user -> log.debug("Changed Information for User: {}", user))
@@ -160,12 +170,26 @@ public class UserService {
                     Instant idpModifiedDate = (Instant) details.get("updated_at");
                     if (idpModifiedDate.isAfter(dbModifiedDate)) {
                         log.debug("Updating user '{}' in local database", user.getLogin());
-                        return updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
+                        return updateUser(
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getEmail(),
+                            user.getLangKey(),
+                            user.getImageUrl(),
+                            user.isActivated()
+                        );
                     }
                     // no last updated info, blindly update
                 } else {
                     log.debug("Updating user '{}' in local database", user.getLogin());
-                    return updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
+                    return updateUser(
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getLangKey(),
+                        user.getImageUrl(),
+                        user.isActivated()
+                    );
                 }
                 return Mono.empty();
             })

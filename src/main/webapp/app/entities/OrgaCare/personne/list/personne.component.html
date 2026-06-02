@@ -163,10 +163,8 @@
       </div>
 
       <div *dxTemplate="let d of 'compteTemplate'" class="compte-cell">
-        <span *ngIf="hasAccount(d.data.email)" class="badge-compte badge-compte--actif">
-          <fa-icon icon="check-circle"></fa-icon> Actif
-        </span>
-        <span *ngIf="!hasAccount(d.data.email)" class="badge-compte badge-compte--none"> Aucun </span>
+        <span *ngIf="hasAccount(d.data)" class="badge-compte badge-compte--actif"> <fa-icon icon="check-circle"></fa-icon> Actif </span>
+        <span *ngIf="!hasAccount(d.data)" class="badge-compte badge-compte--none"> Aucun </span>
       </div>
 
       <div *dxTemplate="let d of 'actionTemplate'" class="action-buttons">

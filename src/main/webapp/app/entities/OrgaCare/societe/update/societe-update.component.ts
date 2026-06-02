@@ -16,16 +16,25 @@ import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 import { IFormeJuridique } from 'app/entities/OrgaCare/forme-juridique/forme-juridique.model';
 import { FormeJuridiqueService } from 'app/entities/OrgaCare/forme-juridique/service/forme-juridique.service';
 import { Etat } from 'app/entities/enumerations/etat.model';
+import { OrganigrammeService } from '../../organigramme/service/organigramme.service';
+// import { IOrgacareCode } from '../orgacare-code.model';
+import { IOrganigrammeCode } from 'app/entities/OrgaCare/organigramme/organigramme.model';
 
 @Component({
   selector: 'jhi-societe-update',
   templateUrl: './societe-update.component.html',
+  styleUrls: ['./societe-update.component.scss'],
 })
 export class SocieteUpdateComponent implements OnInit {
   isSaving = false;
   etatValues = Object.keys(Etat);
 
   formeJuridiquesSharedCollection: IFormeJuridique[] = [];
+  organigrammesCodes: IOrganigrammeCode[] = [];
+
+  SocieteItems = ['Section Générale', 'Section Communication', 'Section Médias'];
+  activePanels: string[] = ['panel-0'];
+  disablePanelTitle: boolean[] = [];
 
   editForm = this.fb.group({
     id: [],
@@ -63,6 +72,7 @@ export class SocieteUpdateComponent implements OnInit {
     protected dataUtils: DataUtils,
     protected eventManager: EventManager,
     protected societeService: SocieteService,
+    protected organigrammeService: OrganigrammeService,
     protected formeJuridiqueService: FormeJuridiqueService,
     protected elementRef: ElementRef,
     protected activatedRoute: ActivatedRoute,
@@ -77,10 +87,8 @@ export class SocieteUpdateComponent implements OnInit {
         societe.dateActivation = today;
         societe.dateCloture = today;
       }
-
-      this.updateForm(societe);
-
       this.loadRelationshipsOptions();
+      this.loadOrganigrammesCodes(() => this.updateForm(societe));
     });
   }
 
@@ -95,7 +103,7 @@ export class SocieteUpdateComponent implements OnInit {
   setFileData(event: Event, field: string, isImage: boolean): void {
     this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
       error: (err: FileLoadError) =>
-        this.eventManager.broadcast(new EventWithContent<AlertError>('orgacaregatewayApp.error', { ...err, key: 'error.file.' + err.key })),
+        this.eventManager.broadcast(new EventWithContent<AlertError>('orgacaregatewayApp.error', { ...err, key: `error.file.${err.key}` })),
     });
   }
 
@@ -125,6 +133,34 @@ export class SocieteUpdateComponent implements OnInit {
 
   trackFormeJuridiqueById(index: number, item: IFormeJuridique): number {
     return item.id!;
+  }
+
+  togglePanel(item: string): void {
+    const panelId = `panel-${this.SocieteItems.indexOf(item)}`;
+    const index = this.activePanels.indexOf(panelId);
+    if (index > -1) {
+      this.activePanels.splice(index, 1);
+    } else {
+      this.activePanels.push(panelId);
+    }
+  }
+
+  isPanelOpen(item: string): boolean {
+    const panelId = `panel-${this.SocieteItems.indexOf(item)}`;
+    return this.activePanels.includes(panelId);
+  }
+
+  loadOrganigrammesCodes(callback?: () => void): void {
+    this.organigrammeService.findAllCodes().subscribe(
+      (codes: IOrganigrammeCode[]) => {
+        this.organigrammesCodes = codes;
+        callback?.();
+      },
+      () => {
+        this.organigrammesCodes = [];
+        callback?.();
+      }
+    );
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ISociete>>): void {

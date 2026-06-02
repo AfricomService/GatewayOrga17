@@ -89,9 +89,8 @@ export class PersonneComponent implements OnInit {
     });
   }
 
-  // TODO: IUser ne contient pas 'email' — désactivé temporairement
-  hasAccount(_email: string | undefined): boolean {
-    return false;
+  hasAccount(personne: IPersonne): boolean {
+    return personne.userId != null && personne.userId !== '';
   }
 
   onRowDblClick(e: { data: IPersonne }): void {
@@ -177,7 +176,9 @@ export class PersonneComponent implements OnInit {
           this.cdr.detectChanges();
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           setTimeout(() => {
-            this.dataGrid?.instance?.refresh();
+            if (this.dataGrid?.instance) {
+              this.dataGrid.instance.refresh();
+            }
           }, 0);
         },
         () => {
@@ -198,7 +199,9 @@ export class PersonneComponent implements OnInit {
         this.cdr.detectChanges();
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         setTimeout(() => {
-          this.dataGrid?.instance?.refresh();
+          if (this.dataGrid?.instance) {
+            this.dataGrid.instance.refresh();
+          }
         }, 0);
       },
       () => {

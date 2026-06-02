@@ -12,11 +12,9 @@ import { ISociete, getSocieteIdentifier } from '../societe.model';
 export type EntityResponseType = HttpResponse<ISociete>;
 export type EntityArrayResponseType = HttpResponse<ISociete[]>;
 
-// Interface pour OrgacareFeignDTO (à adapter selon votre modèle réel)
 export interface OrgacareFeignDTO {
-  code?: string;
-  libelle?: string;
-  [key: string]: any;
+  id?: number;
+  orgaCode?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -80,8 +78,8 @@ export class SocieteService {
   }
 
   // GET /societes/organigramme-codes
-  getAllOrganigrammesCodes(): Observable<OrgacareFeignDTO[]> {
-    return this.http.get<OrgacareFeignDTO[]>(`${this.resourceUrl}/organigramme-codes`);
+  getAllOrganigrammesCodes(): Observable<HttpResponse<OrgacareFeignDTO[]>> {
+    return this.http.get<OrgacareFeignDTO[]>(`${this.resourceUrl}/organigramme-codes`, { observe: 'response' });
   }
 
   addSocieteToCollectionIfMissing(societeCollection: ISociete[], ...societesToCheck: (ISociete | null | undefined)[]): ISociete[] {

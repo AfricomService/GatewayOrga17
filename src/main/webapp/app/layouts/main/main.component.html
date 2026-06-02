@@ -1,5 +1,3 @@
-<jhi-page-ribbon></jhi-page-ribbon>
-
 <div class="oc-layout" [class.sidebar-collapsed]="sidebarCollapsed">
   <!-- ════════════════ SIDEBAR ════════════════ -->
   <aside class="oc-sidebar" [class.collapsed]="sidebarCollapsed" *ngIf="account !== null">
@@ -38,11 +36,6 @@
       <a class="oc-sidebar__item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <i class="ti ti-home"></i><span>Tableau de bord</span>
       </a>
-      <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active"> <i class="ti ti-users"></i><span>Employés</span> </a>
-      <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active"> <i class="ti ti-file-text"></i><span>Contrats</span> </a>
-      <a class="oc-sidebar__item" routerLink="/absence" routerLinkActive="active">
-        <i class="ti ti-calendar-off"></i><span>Absences</span>
-      </a>
 
       <p class="oc-sidebar__section-label">Organisation</p>
       <a class="oc-sidebar__item" routerLink="/societe" routerLinkActive="active"> <i class="ti ti-building"></i><span>Sociétés</span> </a>
@@ -54,10 +47,14 @@
         <i class="ti ti-sitemap"></i><span>Organigramme</span>
       </a>
 
-      <p class="oc-sidebar__section-label">Référentiels</p>
-      <a class="oc-sidebar__item" routerLink="/affectation" routerLinkActive="active">
-        <i class="ti ti-user-check"></i><span>Affectations</span>
+      <p class="oc-sidebar__section-label">RH</p>
+      <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active"> <i class="ti ti-users"></i><span>Employés</span> </a>
+      <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active"> <i class="ti ti-file-text"></i><span>Contrats</span> </a>
+      <a class="oc-sidebar__item" routerLink="/absence" routerLinkActive="active">
+        <i class="ti ti-calendar-off"></i><span>Absences</span>
       </a>
+
+      <p class="oc-sidebar__section-label">Référentiels</p>
       <a class="oc-sidebar__item" routerLink="/grade" routerLinkActive="active"> <i class="ti ti-award"></i><span>Grades</span> </a>
       <a class="oc-sidebar__item" routerLink="/fonction" routerLinkActive="active"> <i class="ti ti-tool"></i><span>Fonctions</span> </a>
       <a class="oc-sidebar__item" routerLink="/type-contrat" routerLinkActive="active">

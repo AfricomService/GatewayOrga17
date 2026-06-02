@@ -52,7 +52,7 @@ public class LogoutResource {
 
         String originUrl = request.getHeaders().getOrigin();
         if (logoutUrl.indexOf("/protocol") > -1) {
-            logoutUrl.append("?redirect_uri=").append(originUrl);
+            logoutUrl.append("?post_logout_redirect_uri=").append(originUrl).append("&id_token_hint=").append(idToken.getTokenValue());
         } else if (logoutUrl.indexOf("auth0.com") > -1) {
             // Auth0
             logoutUrl.append("?client_id=").append(clientRegistration.getClientId()).append("&returnTo=").append(originUrl);

@@ -14,6 +14,7 @@ import { DataUtils } from 'app/core/util/data-util.service';
 @Component({
   selector: 'jhi-societe',
   templateUrl: './societe.component.html',
+  styleUrls: ['./societe.component.scss'],
 })
 export class SocieteComponent implements OnInit {
   societes?: ISociete[];
@@ -80,6 +81,10 @@ export class SocieteComponent implements OnInit {
         this.loadPage();
       }
     });
+  }
+
+  edit(societe: ISociete): void {
+    this.router.navigate(['/societe', societe.id, 'edit']);
   }
 
   protected sort(): string[] {

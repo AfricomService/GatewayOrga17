@@ -452,3 +452,135 @@ $transition: all 0.2s ease;
     padding: 1.25rem 1rem;
   }
 }
+.btn-action--warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.88;
+  }
+}
+// Bouton affecter (bleu info)
+.btn-action--info {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Barre de recherche dans la modal
+.user-search-bar {
+  position: relative;
+  .search-icon-modal {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    z-index: 1;
+    pointer-events: none;
+  }
+}
+
+// Liste des users
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: #f8fafc;
+
+  &:hover {
+    border-color: #0ea5a0;
+    background: #e0f7f6;
+  }
+
+  &.selected {
+    border-color: #0ea5a0;
+    background: #e0f7f6;
+    box-shadow: 0 0 0 2px rgba(14, 165, 160, 0.2);
+  }
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a3a5c, #2563a8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  .user-login {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+  }
+  .user-details {
+    font-size: 0.78rem;
+    color: #64748b;
+  }
+  .user-email {
+    font-style: italic;
+  }
+}
+
+.user-check {
+  color: #0ea5a0;
+  font-size: 1.2rem;
+}
+
+.selected-user-preview {
+  background: #e0f7f6;
+  border: 1px solid #0ea5a0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  color: #0c6f6b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

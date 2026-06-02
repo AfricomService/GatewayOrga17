@@ -206,6 +206,24 @@ export class PersonneService {
       .pipe(map(list => list.map(p => this.convertPersonneDatesFromServer(p))));
   }
 
+  // NOUVEAU — méthodes avant les protected
+  // Assigner un user à une personne
+  assignUser(personneId: number, userId: string): Observable<EntityResponseType> {
+    return this.http
+      .put<IPersonne>(`${this.resourceUrl}/${personneId}/assign-user/${encodeURIComponent(userId)}`, null, { observe: 'response' })
+      .pipe(map(res => this.convertDateFromServer(res)));
+  }
+
+  unassignUser(personneId: number): Observable<EntityResponseType> {
+    return this.http
+      .put<IPersonne>(`${this.resourceUrl}/${personneId}/unassign-user`, null, { observe: 'response' })
+      .pipe(map(res => this.convertDateFromServer(res)));
+  }
+
+  getAssignedUserIds(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.resourceUrl}/assigned-user-ids`);
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // Conversion des dates (dayjs) — client → serveur / serveur → client
   // ═══════════════════════════════════════════════════════════════════════════

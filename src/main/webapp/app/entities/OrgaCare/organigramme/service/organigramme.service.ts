@@ -7,7 +7,7 @@ import * as dayjs from 'dayjs';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { IOrganigramme, getOrganigrammeIdentifier } from '../organigramme.model';
+import { IOrganigramme, getOrganigrammeIdentifier, IOrganigrammeCode } from '../organigramme.model';
 
 export type EntityResponseType = HttpResponse<IOrganigramme>;
 export type EntityArrayResponseType = HttpResponse<IOrganigramme[]>;
@@ -16,6 +16,7 @@ export type EntityArrayResponseType = HttpResponse<IOrganigramme[]>;
 export class OrganigrammeService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/organigrammes', 'orgacare');
   protected resourceListUrl = this.applicationConfigService.getEndpointFor('api/organigrammesList', 'orgacare');
+  protected resourceCodesUrl = this.applicationConfigService.getEndpointFor('api/organigrammes/codes', 'orgacare');
 
   constructor(protected http: HttpClient, protected applicationConfigService: ApplicationConfigService) {}
 
@@ -75,6 +76,10 @@ export class OrganigrammeService {
   // DELETE /organigrammes/{id}
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  findAllCodes(): Observable<IOrganigrammeCode[]> {
+    return this.http.get<IOrganigrammeCode[]>(this.resourceCodesUrl);
   }
 
   addOrganigrammeToCollectionIfMissing(
