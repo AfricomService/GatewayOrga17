@@ -1,55 +1,97 @@
 {
   "orgacaregatewayApp": {
+    "Etat": {
+      "null": "",
+      "ACTIF": "نشط",
+      "INACTIF": "غير نشط",
+      "EN_ATTENTE": "في الانتظار",
+      "SUSPENDU": "موقوف",
+      "CLOTURE": "مغلق"
+    },
     "orgaCareSociete": {
       "home": {
-        "title": "Societes",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Societe",
-        "createOrEditLabel": "Create or edit a Societe",
-        "notFound": "No Societes found"
+        "title": "الشركات",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء شركة جديدة",
+        "createOrEditLabel": "إنشاء أو تعديل شركة",
+        "notFound": "لا توجد شركات"
       },
       "delete": {
-        "question": "Are you sure you want to delete Societe {{ id }}?"
+        "question": "هل أنت متأكد من حذف الشركة {{ id }}؟"
       },
       "detail": {
-        "title": "Societe"
+        "title": "الشركة"
       },
-      "id": "ID",
-      "raisonSociale": "Raison Sociale",
-      "abreviation": "Abreviation",
-      "activite": "Activite",
-      "formeJuridique": "Forme Juridique",
-      "adresse": "Adresse",
-      "codePostale": "Code Postale",
-      "ville": "Ville",
-      "pays": "Pays",
-      "region": "Region",
-      "tel": "Tel",
-      "fax": "Fax",
-      "mail": "Mail",
-      "siteInternet": "Site Internet",
-      "matriculeFiscale": "Matricule Fiscale",
-      "logo": "Logo",
-      "imagesSitePrincipale": "Images Site Principale",
-      "holding": "Holding",
-      "etat": "Etat",
-      "dateCreation": "Date Creation",
-      "dateActivation": "Date Activation",
-      "dateCloture": "Date Cloture",
-      "importTemplate": "Import Template",
-      "codeSociete": "Code Societe",
-      "codeOrganigramme": "Code Organigramme",
-      "organigramme": "Organigramme",
-      "site": "Site",
-      "contrat": "Contrat",
-      "formeJuridiquee": "Forme Juridiquee"
+      "id": "المعرف",
+      "raisonSociale": "الاسم الاجتماعي",
+      "abreviation": "الاختصار",
+      "activite": "النشاط",
+      "formeJuridique": "الشكل القانوني",
+      "adresse": "العنوان",
+      "codePostale": "الرمز البريدي",
+      "ville": "المدينة",
+      "pays": "البلد",
+      "region": "المنطقة",
+      "tel": "الهاتف",
+      "fax": "الفاكس",
+      "mail": "البريد الإلكتروني",
+      "siteInternet": "الموقع الإلكتروني",
+      "matriculeFiscale": "الرقم الجبائي",
+      "logo": "الشعار",
+      "imagesSitePrincipale": "صور الموقع الرئيسي",
+      "holding": "الشركة القابضة",
+      "etat": "الحالة",
+      "dateCreation": "تاريخ الإنشاء",
+      "dateActivation": "تاريخ التفعيل",
+      "dateCloture": "تاريخ الإغلاق",
+      "importTemplate": "قالب الاستيراد",
+      "codeSociete": "رمز الشركة",
+      "codeOrganigramme": "رمز الهيكل التنظيمي",
+      "organigramme": "الهيكل التنظيمي",
+      "site": "الموقع",
+      "contrat": "العقد",
+      "formeJuridiquee": "الشكل القانوني"
+    },
+    "orgaCareSite": {
+      "home": {
+        "title": "المواقع",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء موقع جديد",
+        "createOrEditLabel": "إنشاء أو تعديل موقع",
+        "notFound": "لا توجد مواقع"
+      },
+      "delete": {
+        "question": "هل أنت متأكد من حذف الموقع {{ id }}؟"
+      },
+      "detail": {
+        "title": "الموقع"
+      },
+      "id": "المعرف",
+      "code": "الرمز",
+      "nom": "الاسم",
+      "etat": "الحالة",
+      "adresse": "العنوان",
+      "codePostale": "الرمز البريدي",
+      "ville": "المدينة",
+      "tel": "الهاتف",
+      "fax": "الفاكس",
+      "email": "البريد الإلكتروني",
+      "dateCreation": "تاريخ الإنشاء",
+      "dateActivation": "تاريخ التفعيل",
+      "dateCloture": "تاريخ الإغلاق",
+      "societe": "الشركة"
     }
   },
   "orgaCareApp": {
     "orgaCareSociete": {
-      "created": "A new Societe is created with identifier {{ param }}",
-      "updated": "A Societe is updated with identifier {{ param }}",
-      "deleted": "A Societe is deleted with identifier {{ param }}"
+      "created": "تم إنشاء شركة جديدة بالمعرف {{ param }}",
+      "updated": "تم تحديث الشركة بالمعرف {{ param }}",
+      "deleted": "تم حذف الشركة بالمعرف {{ param }}"
+    },
+    "orgaCareSite": {
+      "created": "تم إنشاء موقع جديد بالمعرف {{ param }}",
+      "updated": "تم تحديث الموقع بالمعرف {{ param }}",
+      "deleted": "تم حذف الموقع بالمعرف {{ param }}"
     }
   }
 }

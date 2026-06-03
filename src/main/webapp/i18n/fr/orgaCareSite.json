@@ -1,5 +1,13 @@
 {
   "orgacaregatewayApp": {
+    "Etat": {
+      "null": "",
+      "ACTIF": "Actif",
+      "INACTIF": "Inactif",
+      "EN_ATTENTE": "En attente",
+      "SUSPENDU": "Suspendu",
+      "CLOTURE": "Clôturé"
+    },
     "orgaCareSite": {
       "home": {
         "title": "Sites",

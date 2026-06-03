@@ -1,61 +1,61 @@
 {
-  "orgaCareGatewayApp": {
+  "orgacaregatewayApp": {
     "orgaCarePersonne": {
       "home": {
-        "title": "Personnes",
-        "refreshListLabel": "Actualiser la liste",
-        "createLabel": "Créer un nouveau Personne",
-        "createOrEditLabel": "Créer ou éditer un Personne",
-        "notFound": "Aucun Personne trouvé",
-        "importer": "Importer"
+        "title": "الأشخاص",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء شخص جديد",
+        "createOrEditLabel": "إنشاء أو تعديل شخص",
+        "notFound": "لا يوجد أشخاص",
+        "importer": "استيراد"
       },
       "delete": {
-        "question": "Êtes-vous certain de vouloir supprimer le Personne {{ id }} ?"
+        "question": "هل أنت متأكد من حذف الشخص {{ id }}؟"
       },
       "detail": {
-        "title": "Personne"
+        "title": "الشخص"
       },
-      "id": "ID",
-      "matricule": "Matricule",
-      "nomPrenom": "Nom et Prénom",
-      "email": "Email",
-      "numTelephone": "Numéro de téléphone",
-      "genre": "Genre",
-      "masculin": "Masculin",
-      "féminin": "Féminin",
-      "cin": "CIN",
-      "etat": "État",
-      "etatContractuelle": "État Contractuel",
-      "dateCreation": "Date de Création",
-      "dateDebutContrat": "Date Début Contrat",
-      "idContratActif": "ID Contrat Actif",
-      "idTypeContratActif": "ID Type Contrat Actif",
-      "userId": "Identifiant Utilisateur",
-      "contrat": "Contrat",
-      "affectation": "Affectation",
-      "grade": "Grade",
-      "fonction": "Fonction",
-      "departement": "Département"
+      "id": "المعرف",
+      "matricule": "رقم التسجيل",
+      "nomPrenom": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "numTelephone": "رقم الهاتف",
+      "genre": "الجنس",
+      "masculin": "ذكر",
+      "féminin": "أنثى",
+      "cin": "رقم بطاقة الهوية",
+      "etat": "الحالة",
+      "etatContractuelle": "الحالة التعاقدية",
+      "dateCreation": "تاريخ الإنشاء",
+      "dateDebutContrat": "تاريخ بداية العقد",
+      "idContratActif": "معرف العقد النشط",
+      "idTypeContratActif": "معرف نوع العقد النشط",
+      "userId": "معرف المستخدم",
+      "contrat": "العقد",
+      "affectation": "التعيين",
+      "grade": "الدرجة",
+      "fonction": "الوظيفة",
+      "departement": "القسم"
     },
     "Etat": {
-      "null": "— Sélectionner —",
-      "ACTIF": "Actif",
-      "INACTIF": "Inactif",
-      "SUSPENDU": "Suspendu"
+      "null": "— اختر —",
+      "ACTIF": "نشط",
+      "INACTIF": "غير نشط",
+      "SUSPENDU": "موقوف"
     },
     "EtatContractuelle": {
-      "null": "— Sélectionner —",
-      "CDI": "CDI",
-      "CDD": "CDD",
-      "STAGE": "Stage",
-      "FREELANCE": "Freelance"
+      "null": "— اختر —",
+      "CDI": "عقد دائم",
+      "CDD": "عقد محدد المدة",
+      "STAGE": "تدريب",
+      "FREELANCE": "عمل حر"
     }
   },
-  "orgaCareApp": {
+  "orgacareApp": {
     "orgaCarePersonne": {
-      "created": "Un nouveau Personne a été créé avec l'identifiant {{ param }}",
-      "updated": "Le Personne avec l'identifiant {{ param }} a été mis à jour",
-      "deleted": "Le Personne avec l'identifiant {{ param }} a été supprimé"
+      "created": "تم إنشاء شخص جديد بالمعرف {{ param }}",
+      "updated": "تم تحديث الشخص بالمعرف {{ param }}",
+      "deleted": "تم حذف الشخص بالمعرف {{ param }}"
     }
   }
 }

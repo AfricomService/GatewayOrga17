@@ -1,40 +1,48 @@
 {
   "orgacaregatewayApp": {
+    "Etat": {
+      "null": "",
+      "ACTIF": "نشط",
+      "INACTIF": "غير نشط",
+      "EN_ATTENTE": "في الانتظار",
+      "SUSPENDU": "موقوف",
+      "CLOTURE": "مغلق"
+    },
     "orgaCareSite": {
       "home": {
-        "title": "Sites",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Site",
-        "createOrEditLabel": "Create or edit a Site",
-        "notFound": "No Sites found"
+        "title": "المواقع",
+        "refreshListLabel": "تحديث القائمة",
+        "createLabel": "إنشاء موقع جديد",
+        "createOrEditLabel": "إنشاء أو تعديل موقع",
+        "notFound": "لا توجد مواقع"
       },
       "delete": {
-        "question": "Are you sure you want to delete Site {{ id }}?"
+        "question": "هل أنت متأكد من حذف الموقع {{ id }}؟"
       },
       "detail": {
-        "title": "Site"
+        "title": "الموقع"
       },
-      "id": "ID",
-      "code": "Code",
-      "nom": "Nom",
-      "etat": "Etat",
-      "adresse": "Adresse",
-      "codePostale": "Code Postale",
-      "ville": "Ville",
-      "tel": "Tel",
-      "fax": "Fax",
-      "email": "Email",
-      "dateCreation": "Date Creation",
-      "dateActivation": "Date Activation",
-      "dateCloture": "Date Cloture",
-      "societe": "Societe"
+      "id": "المعرف",
+      "code": "الرمز",
+      "nom": "الاسم",
+      "etat": "الحالة",
+      "adresse": "العنوان",
+      "codePostale": "الرمز البريدي",
+      "ville": "المدينة",
+      "tel": "الهاتف",
+      "fax": "الفاكس",
+      "email": "البريد الإلكتروني",
+      "dateCreation": "تاريخ الإنشاء",
+      "dateActivation": "تاريخ التفعيل",
+      "dateCloture": "تاريخ الإغلاق",
+      "societe": "الشركة"
     }
   },
   "orgaCareApp": {
     "orgaCareSite": {
-      "created": "A new Site is created with identifier {{ param }}",
-      "updated": "A Site is updated with identifier {{ param }}",
-      "deleted": "A Site is deleted with identifier {{ param }}"
+      "created": "تم إنشاء موقع جديد بالمعرف {{ param }}",
+      "updated": "تم تحديث الموقع بالمعرف {{ param }}",
+      "deleted": "تم حذف الموقع بالمعرف {{ param }}"
     }
   }
 }

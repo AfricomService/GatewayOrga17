@@ -1,160 +1,225 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="jhi-site-heading" data-cy="SiteCreateUpdateHeading" jhiTranslate="orgacaregatewayApp.orgaCareSite.home.createOrEditLabel">
-        Create or edit a Site
-      </h2>
-
-      <div>
-        <jhi-alert-error></jhi-alert-error>
-
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.code" for="field_code">Code</label>
-          <input type="text" class="form-control" name="code" id="field_code" data-cy="code" formControlName="code" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.nom" for="field_nom">Nom</label>
-          <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.etat" for="field_etat">Etat</label>
-          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
-            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
-            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse" for="field_adresse">Adresse</label>
-          <input type="text" class="form-control" name="adresse" id="field_adresse" data-cy="adresse" formControlName="adresse" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.codePostale" for="field_codePostale"
-            >Code Postale</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            name="codePostale"
-            id="field_codePostale"
-            data-cy="codePostale"
-            formControlName="codePostale"
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.ville" for="field_ville">Ville</label>
-          <input type="text" class="form-control" name="ville" id="field_ville" data-cy="ville" formControlName="ville" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.tel" for="field_tel">Tel</label>
-          <input type="text" class="form-control" name="tel" id="field_tel" data-cy="tel" formControlName="tel" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.fax" for="field_fax">Fax</label>
-          <input type="text" class="form-control" name="fax" id="field_fax" data-cy="fax" formControlName="fax" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.email" for="field_email">Email</label>
-          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCreation" for="field_dateCreation"
-            >Date Creation</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateCreation"
-              data-cy="dateCreation"
-              type="datetime-local"
-              class="form-control"
-              name="dateCreation"
-              formControlName="dateCreation"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.dateActivation" for="field_dateActivation"
-            >Date Activation</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateActivation"
-              data-cy="dateActivation"
-              type="datetime-local"
-              class="form-control"
-              name="dateActivation"
-              formControlName="dateActivation"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCloture" for="field_dateCloture"
-            >Date Cloture</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateCloture"
-              data-cy="dateCloture"
-              type="datetime-local"
-              class="form-control"
-              name="dateCloture"
-              formControlName="dateCloture"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.societe" for="field_societe">Societe</label>
-          <select class="form-control" id="field_societe" data-cy="societe" name="societe" formControlName="societe">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
-              *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
-            >
-              {{ societeOption.id }}
-            </option>
-          </select>
-        </div>
+<div class="site-update-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <span class="material-icon">&#x1F3E2;</span>
       </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareSite.home.createOrEditLabel">Créer ou éditer un Site</h1>
+        <p>Renseignez les informations du site</p>
       </div>
-    </form>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button type="button" class="btn-header-primary" [disabled]="editForm.invalid || isSaving" (click)="save()">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
   </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <!-- Hidden ID field -->
+    <div [hidden]="true">
+      <input type="number" formControlName="id" />
+    </div>
+
+    <!-- Section Générale -->
+    <div class="accordion-card" [class.open]="sectionGenerale">
+      <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Générale</span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionGenerale">
+        <div class="form-grid-3">
+          <div class="field-group">
+            <label for="field_code" jhiTranslate="orgacaregatewayApp.orgaCareSite.code">CODE</label>
+            <input type="text" id="field_code" class="field-input" placeholder="Code du site" formControlName="code" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_nom" jhiTranslate="orgacaregatewayApp.orgaCareSite.nom">NOM</label>
+            <input type="text" id="field_nom" class="field-input" placeholder="Nom du site" formControlName="nom" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_etat" jhiTranslate="orgacaregatewayApp.orgaCareSite.etat">ETAT <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select
+                id="field_etat"
+                class="field-select"
+                formControlName="etat"
+                [ngStyle]="{ color: editForm.get('etat')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null" disabled>-- Sélectionner un état --</option>
+                <option *ngFor="let etat of etatValues" [ngValue]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
+              <small class="error-msg" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
+                Ce champ est obligatoire.
+              </small>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="field_societe" jhiTranslate="orgacaregatewayApp.orgaCareSite.societe">SOCIETE</label>
+            <div class="select-wrapper">
+              <select
+                id="field_societe"
+                class="field-select"
+                formControlName="societe"
+                [compareWith]="compareSociete"
+                [ngStyle]="{ color: editForm.get('societe')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null" disabled>-- Sélectionner une société --</option>
+                <option
+                  [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
+                  *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
+                >
+                  {{ societeOption.raisonSociale }}
+                </option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-3 mt-16">
+          <div class="field-group">
+            <label for="field_dateCreation" jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCreation">DATE CREATION</label>
+            <input type="datetime-local" id="field_dateCreation" class="field-input" formControlName="dateCreation" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_dateActivation" jhiTranslate="orgacaregatewayApp.orgaCareSite.dateActivation">DATE ACTIVATION</label>
+            <input type="datetime-local" id="field_dateActivation" class="field-input" formControlName="dateActivation" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_dateCloture" jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCloture">DATE CLOTURE</label>
+            <input type="datetime-local" id="field_dateCloture" class="field-input" formControlName="dateCloture" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Adresse -->
+    <div class="accordion-card" [class.open]="sectionAdresse">
+      <div class="accordion-header" (click)="sectionAdresse = !sectionAdresse">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Adresse</span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionAdresse">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionAdresse">
+        <div class="form-grid-1">
+          <div class="field-group">
+            <label for="field_adresse" jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse">ADRESSE</label>
+            <input type="text" id="field_adresse" class="field-input" placeholder="Adresse complète" formControlName="adresse" />
+          </div>
+        </div>
+
+        <div class="form-grid-3 mt-16">
+          <div class="field-group">
+            <label for="field_codePostale" jhiTranslate="orgacaregatewayApp.orgaCareSite.codePostale">CODE POSTALE</label>
+            <input type="text" id="field_codePostale" class="field-input" placeholder="Code postal" formControlName="codePostale" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_ville" jhiTranslate="orgacaregatewayApp.orgaCareSite.ville">VILLE</label>
+            <input type="text" id="field_ville" class="field-input" placeholder="Ville" formControlName="ville" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Communication -->
+    <div class="accordion-card" [class.open]="sectionCommunication">
+      <div class="accordion-header" (click)="sectionCommunication = !sectionCommunication">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-orange">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.6 4.87 2 2 0 0 1 3.59 2.69h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l1.54-1.54a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+              />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Communication</span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionCommunication">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionCommunication">
+        <div class="form-grid-3">
+          <div class="field-group">
+            <label for="field_tel" jhiTranslate="orgacaregatewayApp.orgaCareSite.tel">TÉLÉPHONE</label>
+            <input type="text" id="field_tel" class="field-input" placeholder="Numéro de téléphone" formControlName="tel" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_fax" jhiTranslate="orgacaregatewayApp.orgaCareSite.fax">FAX</label>
+            <input type="text" id="field_fax" class="field-input" placeholder="Numéro de fax" formControlName="fax" />
+          </div>
+
+          <div class="field-group">
+            <label for="field_email" jhiTranslate="orgacaregatewayApp.orgaCareSite.email">EMAIL</label>
+            <input type="email" id="field_email" class="field-input" placeholder="Adresse email" formControlName="email" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="form-footer">
+      <button type="button" class="btn-cancel" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        <span jhiTranslate="entity.action.cancel">Annuler</span>
+      </button>
+      <button type="submit" [disabled]="editForm.invalid || isSaving" class="btn-save">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
+  </form>
 </div>

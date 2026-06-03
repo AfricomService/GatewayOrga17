@@ -13,14 +13,23 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn btn-outline-secondary btn-action" (click)="loadPage()" [disabled]="isLoading">
+        <button
+          class="btn btn-outline-secondary btn-action"
+          (click)="loadPage()"
+          [disabled]="isLoading"
+          title="{{ 'orgacaregatewayApp.orgaCareSociete.home.refreshListLabel' | translate }}"
+        >
           <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-          <span jhiTranslate="orgacaregatewayApp.orgaCareSociete.home.refreshListLabel">Refresh List</span>
         </button>
 
-        <button id="jh-create-entity" data-cy="entityCreateButton" class="btn btn-primary btn-action" [routerLink]="['/societe/new']">
+        <button
+          id="jh-create-entity"
+          data-cy="entityCreateButton"
+          class="btn btn-primary btn-action"
+          [routerLink]="['/societe/new']"
+          title="{{ 'orgacaregatewayApp.orgaCareSociete.home.createLabel' | translate }}"
+        >
           <fa-icon icon="plus"></fa-icon>
-          <span jhiTranslate="orgacaregatewayApp.orgaCareSociete.home.createLabel">Create a new Societe</span>
         </button>
       </div>
     </div>
@@ -85,9 +94,14 @@
 
             <td class="text-right" (dblclick)="$event.stopPropagation()">
               <div class="btn-group action-group">
-                <button type="button" (click)="delete(societe)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                  <fa-icon icon="times"></fa-icon>
-                  <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                <button
+                  type="button"
+                  (click)="delete(societe)"
+                  class="btn btn-danger btn-sm"
+                  data-cy="entityDeleteButton"
+                  title="{{ 'entity.action.delete' | translate }}"
+                >
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>

@@ -6,7 +6,7 @@
         <fa-icon icon="user-plus"></fa-icon>
       </div>
       <div>
-        <h2 class="page-title" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.home.createOrEditLabel">Créer / Modifier une Personne</h2>
+        <h2 class="page-title" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.createOrEditLabel">Créer / Modifier une Personne</h2>
         <p class="page-subtitle">Remplissez les informations ci-dessous</p>
       </div>
     </div>
@@ -25,6 +25,7 @@
           *ngIf="!editForm.get('userId')!.value"
           type="button"
           class="btn-action btn-action--warning"
+          [disabled]="!keycloakAdminUrl"
           (click)="openKeycloakCreateUser()"
           title="Ouvrir Keycloak pour créer un compte utilisateur"
         >
@@ -76,7 +77,7 @@
             <div class="form-grid">
               <!-- Matricule -->
               <div class="field-group">
-                <label class="field-label" for="field_matricule" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.matricule">
+                <label class="field-label" for="field_matricule" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule">
                   Matricule
                 </label>
                 <div class="input-wrapper">
@@ -93,7 +94,7 @@
 
               <!-- Nom et Prénom -->
               <div class="field-group required">
-                <label class="field-label" for="field_nomPrenom" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.nomPrenom">
+                <label class="field-label" for="field_nomPrenom" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom">
                   Nom et Prénom
                 </label>
                 <div class="input-wrapper">
@@ -117,7 +118,7 @@
 
               <!-- Email -->
               <div class="field-group">
-                <label class="field-label" for="field_email" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.email"> Email </label>
+                <label class="field-label" for="field_email" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email"> Email </label>
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="envelope"></fa-icon></span>
                   <input
@@ -139,7 +140,7 @@
 
               <!-- Num Téléphone -->
               <div class="field-group">
-                <label class="field-label" for="field_numTelephone" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.numTelephone">
+                <label class="field-label" for="field_numTelephone" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone">
                   Numéro de téléphone
                 </label>
                 <div class="input-wrapper">
@@ -156,20 +157,20 @@
 
               <!-- Genre -->
               <div class="field-group">
-                <label class="field-label" for="field_genre" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.genre"> Genre </label>
+                <label class="field-label" for="field_genre" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre"> Genre </label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="venus-mars"></fa-icon></span>
                   <select class="field-input field-select with-prefix" id="field_genre" formControlName="genre">
                     <option value="">— Sélectionner —</option>
-                    <option value="Masculin">{{ 'orgaCareGatewayApp.orgaCarePersonne.masculin' | translate }}</option>
-                    <option value="Feminin">{{ 'orgaCareGatewayApp.orgaCarePersonne.féminin' | translate }}</option>
+                    <option value="Masculin">{{ 'orgacaregatewayApp.orgaCarePersonne.masculin' | translate }}</option>
+                    <option value="Feminin">{{ 'orgacaregatewayApp.orgaCarePersonne.féminin' | translate }}</option>
                   </select>
                 </div>
               </div>
 
               <!-- CIN -->
               <div class="field-group">
-                <label class="field-label" for="field_cin" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.cin"> CIN </label>
+                <label class="field-label" for="field_cin" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin"> CIN </label>
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="id-badge"></fa-icon></span>
                   <input class="field-input with-prefix" id="field_cin" type="text" formControlName="cin" placeholder="XXXXXXXX" />
@@ -178,7 +179,7 @@
 
               <!-- Etat -->
               <div class="field-group required">
-                <label class="field-label" for="field_etat" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.etat"> État </label>
+                <label class="field-label" for="field_etat" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat"> État </label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="check-circle"></fa-icon></span>
                   <select class="field-input field-select with-prefix" id="field_etat" formControlName="etat">
@@ -199,7 +200,7 @@
 
               <!-- Grade -->
               <div class="field-group">
-                <label class="field-label" for="field_grade" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.grade"> Grade </label>
+                <label class="field-label" for="field_grade" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade"> Grade </label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="layer-group"></fa-icon></span>
                   <select class="field-input field-select with-prefix" id="field_grade" formControlName="grade">
@@ -216,7 +217,7 @@
 
               <!-- Fonction -->
               <div class="field-group">
-                <label class="field-label" for="field_fonction" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.fonction">
+                <label class="field-label" for="field_fonction" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction">
                   Fonction
                 </label>
                 <div class="input-wrapper select-wrapper">
@@ -237,7 +238,7 @@
 
               <!-- Affectation -->
               <div class="field-group">
-                <label class="field-label" for="field_affectation" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.affectation">
+                <label class="field-label" for="field_affectation" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.affectation">
                   Affectation
                 </label>
                 <div class="input-wrapper select-wrapper">
@@ -284,7 +285,7 @@
                 <label
                   class="field-label"
                   for="field_etatContractuelle"
-                  jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.etatContractuelle"
+                  jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etatContractuelle"
                 >
                   État Contractuel
                 </label>
@@ -311,7 +312,7 @@
 
               <!-- Date Création -->
               <div class="field-group">
-                <label class="field-label" for="field_dateCreation" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.dateCreation">
+                <label class="field-label" for="field_dateCreation" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateCreation">
                   Date de Création
                 </label>
                 <div class="input-wrapper">
@@ -328,7 +329,7 @@
 
               <!-- Date Début Contrat -->
               <div class="field-group">
-                <label class="field-label" for="field_dateDebutContrat" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.dateDebutContrat">
+                <label class="field-label" for="field_dateDebutContrat" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateDebutContrat">
                   Date Début Contrat
                 </label>
                 <div class="input-wrapper">
@@ -345,7 +346,7 @@
 
               <!-- ID Contrat Actif -->
               <div class="field-group" [hidden]="editForm.get('id')!.value == null">
-                <label class="field-label" for="field_idContratActif" jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.idContratActif">
+                <label class="field-label" for="field_idContratActif" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idContratActif">
                   ID Contrat Actif
                 </label>
                 <div class="input-wrapper">
@@ -359,7 +360,7 @@
                 <label
                   class="field-label"
                   for="field_idTypeContratActif"
-                  jhiTranslate="orgaCareGatewayApp.orgaCarePersonne.idTypeContratActif"
+                  jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idTypeContratActif"
                 >
                   ID Type Contrat Actif
                 </label>

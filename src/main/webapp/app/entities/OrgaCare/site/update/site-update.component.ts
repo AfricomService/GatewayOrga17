@@ -17,10 +17,16 @@ import { Etat } from 'app/entities/enumerations/etat.model';
 @Component({
   selector: 'jhi-site-update',
   templateUrl: './site-update.component.html',
+  styleUrls: ['./site-update.component.scss'],
 })
 export class SiteUpdateComponent implements OnInit {
   isSaving = false;
   etatValues = Object.keys(Etat);
+
+  // Accordion section states — Section Générale is open by default
+  sectionGenerale = true;
+  sectionAdresse = false;
+  sectionCommunication = false;
 
   societesSharedCollection: ISociete[] = [];
 
@@ -58,7 +64,6 @@ export class SiteUpdateComponent implements OnInit {
       }
 
       this.updateForm(site);
-
       this.loadRelationshipsOptions();
     });
   }
@@ -79,6 +84,10 @@ export class SiteUpdateComponent implements OnInit {
 
   trackSocieteById(index: number, item: ISociete): number {
     return item.id!;
+  }
+
+  compareSociete(s1: ISociete | null, s2: ISociete | null): boolean {
+    return s1 && s2 ? s1.id === s2.id : s1 === s2;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ISite>>): void {

@@ -21,6 +21,7 @@ import { EtatContractuelle } from 'app/entities/enumerations/etat-contractuelle.
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
+import { FrontendConfigService } from '../service/frontend-config.service';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -58,7 +59,7 @@ export class PersonneUpdateComponent implements OnInit {
   userPage = 1;
   userItemsPerPage = 5;
   userTotalItems = 0;
-  keycloakAdminUrl = 'http://localhost:9080/admin/Africom/console/#/Africom/users/add-user';
+  keycloakAdminUrl?: string;
 
   editForm = this.fb.group({
     id: [],
@@ -90,10 +91,13 @@ export class PersonneUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     protected modalService: NgbModal,
     protected userService: UserService,
+    protected frontendConfigService: FrontendConfigService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.loadKeycloakConfig();
+
     this.activatedRoute.data.subscribe(({ personne }) => {
       if (personne.id === undefined) {
         const today = dayjs().startOf('day');
@@ -105,7 +109,6 @@ export class PersonneUpdateComponent implements OnInit {
       this.loadRelationshipsOptions();
       this.cdr.markForCheck();
 
-      // Logique de génération automatique du matricule (conservée)
       if (this.generateMatriculeAutomatically && personne.id === undefined) {
         this.personneService.generateNextMatricule('Empl-').subscribe(nextCode => {
           this.editForm.get('matricule')?.setValue(nextCode);
@@ -130,6 +133,9 @@ export class PersonneUpdateComponent implements OnInit {
   }
 
   openKeycloakCreateUser(): void {
+    if (!this.keycloakAdminUrl) {
+      return;
+    }
     window.open(this.keycloakAdminUrl, '_blank');
   }
 
@@ -333,5 +339,18 @@ export class PersonneUpdateComponent implements OnInit {
       grade: this.editForm.get(['grade'])!.value,
       fonction: this.editForm.get(['fonction'])!.value,
     };
+  }
+
+  protected loadKeycloakConfig(): void {
+    this.frontendConfigService.getKeycloakConfig().subscribe({
+      next: cfg => {
+        this.keycloakAdminUrl = cfg.adminUserCreateUrl;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.keycloakAdminUrl = undefined;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }

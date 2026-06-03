@@ -13,6 +13,7 @@ import { SiteDeleteDialogComponent } from '../delete/site-delete-dialog.componen
 @Component({
   selector: 'jhi-site',
   templateUrl: './site.component.html',
+  styleUrls: ['./site.component.scss'],
 })
 export class SiteComponent implements OnInit {
   sites?: ISite[];
@@ -61,10 +62,14 @@ export class SiteComponent implements OnInit {
     return item.id!;
   }
 
+  // Double-click → navigate to edit page
+  editSite(site: ISite): void {
+    this.router.navigate(['/site', site.id, 'edit']);
+  }
+
   delete(site: ISite): void {
     const modalRef = this.modalService.open(SiteDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.site = site;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();

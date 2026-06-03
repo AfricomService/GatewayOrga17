@@ -1,23 +1,16 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IPersonne } from '../personne.model';
-import { ISociete } from 'app/entities/OrgaCare/societe/societe.model';
 import { ITypeContrat } from 'app/entities/OrgaCare/type-contrat/type-contrat.model';
-import { IUser } from 'app/entities/user/user.model';
 
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { PersonneService } from '../service/personne.service';
 import { PersonneDeleteDialogComponent } from '../delete/personne-delete-dialog.component';
-import { SocieteService } from 'app/entities/OrgaCare/societe/service/societe.service';
 import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/type-contrat.service';
-import { UserService } from 'app/entities/user/user.service';
-import { DxDataGridComponent } from 'devextreme-angular';
-
-type ColumnResizeMode = 'nextColumn' | 'widget';
 
 @Component({
   selector: 'jhi-personne',
@@ -25,8 +18,6 @@ type ColumnResizeMode = 'nextColumn' | 'widget';
   styleUrls: ['./personne.component.scss'],
 })
 export class PersonneComponent implements OnInit {
-  @ViewChild('dataGrid') dataGrid?: DxDataGridComponent;
-
   personnes?: IPersonne[];
   isLoading = false;
   totalItems = 0;
@@ -36,6 +27,7 @@ export class PersonneComponent implements OnInit {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
+  // Recherche
   matricule = '';
   nomPrenom = '';
   numTelephone = '';
@@ -44,43 +36,21 @@ export class PersonneComponent implements OnInit {
   searchField = '';
   showMoreSearch = false;
 
-  societes: ISociete[] = [];
-  users: IUser[] = [];
   typesContrat: ITypeContrat[] = [];
   selectedFile: File | null = null;
-  columnResizingMode: ColumnResizeMode = 'nextColumn';
-  personne!: IPersonne;
 
   constructor(
     protected personneService: PersonneService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected modalService: NgbModal,
-    protected societeService: SocieteService,
     protected typeContratService: TypeContratService,
-    protected userService: UserService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.handleNavigation();
-    this.loadUsers();
-    this.loadSocietes();
     this.loadTypesContrat();
-  }
-
-  loadUsers(): void {
-    this.userService.query().subscribe((response: HttpResponse<IUser[]>) => {
-      if (response.body) {
-        this.users = response.body;
-      }
-    });
-  }
-
-  loadSocietes(): void {
-    this.societeService.query().subscribe((res: HttpResponse<ISociete[]>) => {
-      this.societes = res.body ?? [];
-    });
   }
 
   loadTypesContrat(): void {
@@ -93,20 +63,9 @@ export class PersonneComponent implements OnInit {
     return personne.userId != null && personne.userId !== '';
   }
 
-  onRowDblClick(e: { data: IPersonne }): void {
-    this.router.navigate(['/personne', String(e.data.id), 'view']);
-  }
-
-  OnDeleteBtnClicked(e: { data: IPersonne }, content: unknown): void {
-    this.personne = e.data;
-    this.modalService.open(content, { centered: true });
-  }
-
-  confirmDelete(modal: { close: () => void }): void {
-    this.personneService.delete(this.personne.id!).subscribe(() => {
-      modal.close();
-      this.loadPage(this.page);
-    });
+  // Double-click → navigate to edit page
+  editPersonne(personne: IPersonne): void {
+    this.router.navigate(['/personne', personne.id, 'edit']);
   }
 
   delete(personne: IPersonne): void {
@@ -173,13 +132,6 @@ export class PersonneComponent implements OnInit {
         (res: HttpResponse<IPersonne[]>) => {
           this.isLoading = false;
           this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate);
-          this.cdr.detectChanges();
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          setTimeout(() => {
-            if (this.dataGrid?.instance) {
-              this.dataGrid.instance.refresh();
-            }
-          }, 0);
         },
         () => {
           this.isLoading = false;
@@ -197,17 +149,19 @@ export class PersonneComponent implements OnInit {
         this.ngbPaginationPage = 1;
         this.personnes = res.body ?? [];
         this.cdr.detectChanges();
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        setTimeout(() => {
-          if (this.dataGrid?.instance) {
-            this.dataGrid.instance.refresh();
-          }
-        }, 0);
       },
       () => {
         this.ngbPaginationPage = 1;
       }
     );
+  }
+
+  protected sort(): string[] {
+    const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];
+    if (this.predicate !== 'id') {
+      result.push('id');
+    }
+    return result;
   }
 
   protected handleNavigation(): void {
@@ -239,17 +193,10 @@ export class PersonneComponent implements OnInit {
     }
     this.personnes = data ?? [];
     this.ngbPaginationPage = this.page;
+    this.cdr.detectChanges();
   }
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
-  }
-
-  protected sort(): string[] {
-    const result = [this.predicate + ',' + (this.ascending ? ASC : DESC)];
-    if (this.predicate !== 'id') {
-      result.push('id');
-    }
-    return result;
   }
 }

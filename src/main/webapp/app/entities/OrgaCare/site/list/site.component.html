@@ -1,131 +1,126 @@
-<div>
-  <h2 id="page-heading" data-cy="SiteHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareSite.home.title">Sites</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareSite.home.refreshListLabel">Refresh List</span>
-      </button>
-
+<div class="site-list-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">🏢</div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareSite.home.title">Sites</h1>
+        <p>Gérez et consultez la liste des sites</p>
+      </div>
+    </div>
+    <div class="header-actions">
       <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-site"
+        class="btn-header-secondary"
+        (click)="loadPage()"
+        [disabled]="isLoading"
+        title="{{ 'orgacaregatewayApp.orgaCareSite.home.refreshListLabel' | translate }}"
+      >
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+      </button>
+      <button
+        class="btn-header-primary"
         [routerLink]="['/site/new']"
+        title="{{ 'orgacaregatewayApp.orgaCareSite.home.createLabel' | translate }}"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareSite.home.createLabel"> Create a new Site </span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
-
   <jhi-alert></jhi-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="sites?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareSite.home.notFound">No sites found</span>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && sites?.length === 0">
+    <div class="empty-icon">🏢</div>
+    <h3 jhiTranslate="orgacaregatewayApp.orgaCareSite.home.notFound">Aucun site trouvé</h3>
+    <p>Commencez par créer un nouveau site</p>
+    <button class="btn-create" [routerLink]="['/site/new']">
+      <fa-icon icon="plus"></fa-icon>
+      Créer un site
+    </button>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="sites && sites.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="code">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.code">Code</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="nom">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.nom">Nom</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="etat">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.etat">Etat</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="adresse">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse">Adresse</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="codePostale">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.codePostale">Code Postale</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="ville">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.ville">Ville</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="tel">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.tel">Tel</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="fax">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.fax">Fax</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="email">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.email">Email</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="dateCreation">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCreation">Date Creation</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="dateActivation">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateActivation">Date Activation</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="dateCloture">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCloture">Date Cloture</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="societe.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareSite.societe">Societe</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let site of sites; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/site', site.id, 'view']">{{ site.id }}</a>
-          </td>
-          <td>{{ site.code }}</td>
-          <td>{{ site.nom }}</td>
-          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + site.etat }}">{{ site.etat }}</td>
-          <td>{{ site.adresse }}</td>
-          <td>{{ site.codePostale }}</td>
-          <td>{{ site.ville }}</td>
-          <td>{{ site.tel }}</td>
-          <td>{{ site.fax }}</td>
-          <td>{{ site.email }}</td>
-          <td>{{ site.dateCreation | formatMediumDatetime }}</td>
-          <td>{{ site.dateActivation | formatMediumDatetime }}</td>
-          <td>{{ site.dateCloture | formatMediumDatetime }}</td>
-          <td>
-            <div *ngIf="site.societe">
-              <a [routerLink]="['/societe', site.societe?.id, 'view']">{{ site.societe?.id }}</a>
-            </div>
-          </td>
-          <td class="text-right">
-            <div class="btn-group">
-              <button type="submit" [routerLink]="['/site', site.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+  <!-- Table Card -->
+  <div class="table-card" *ngIf="sites && sites.length > 0">
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+            <th scope="col" jhiSortBy="nom">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareSite.nom">Nom</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="code">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareSite.code">Code</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="adresse">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse">Adresse</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="societe.id">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareSite.societe">Société</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" class="th-actions">
+              <span>Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let site of sites; trackBy: trackId"
+            data-cy="entityTable"
+            (dblclick)="editSite(site)"
+            class="table-row"
+            [title]="'Double-cliquer pour modifier'"
+          >
+            <td>
+              <div class="cell-nom">
+                <div class="nom-avatar">{{ (site.nom || '?')[0].toUpperCase() }}</div>
+                <span class="nom-text">{{ site.nom || '—' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge-code" *ngIf="site.code; else noCode">{{ site.code }}</span>
+              <ng-template #noCode><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td>
+              <span class="cell-adresse" *ngIf="site.adresse; else noAdresse">{{ site.adresse }}</span>
+              <ng-template #noAdresse><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td>
+              <span class="cell-societe" *ngIf="site.societe">{{ site.societe?.raisonSociale || site.societe?.id }}</span>
+              <span class="cell-empty" *ngIf="!site.societe">—</span>
+            </td>
+            <td class="td-actions">
+              <button
+                type="button"
+                class="btn-delete"
+                (click)="delete(site); $event.stopPropagation()"
+                title="{{ 'entity.action.delete' | translate }}"
+              >
+                <fa-icon icon="trash"></fa-icon>
               </button>
-
-              <button type="submit" [routerLink]="['/site', site.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
-
-              <button type="submit" (click)="delete(site)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="sites && sites.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="row justify-content-center">
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
       <ngb-pagination
         [collectionSize]="totalItems"
         [(page)]="ngbPaginationPage"
