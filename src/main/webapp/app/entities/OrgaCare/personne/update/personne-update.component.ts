@@ -22,6 +22,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
 import { FrontendConfigService } from '../service/frontend-config.service';
+import { KeycloakSyncService, KeycloakSyncResult } from 'app/core/keycloak/keycloak-sync.service';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -61,6 +62,10 @@ export class PersonneUpdateComponent implements OnInit {
   userTotalItems = 0;
   keycloakAdminUrl?: string;
 
+  isSyncing = false;
+  syncResult: KeycloakSyncResult | null = null;
+  syncError: string | null = null;
+
   editForm = this.fb.group({
     id: [],
     matricule: [],
@@ -92,7 +97,8 @@ export class PersonneUpdateComponent implements OnInit {
     protected modalService: NgbModal,
     protected userService: UserService,
     protected frontendConfigService: FrontendConfigService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private keycloakSyncService: KeycloakSyncService
   ) {}
 
   ngOnInit(): void {
@@ -137,6 +143,28 @@ export class PersonneUpdateComponent implements OnInit {
       return;
     }
     window.open(this.keycloakAdminUrl, '_blank');
+  }
+
+  syncKeycloakUsers(): void {
+    this.isSyncing = true;
+    this.syncResult = null;
+    this.syncError = null;
+
+    this.keycloakSyncService.syncNow().subscribe({
+      next: result => {
+        this.isSyncing = false;
+        this.syncResult = result;
+        this.cdr.markForCheck();
+        // Recharger la liste des users après sync
+        this.loadAvailableUsers();
+      },
+      error: err => {
+        this.isSyncing = false;
+        this.syncError = 'Erreur lors de la synchronisation. Vérifiez la connexion Keycloak.';
+        this.cdr.markForCheck();
+        console.error(err);
+      },
+    });
   }
 
   openAssignUserModal(content: unknown): void {

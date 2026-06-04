@@ -18,9 +18,23 @@
         <span jhiTranslate="entity.action.back">Retour</span>
       </button>
 
-      <!-- NOUVEAU -->
+      <!-- ══ BOUTON SYNC ══ -->
+      <ng-container *jhiHasAnyAuthority="'ROLE_ADMIN'">
+        <button
+          type="button"
+          class="btn-action btn-action--sync"
+          [disabled]="isSyncing"
+          (click)="syncKeycloakUsers()"
+          title="Synchroniser les comptes Keycloak vers la base de données"
+        >
+          <span *ngIf="isSyncing" class="spinner-border spinner-border-sm" role="status"></span>
+          <fa-icon *ngIf="!isSyncing" icon="sync"></fa-icon>
+          <span>{{ isSyncing ? 'Synchronisation...' : 'Synchroniser' }}</span>
+        </button>
+      </ng-container>
+
       <ng-container *ngIf="editForm.get('id')!.value != null">
-        <!-- Bouton Créer un compte : si pas encore de userId -->
+        <!-- Bouton Créer un compte -->
         <button
           *ngIf="!editForm.get('userId')!.value"
           type="button"
@@ -33,7 +47,7 @@
           <span>Créer un compte</span>
         </button>
 
-        <!-- Bouton Affecter un compte : toujours visible si personne existe -->
+        <!-- Bouton Affecter un compte -->
         <button
           type="button"
           class="btn-action btn-action--info"
@@ -51,6 +65,19 @@
         <span jhiTranslate="entity.action.save">Enregistrer</span>
       </button>
     </div>
+  </div>
+
+  <!-- ══ RÉSULTAT SYNC ══ -->
+  <div *ngIf="syncResult" class="sync-banner sync-banner--success">
+    <fa-icon icon="check-circle"></fa-icon>
+    <span>{{ syncResult.message }}</span>
+    <button class="sync-banner__close" (click)="syncResult = null">×</button>
+  </div>
+
+  <div *ngIf="syncError" class="sync-banner sync-banner--error">
+    <fa-icon icon="exclamation-circle"></fa-icon>
+    <span>{{ syncError }}</span>
+    <button class="sync-banner__close" (click)="syncError = null">×</button>
   </div>
 
   <jhi-alert-error></jhi-alert-error>

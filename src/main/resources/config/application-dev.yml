@@ -125,3 +125,11 @@ application:
   frontend:
     keycloak:
       admin-user-create-url: ${KEYCLOAK_ADMIN_USER_CREATE_URL:http://localhost:9080/admin/Africom/console/#/Africom/users/add-user}
+  keycloak-admin:
+    admin:
+      server-url: http://localhost:9080
+      realm: master
+      client-id: admin-cli
+      username: admin
+      password: admin
+      target-realm: Africom

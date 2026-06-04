@@ -137,7 +137,16 @@ jhipster:
 # ===================================================================
 
 # application:
+# Nouveau
 application:
   frontend:
     keycloak:
       admin-user-create-url: ${KEYCLOAK_ADMIN_USER_CREATE_URL}
+  keycloak-admin:
+    admin:
+      server-url: ${KEYCLOAK_SERVER_URL}
+      realm: master
+      client-id: admin-cli
+      username: ${KEYCLOAK_ADMIN_USERNAME}
+      password: ${KEYCLOAK_ADMIN_PASSWORD}
+      target-realm: ${KEYCLOAK_TARGET_REALM}
