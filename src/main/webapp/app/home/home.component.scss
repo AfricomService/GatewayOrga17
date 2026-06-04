@@ -1,604 +1,122 @@
-/* ══════════════════════════════════════════════════════════════════
-   OrgaCare — Layout complet : sidebar + topbar + dashboard
-   Compatible SCSS/node-sass (pas de & en milieu de sélecteur)
-   ══════════════════════════════════════════════════════════════════ */
-
-/* Tabler Icons depuis CDN — à ajouter dans index.html si pas déjà présent */
-/* @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css'); */
-
-$sidebar-w: 240px;
-$sidebar-w-col: 64px;
-$topbar-h: 60px;
-$blue: #2563eb;
-$blue-light: #eff6ff;
-$text-main: #0f172a;
-$text-muted: #64748b;
-$border: #e2e8f0;
-$bg-page: #f1f5f9;
-$bg-white: #ffffff;
-$transition: 0.22s ease;
-
-/* ── Layout global ─────────────────────────────────────────────── */
-.oc-layout {
-  display: flex;
-  min-height: 100vh;
-  background: $bg-page;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   SIDEBAR
-   ══════════════════════════════════════════════════════════════════ */
-.oc-sidebar {
-  width: $sidebar-w;
-  min-height: 100vh;
-  background: $text-main;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 200;
-  transition: width $transition;
-  overflow: hidden;
-}
-
-.oc-sidebar.collapsed {
-  width: $sidebar-w-col;
-}
-
-/* Logo */
-.oc-sidebar__logo {
-  height: $topbar-h;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  gap: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  flex-shrink: 0;
-}
-
-.oc-sidebar__logo-icon svg {
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-}
-
-.oc-sidebar__logo-text {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: white;
-  white-space: nowrap;
-  flex: 1;
-  transition: opacity $transition;
-}
-
-.oc-sidebar.collapsed .oc-sidebar__logo-text {
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-}
-
-.oc-sidebar__toggle {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.45);
-  cursor: pointer;
-  font-size: 18px;
-  padding: 4px;
-  border-radius: 6px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  transition: color 0.15s;
-}
-
-.oc-sidebar__toggle:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* User block */
-.oc-sidebar__user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  flex-shrink: 0;
-}
-
-.oc-sidebar__user-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: $blue;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.875rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.oc-sidebar__user-info {
-  overflow: hidden;
-  transition: opacity $transition;
-}
-
-.oc-sidebar.collapsed .oc-sidebar__user-info {
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-}
-
-.oc-sidebar__user-name {
-  font-size: 0.83rem;
-  font-weight: 600;
-  color: white;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.oc-sidebar__user-role {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0;
-  white-space: nowrap;
-}
-
-/* Navigation */
-.oc-sidebar__nav {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 12px 8px;
-  scrollbar-width: none;
-}
-
-.oc-sidebar__nav::-webkit-scrollbar {
-  display: none;
-}
-
-.oc-sidebar__section-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.3);
-  padding: 12px 8px 4px;
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  transition: opacity $transition;
-}
-
-.oc-sidebar.collapsed .oc-sidebar__section-label {
-  opacity: 0;
-}
-
-.oc-sidebar__item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  background: none;
+:host {
+  display: block;
   width: 100%;
-  text-align: left;
-  transition: all 0.15s;
-  white-space: nowrap;
 }
 
-.oc-sidebar__item i {
-  font-size: 18px;
-  flex-shrink: 0;
-  width: 20px;
-  text-align: center;
-}
-
-.oc-sidebar__item span {
-  transition: opacity $transition;
-  overflow: hidden;
-}
-
-.oc-sidebar.collapsed .oc-sidebar__item span {
-  opacity: 0;
-  width: 0;
-  pointer-events: none;
-}
-
-.oc-sidebar__item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  text-decoration: none;
-}
-
-.oc-sidebar__item.active {
-  background: $blue;
-  color: white;
-}
-
-.oc-sidebar__item--danger {
-  color: rgba(248, 113, 113, 0.8);
-}
-
-.oc-sidebar__item--danger:hover {
-  background: rgba(220, 38, 38, 0.15);
-  color: #f87171;
-}
-
-/* Footer sidebar */
-.oc-sidebar__footer {
-  padding: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  flex-shrink: 0;
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   MAIN CONTENT
-   ══════════════════════════════════════════════════════════════════ */
-.oc-main {
-  flex: 1;
-  margin-left: $sidebar-w;
+// ── Page login ────────────────────────────────────────────────────
+.oc-login-page {
+  display: flex;
   min-height: 100vh;
+  background: #f1f5f9;
+}
+
+.oc-login-left {
+  width: 42%;
+  background: #0f172a;
   display: flex;
   flex-direction: column;
-  transition: margin-left $transition;
-}
-
-.oc-layout.sidebar-collapsed .oc-main {
-  margin-left: $sidebar-w-col;
-}
-
-/* Topbar */
-.oc-topbar {
-  height: $topbar-h;
-  background: $bg-white;
-  border-bottom: 1px solid $border;
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.oc-topbar__title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: $text-main;
-  margin: 0;
-}
-
-.oc-topbar__date {
-  font-size: 0.75rem;
-  color: $text-muted;
-  margin: 0;
-  text-transform: capitalize;
-}
-
-.oc-topbar__right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.oc-topbar__icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid $border;
-  background: none;
-  color: $text-muted;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-}
-
-.oc-topbar__icon-btn::after {
-  display: none !important;
-}
-
-.oc-topbar__icon-btn:hover {
-  background: $bg-page;
-  color: $text-main;
-}
-
-.oc-topbar__avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: $blue;
-  color: white;
-  font-size: 0.85rem;
-  font-weight: 700;
-  border: 2px solid $border;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  padding: 0;
-}
-
-.oc-topbar__avatar::after {
-  display: none !important;
-}
-
-.oc-topbar__avatar:hover {
-  border-color: $blue;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.oc-topbar__avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* Dropdown */
-.oc-drop__menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  min-width: 200px;
-  background: $bg-white;
-  border: 1px solid $border;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  padding: 6px;
-  list-style: none;
-  margin: 0;
-  z-index: 500;
-}
-
-.oc-drop__menu--right {
-  left: auto;
-  right: 0;
-}
-
-.oc-drop__item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: #334155;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.1s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-
-.oc-drop__item:hover {
-  background: $bg-page;
-  color: $text-main;
-}
-
-.oc-drop__item--danger {
-  color: #dc2626;
-}
-
-.oc-drop__item--danger:hover {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.oc-drop__header {
-  padding: 10px 12px 6px;
-}
-
-.oc-drop__name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: $text-main;
-  margin: 0 0 2px;
-}
-
-.oc-drop__email {
-  font-size: 0.75rem;
-  color: $text-muted;
-  margin: 0;
+  padding: 3rem;
+  position: relative;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 200px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.12);
+    top: -80px;
+    right: -80px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.07);
+    bottom: 60px;
+    left: -60px;
+  }
 }
 
-.oc-drop__divider {
-  height: 1px;
-  background: $border;
-  margin: 4px 0;
-  list-style: none;
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   DASHBOARD
-   ══════════════════════════════════════════════════════════════════ */
-.oc-dashboard {
-  padding: 1.5rem 2rem;
-  flex: 1;
-}
-
-/* KPI grid */
-.oc-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.oc-kpi {
-  background: $bg-white;
-  border-radius: 14px;
-  padding: 1.25rem;
+.oc-login-left__logo {
   display: flex;
   align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid $border;
-  border-left-width: 4px;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+
+  svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.3px;
+  }
 }
 
-.oc-kpi:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  border-bottom-color: transparent;
-  border-right-color: transparent;
-  border-top-color: transparent;
+.oc-login-left__hero {
+  position: relative;
+  z-index: 1;
+
+  h2 {
+    font-size: 1.65rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1.35;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.7;
+  }
 }
 
-/* Couleurs accent des KPI */
-.oc-kpi--blue {
-  border-left-color: #2563eb;
-}
-.oc-kpi--green {
-  border-left-color: #059669;
-}
-.oc-kpi--orange {
-  border-left-color: #d97706;
-}
-.oc-kpi--purple {
-  border-left-color: #7c3aed;
-}
-.oc-kpi--teal {
-  border-left-color: #0891b2;
-}
-.oc-kpi--red {
-  border-left-color: #dc2626;
-}
-
-.oc-kpi__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 20px;
-}
-
-.oc-kpi--blue .oc-kpi__icon {
-  background: #eff6ff;
-  color: #2563eb;
-}
-.oc-kpi--green .oc-kpi__icon {
-  background: #ecfdf5;
-  color: #059669;
-}
-.oc-kpi--orange .oc-kpi__icon {
-  background: #fffbeb;
-  color: #d97706;
-}
-.oc-kpi--purple .oc-kpi__icon {
-  background: #f5f3ff;
-  color: #7c3aed;
-}
-.oc-kpi--teal .oc-kpi__icon {
-  background: #ecfeff;
-  color: #0891b2;
-}
-.oc-kpi--red .oc-kpi__icon {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.oc-kpi__label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: $text-muted;
-  margin: 0 0 2px;
-}
-
-.oc-kpi__action {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: $text-main;
-  margin: 0;
-}
-
-/* Section */
-.oc-section {
-  margin-bottom: 2rem;
-}
-
-.oc-section__title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: $text-muted;
-  margin-bottom: 1rem;
-}
-
-/* Quick access grid */
-.oc-quick-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 0.75rem;
-}
-
-.oc-quick-card {
-  background: $bg-white;
-  border: 1px solid $border;
-  border-radius: 12px;
-  padding: 1rem;
+.oc-login-left__features {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.oc-login-feat {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.8rem;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
-  color: #334155;
-  text-decoration: none;
-  transition: all 0.15s;
-  text-align: center;
 }
 
-.oc-quick-card i {
-  font-size: 22px;
-  color: $blue;
+.oc-login-feat__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(37, 99, 235, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #93c5fd;
+  flex-shrink: 0;
 }
 
-.oc-quick-card:hover {
-  background: $blue;
-  color: white;
-  border-color: $blue;
-  text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-.oc-quick-card:hover i {
-  color: white;
-}
-
-/* ── Page login ─────────────────────────────────────────────────── */
-.oc-login-screen {
+.oc-login-right {
   flex: 1;
   display: flex;
   align-items: center;
@@ -607,106 +125,155 @@ $transition: 0.22s ease;
 }
 
 .oc-login-card {
-  background: $bg-white;
-  border: 1px solid $border;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
-  padding: 3rem;
-  text-align: center;
-  max-width: 380px;
+  padding: 2.5rem;
   width: 100%;
+  max-width: 400px;
 }
 
-.oc-login-logo svg {
-  width: 56px;
-  height: 56px;
-  margin-bottom: 1rem;
+.oc-login-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+
+  i {
+    font-size: 14px;
+  }
 }
 
-.oc-login-title {
+.oc-login-card__title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: $text-main;
+  color: #0f172a;
   margin: 0 0 6px;
 }
 
-.oc-login-sub {
-  font-size: 0.9rem;
-  color: $text-muted;
-  margin-bottom: 2rem;
+.oc-login-card__sub {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
-.oc-login-btn {
-  display: inline-flex;
+.oc-login-card__info {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+
+  i {
+    font-size: 16px;
+    color: #2563eb;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.oc-login-card__btn {
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: $blue;
+  width: 100%;
+  padding: 13px;
+  background: #2563eb;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 12px 28px;
+  border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  width: 100%;
-  justify-content: center;
+  transition: background 0.15s, transform 0.15s;
+
+  i {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+  }
 }
 
-.oc-login-btn:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+.oc-login-card__footer {
+  margin-top: 1.25rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.6;
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
-/* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .oc-sidebar {
-    width: $sidebar-w-col;
+  .oc-login-left {
+    display: none;
   }
-  .oc-sidebar .oc-sidebar__logo-text,
-  .oc-sidebar .oc-sidebar__user-info,
-  .oc-sidebar .oc-sidebar__section-label,
-  .oc-sidebar .oc-sidebar__item span {
-    opacity: 0;
-    width: 0;
-    pointer-events: none;
+
+  .oc-login-page {
+    background: #ffffff;
   }
-  .oc-main {
-    margin-left: $sidebar-w-col;
-  }
-  .oc-dashboard {
+
+  .oc-login-right {
     padding: 1rem;
   }
-  .oc-kpi-grid {
-    grid-template-columns: 1fr 1fr;
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────
+.oc-dashboard {
+  padding: 2rem 2.5rem;
+}
+
+.oc-topbar {
+  margin-bottom: 2rem;
+
+  &__date {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #2563eb;
+    margin: 0 0 6px;
   }
-}
-/* ── Fix toggle visible quand sidebar collapsed ─────────────────── */
-.oc-sidebar__logo.collapsed {
-  justify-content: center;
-  padding: 0 8px;
-}
 
-.oc-sidebar.collapsed .oc-sidebar__logo {
-  justify-content: center;
-  padding: 0 8px;
-}
-.oc-greeting {
-  margin-bottom: 1.5rem;
-}
-.oc-greeting h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 4px;
-}
-.oc-greeting p {
-  font-size: 0.82rem;
-  color: #64748b;
-}
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 4px;
+  }
 
-.oc-topbar__left {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  &__sub {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+  }
 }
