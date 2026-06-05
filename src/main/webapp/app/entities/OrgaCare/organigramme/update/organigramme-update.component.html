@@ -1,127 +1,407 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-organigramme-heading"
-        data-cy="OrganigrammeCreateUpdateHeading"
-        jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.createOrEditLabel"
-      >
-        Create or edit a Organigramme
-      </h2>
-
-      <div>
-        <jhi-alert-error></jhi-alert-error>
-
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code" for="field_code">Code</label>
-          <input type="text" class="form-control" name="code" id="field_code" data-cy="code" formControlName="code" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom" for="field_nom">Nom</label>
-          <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateCreation" for="field_dateCreation"
-            >Date Creation</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateCreation"
-              data-cy="dateCreation"
-              type="datetime-local"
-              class="form-control"
-              name="dateCreation"
-              formControlName="dateCreation"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateAction" for="field_dateAction"
-            >Date Action</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateAction"
-              data-cy="dateAction"
-              type="datetime-local"
-              class="form-control"
-              name="dateAction"
-              formControlName="dateAction"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateExpiration" for="field_dateExpiration"
-            >Date Expiration</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_dateExpiration"
-              data-cy="dateExpiration"
-              type="datetime-local"
-              class="form-control"
-              name="dateExpiration"
-              formControlName="dateExpiration"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.etat" for="field_etat">Etat</label>
-          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
-            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
-            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe" for="field_societe"
-            >Societe</label
-          >
-          <select class="form-control" id="field_societe" data-cy="societe" name="societe" formControlName="societe">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
-              *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
-            >
-              {{ societeOption.id }}
-            </option>
-          </select>
-        </div>
+<div class="organigramme-update-container">
+  <!-- ── Header Banner ─────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="6" height="6" rx="1" />
+          <rect x="15" y="3" width="6" height="6" rx="1" />
+          <rect x="9" y="15" width="6" height="6" rx="1" />
+          <line x1="6" y1="9" x2="6" y2="12" />
+          <line x1="18" y1="9" x2="18" y2="12" />
+          <line x1="6" y1="12" x2="18" y2="12" />
+          <line x1="12" y1="12" x2="12" y2="15" />
+        </svg>
       </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.createOrEditLabel">Créer ou éditer un Organigramme</h1>
+        <p>Renseignez les informations de l'organigramme</p>
       </div>
-    </form>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button type="button" class="btn-header-primary" [disabled]="editForm.invalid || isSaving" (click)="save()">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
   </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <!-- Hidden ID -->
+    <div [hidden]="true">
+      <input type="number" formControlName="id" />
+    </div>
+
+    <!-- ── Section Générale ───────────────────────────── -->
+    <div class="accordion-card" [class.open]="sectionGenerale">
+      <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="3" width="6" height="6" rx="1" />
+              <rect x="9" y="15" width="6" height="6" rx="1" />
+              <line x1="6" y1="9" x2="6" y2="12" />
+              <line x1="18" y1="9" x2="18" y2="12" />
+              <line x1="6" y1="12" x2="18" y2="12" />
+              <line x1="12" y1="12" x2="12" y2="15" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Générale</span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionGenerale">
+        <div class="form-grid-3">
+          <!-- Code (nullable) -->
+          <div class="field-group">
+            <label for="field_code" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">CODE</label>
+            <input
+              type="text"
+              id="field_code"
+              class="field-input"
+              placeholder="Code de l'organigramme (optionnel)"
+              formControlName="code"
+            />
+          </div>
+
+          <!-- Nom (nullable) -->
+          <div class="field-group">
+            <label for="field_nom" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">NOM</label>
+            <input type="text" id="field_nom" class="field-input" placeholder="Nom de l'organigramme (optionnel)" formControlName="nom" />
+          </div>
+
+          <!-- Société (nullable) -->
+          <div class="field-group">
+            <label for="field_societe" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">SOCIÉTÉ</label>
+            <div class="select-wrapper">
+              <select
+                id="field_societe"
+                class="field-select"
+                formControlName="societe"
+                [compareWith]="compareSociete"
+                [ngStyle]="{ color: editForm.get('societe')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null">-- Aucune société --</option>
+                <option
+                  [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
+                  *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
+                >
+                  {{ societeOption.raisonSociale }}
+                </option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section Départements ──────────────────────────── -->
+    <div class="accordion-card" [class.open]="sectionDepartements">
+      <div class="accordion-header" (click)="sectionDepartements = !sectionDepartements">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-purple">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="3" width="6" height="6" rx="1" />
+              <rect x="9" y="15" width="6" height="6" rx="1" />
+              <line x1="6" y1="9" x2="6" y2="12" />
+              <line x1="18" y1="9" x2="18" y2="12" />
+              <line x1="6" y1="12" x2="18" y2="12" />
+              <line x1="12" y1="12" x2="12" y2="15" />
+            </svg>
+          </div>
+          <span class="accordion-title">Départements</span>
+          <span class="dept-count-badge" *ngIf="departementsCreated.length > 0">
+            {{ departementsCreated.length }}
+          </span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionDepartements">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionDepartements">
+        <!-- Bouton Ajouter -->
+        <div class="dept-toolbar">
+          <button type="button" class="btn-add-dept" (click)="openDepartementModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Ajouter un département
+          </button>
+        </div>
+
+        <!-- Liste des départements créés -->
+        <!-- Nouveau -->
+        <div class="dept-empty" *ngIf="departementsCreated.length === 0">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+            <rect x="3" y="3" width="6" height="6" rx="1" />
+            <rect x="15" y="3" width="6" height="6" rx="1" />
+            <rect x="9" y="15" width="6" height="6" rx="1" />
+            <line x1="6" y1="9" x2="6" y2="12" />
+            <line x1="18" y1="9" x2="18" y2="12" />
+            <line x1="6" y1="12" x2="18" y2="12" />
+            <line x1="12" y1="12" x2="12" y2="15" />
+          </svg>
+          <p>Aucun département pour cet organigramme</p>
+        </div>
+
+        <!-- Arbre des départements dans l'accordéon -->
+        <div class="dept-tree-container" *ngIf="departementTree.length > 0">
+          <ng-container *ngTemplateOutlet="deptAccordionNode; context: { nodes: departementTree, depth: 0 }"> </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Template arbre accordéon ──────────────────────── -->
+    <ng-template #deptAccordionNode let-nodes="nodes" let-depth="depth">
+      <div *ngFor="let node of nodes" class="dept-acc-node-wrapper">
+        <div class="dept-acc-row" [style.padding-left.px]="16 + depth * 24">
+          <!-- Bouton expand/collapse -->
+          <button *ngIf="node.children?.length > 0" type="button" class="dept-acc-toggle" (click)="toggleAccordionNode(node.id, $event)">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              [style.transform]="isAccordionExpanded(node.id) ? 'rotate(90deg)' : 'rotate(0deg)'"
+              style="transition: transform 0.18s ease; display: block"
+            >
+              <polyline points="9 6 15 12 9 18" />
+            </svg>
+          </button>
+
+          <!-- Point feuille -->
+          <span class="dept-acc-leaf" *ngIf="!node.children?.length">
+            <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="6" />
+            </svg>
+          </span>
+
+          <!-- Infos -->
+          <div class="dept-acc-info">
+            <span class="dept-code">{{ node.code ?? '—' }}</span>
+            <span class="dept-nom">{{ node.nom ?? '—' }}</span>
+            <span class="dept-children-badge" *ngIf="node.children?.length > 0">
+              {{ node.children.length }}
+              {{ node.children.length === 1 ? 'sous-dept' : 'sous-depts' }}
+            </span>
+          </div>
+
+          <!-- Bouton supprimer -->
+          <button type="button" class="btn-remove-dept" (click)="removeDepartement(node)" title="Supprimer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-1 14H6L5 6" />
+              <path d="M10 11v6M14 11v6" />
+              <path d="M9 6V4h6v2" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Enfants récursifs -->
+        <div class="dept-acc-children" *ngIf="node.children?.length > 0 && isAccordionExpanded(node.id)">
+          <ng-container [ngTemplateOutlet]="deptAccordionNode" [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }">
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- ── Modal Ajout Département ───────────────────────── -->
+    <ng-template #departementModal>
+      <div class="modal-header-custom">
+        <div class="modal-header-left">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="3" width="6" height="6" rx="1" />
+              <rect x="9" y="15" width="6" height="6" rx="1" />
+              <line x1="6" y1="9" x2="6" y2="12" />
+              <line x1="18" y1="9" x2="18" y2="12" />
+              <line x1="6" y1="12" x2="18" y2="12" />
+              <line x1="12" y1="12" x2="12" y2="15" />
+            </svg>
+          </div>
+          <div>
+            <h5 class="modal-title-text">Nouveau département</h5>
+            <p class="modal-subtitle-text">Rattaché à l'organigramme courant</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" (click)="closeDepartementModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body-custom" [formGroup]="deptForm">
+        <div class="modal-form-grid">
+          <!-- Nom -->
+          <div class="field-group">
+            <label for="dept_nom">NOM</label>
+            <input type="text" id="dept_nom" class="field-input" placeholder="Nom du département" formControlName="nom" />
+          </div>
+
+          <!-- Code -->
+          <div class="field-group">
+            <label for="dept_code">CODE</label>
+            <input type="text" id="dept_code" class="field-input" placeholder="Ex: DEPT-001" formControlName="code" />
+          </div>
+
+          <!-- Email -->
+          <div class="field-group">
+            <label for="dept_email">EMAIL</label>
+            <input type="email" id="dept_email" class="field-input" placeholder="dept@exemple.com" formControlName="email" />
+          </div>
+
+          <!-- Site -->
+          <div class="field-group">
+            <label for="dept_site">SITE</label>
+            <div class="select-wrapper">
+              <select
+                id="dept_site"
+                class="field-select"
+                formControlName="site"
+                [compareWith]="compareSite"
+                [ngStyle]="{ color: deptForm.get('site')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null">-- Aucun site --</option>
+                <option [ngValue]="siteOption" *ngFor="let siteOption of sitesCollection; trackBy: trackSiteById">
+                  {{ siteOption.nom ?? siteOption.code ?? siteOption.id }}
+                </option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+          <!-- Département Parent -->
+          <div class="dept-parent-section">
+            <div class="dept-parent-label">
+              DÉPARTEMENT PARENT
+              <span class="dept-parent-selected" *ngIf="deptForm.get('departementParentId')!.value">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                {{ getSelectedParentNom() }}
+                <button type="button" class="btn-clear-parent" (click)="deptForm.get('departementParentId')!.setValue(null)">×</button>
+              </span>
+            </div>
+
+            <!-- Aucun arbre disponible -->
+            <div class="tree-empty" *ngIf="departementTree.length === 0">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
+              </svg>
+              <p>Sauvegardez d'abord l'organigramme pour voir l'arbre</p>
+            </div>
+
+            <!-- Arbre récursif -->
+            <div class="tree-container" *ngIf="departementTree.length > 0">
+              <ng-container *ngTemplateOutlet="treeNode; context: { nodes: departementTree, depth: 0 }"> </ng-container>
+            </div>
+          </div>
+
+          <!-- Template récursif pour l'arbre -->
+          <ng-template #treeNode let-nodes="nodes" let-depth="depth">
+            <div *ngFor="let node of nodes" class="tree-node-wrapper">
+              <div
+                class="tree-node"
+                [class.selected]="deptForm.get('departementParentId')!.value === node.id"
+                [style.padding-left.px]="14 + depth * 20"
+                (click)="selectDepartementParent(node)"
+              >
+                <!-- Bouton expand/collapse -->
+                <button
+                  *ngIf="node.children?.length > 0"
+                  type="button"
+                  class="tree-toggle-btn"
+                  (click)="toggleNode(node.id, $event)"
+                  [attr.aria-expanded]="isExpanded(node.id)"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    [style.transform]="isExpanded(node.id) ? 'rotate(90deg)' : 'rotate(0deg)'"
+                    style="transition: transform 0.18s ease; display: block"
+                  >
+                    <polyline points="9 6 15 12 9 18" />
+                  </svg>
+                </button>
+
+                <!-- Point feuille -->
+                <span class="tree-node-icon leaf" *ngIf="!node.children?.length">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="5" />
+                  </svg>
+                </span>
+
+                <!-- Texte -->
+                <span class="tree-node-code" *ngIf="node.code">{{ node.code }}</span>
+                <span class="tree-node-nom">{{ node.nom ?? '—' }}</span>
+
+                <!-- Check sélectionné -->
+                <span class="tree-node-check" *ngIf="deptForm.get('departementParentId')!.value === node.id">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+              </div>
+
+              <!-- Récursion enfants — visible seulement si expandé -->
+              <div class="tree-children" *ngIf="node.children?.length > 0 && isExpanded(node.id)">
+                <ng-container [ngTemplateOutlet]="treeNode" [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }">
+                </ng-container>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="closeDepartementModal()">Annuler</button>
+        <button type="button" class="btn-save" [disabled]="isSavingDept" (click)="saveDepartement()">
+          <span *ngIf="isSavingDept" class="spinner-border spinner-border-sm me-1"></span>
+          Créer le département
+        </button>
+      </div>
+    </ng-template>
+
+    <!-- ── Footer Actions ────────────────────────────── -->
+    <div class="form-footer">
+      <button type="button" class="btn-cancel" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        <span jhiTranslate="entity.action.cancel">Annuler</span>
+      </button>
+      <button type="submit" [disabled]="editForm.invalid || isSaving" class="btn-save">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
+  </form>
 </div>

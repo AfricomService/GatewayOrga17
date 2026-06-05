@@ -10,8 +10,11 @@ export interface IDepartement {
   status?: Etat;
   email?: string | null;
   organigramme?: IOrganigramme | null;
+  organigrammeId?: number | null; // ← ajouter
   site?: ISite | null;
+  siteId?: number | null; // ← ajouter
   departementParent?: IDepartement | null;
+  departementParentId?: number | null; // ← ajouter (cohérence)
   personnes?: IPersonne[] | null;
 }
 
@@ -23,8 +26,11 @@ export class Departement implements IDepartement {
     public status?: Etat,
     public email?: string | null,
     public organigramme?: IOrganigramme | null,
+    public organigrammeId?: number | null, // ← ajouter
     public site?: ISite | null,
+    public siteId?: number | null, // ← ajouter
     public departementParent?: IDepartement | null,
+    public departementParentId?: number | null, // ← ajouter
     public personnes?: IPersonne[] | null
   ) {}
 }

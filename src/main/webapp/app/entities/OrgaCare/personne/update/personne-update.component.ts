@@ -21,7 +21,6 @@ import { EtatContractuelle } from 'app/entities/enumerations/etat-contractuelle.
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
-import { FrontendConfigService } from '../service/frontend-config.service';
 import { KeycloakSyncService, KeycloakSyncResult } from 'app/core/keycloak/keycloak-sync.service';
 
 @Component({
@@ -60,7 +59,6 @@ export class PersonneUpdateComponent implements OnInit {
   userPage = 1;
   userItemsPerPage = 5;
   userTotalItems = 0;
-  keycloakAdminUrl?: string;
 
   isSyncing = false;
   syncResult: KeycloakSyncResult | null = null;
@@ -96,14 +94,11 @@ export class PersonneUpdateComponent implements OnInit {
     protected fb: FormBuilder,
     protected modalService: NgbModal,
     protected userService: UserService,
-    protected frontendConfigService: FrontendConfigService,
     private cdr: ChangeDetectorRef,
     private keycloakSyncService: KeycloakSyncService
   ) {}
 
   ngOnInit(): void {
-    this.loadKeycloakConfig();
-
     this.activatedRoute.data.subscribe(({ personne }) => {
       if (personne.id === undefined) {
         const today = dayjs().startOf('day');
@@ -136,13 +131,6 @@ export class PersonneUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.personneService.create(personne));
     }
-  }
-
-  openKeycloakCreateUser(): void {
-    if (!this.keycloakAdminUrl) {
-      return;
-    }
-    window.open(this.keycloakAdminUrl, '_blank');
   }
 
   syncKeycloakUsers(): void {
@@ -367,18 +355,5 @@ export class PersonneUpdateComponent implements OnInit {
       grade: this.editForm.get(['grade'])!.value,
       fonction: this.editForm.get(['fonction'])!.value,
     };
-  }
-
-  protected loadKeycloakConfig(): void {
-    this.frontendConfigService.getKeycloakConfig().subscribe({
-      next: cfg => {
-        this.keycloakAdminUrl = cfg.adminUserCreateUrl;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.keycloakAdminUrl = undefined;
-        this.cdr.markForCheck();
-      },
-    });
   }
 }

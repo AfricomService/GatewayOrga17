@@ -34,19 +34,6 @@
       </ng-container>
 
       <ng-container *ngIf="editForm.get('id')!.value != null">
-        <!-- Bouton Créer un compte -->
-        <button
-          *ngIf="!editForm.get('userId')!.value"
-          type="button"
-          class="btn-action btn-action--warning"
-          [disabled]="!keycloakAdminUrl"
-          (click)="openKeycloakCreateUser()"
-          title="Ouvrir Keycloak pour créer un compte utilisateur"
-        >
-          <fa-icon icon="user-plus"></fa-icon>
-          <span>Créer un compte</span>
-        </button>
-
         <!-- Bouton Affecter un compte -->
         <button
           type="button"

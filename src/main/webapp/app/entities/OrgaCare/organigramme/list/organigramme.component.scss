@@ -1,0 +1,505 @@
+// =============================================
+// organigramme.component.scss
+// Liste des organigrammes — même design system
+// =============================================
+
+$primary: #3f3d8f;
+$primary-light: #5451a8;
+$surface: #ffffff;
+$bg: #f0f2f8;
+$border: #e2e6f0;
+$text-dark: #1a1a2e;
+$text-muted: #8890a6;
+$text-label: #5a6380;
+$danger: #e53e3e;
+$danger-light: #fff0f0;
+$radius-card: 12px;
+$shadow-card: 0 2px 12px rgba(63, 61, 143, 0.07);
+$shadow-hover: 0 4px 20px rgba(63, 61, 143, 0.12);
+$transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── Etat badge colors ──────────────────────
+$etat-actif: #2f855a;
+$etat-actif-bg: #f0fff4;
+$etat-actif-border: #9ae6b4;
+
+$etat-draft: #6b46c1;
+$etat-draft-bg: #faf5ff;
+$etat-draft-border: #d6bcfa;
+
+$etat-canceled: #c05621;
+$etat-canceled-bg: #fffaf0;
+$etat-canceled-border: #fbd38d;
+
+$etat-closed: #2d3748;
+$etat-closed-bg: #edf2f7;
+$etat-closed-border: #cbd5e0;
+
+$etat-inexecution: #2b6cb0;
+$etat-inexecution-bg: #ebf8ff;
+$etat-inexecution-border: #90cdf4;
+
+// =============================================
+// Container
+// =============================================
+.organigramme-list-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 0 40px;
+}
+
+// =============================================
+// Page Header
+// =============================================
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+  border-radius: $radius-card;
+  padding: 22px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 24px rgba(63, 61, 143, 0.25);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+  }
+
+  .header-text {
+    h1 {
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 2px;
+      letter-spacing: -0.3px;
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.82rem;
+      margin: 0;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+// Refresh button (icon-only)
+.btn-header-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg.spinning {
+    animation: spin 0.9s linear infinite;
+  }
+}
+
+// Create button (icon-only, filled)
+.btn-header-create {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: $transition;
+  backdrop-filter: blur(4px);
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.32);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// =============================================
+// Empty State
+// =============================================
+.empty-state {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  padding: 64px 32px;
+  text-align: center;
+
+  .empty-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: $text-muted;
+    opacity: 0.4;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: $text-dark;
+    margin: 0 0 24px;
+  }
+}
+
+.btn-empty-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: $primary;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    background: $primary-light;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba($primary, 0.35);
+  }
+}
+
+// =============================================
+// Table Card
+// =============================================
+.table-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+  }
+}
+
+.orga-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+
+  // ── Head ──────────────────────────────────
+  thead {
+    background: $bg;
+    border-bottom: 1.5px solid $border;
+
+    tr th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: $text-label;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: $transition;
+
+      &.col-actions {
+        text-align: right;
+        padding-right: 24px;
+        cursor: default;
+      }
+
+      &:hover:not(.col-actions) {
+        color: $primary;
+      }
+
+      .sort-icon {
+        font-size: 11px;
+        color: $text-muted;
+        margin-left: 5px;
+      }
+    }
+  }
+
+  // ── Body ──────────────────────────────────
+  tbody {
+    .orga-row {
+      border-bottom: 1px solid $border;
+      transition: $transition;
+      cursor: pointer;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: rgba($primary, 0.03);
+
+        .nom-avatar {
+          background: $primary;
+          color: #fff;
+        }
+      }
+
+      &:active {
+        background: rgba($primary, 0.06);
+      }
+
+      td {
+        padding: 14px 20px;
+        font-size: 0.875rem;
+        color: $text-dark;
+        vertical-align: middle;
+      }
+
+      .col-actions {
+        text-align: right;
+        padding-right: 20px;
+      }
+    }
+  }
+}
+
+// =============================================
+// Cell — Nom
+// =============================================
+.col-nom {
+  .nom-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.nom-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #eef0fc;
+  color: $primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: $transition;
+}
+
+.nom-text {
+  font-weight: 500;
+  color: $text-dark;
+}
+
+// =============================================
+// Cell — Code
+// =============================================
+.code-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #eef0fc;
+  color: $primary;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.text-muted {
+  color: $text-muted;
+  font-size: 0.875rem;
+}
+
+// =============================================
+// Cell — Etat badges
+// =============================================
+.etat-badge {
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.badge-actif {
+  background: $etat-actif-bg;
+  color: $etat-actif;
+  border-color: $etat-actif-border;
+}
+
+.badge-draft {
+  background: $etat-draft-bg;
+  color: $etat-draft;
+  border-color: $etat-draft-border;
+}
+
+.badge-canceled {
+  background: $etat-canceled-bg;
+  color: $etat-canceled;
+  border-color: $etat-canceled-border;
+}
+
+.badge-closed {
+  background: $etat-closed-bg;
+  color: $etat-closed;
+  border-color: $etat-closed-border;
+}
+
+.badge-inexecution {
+  background: $etat-inexecution-bg;
+  color: $etat-inexecution;
+  border-color: $etat-inexecution-border;
+}
+
+.badge-default {
+  background: $bg;
+  color: $text-muted;
+  border-color: $border;
+}
+
+// =============================================
+// Cell — Société
+// =============================================
+.societe-name {
+  color: $text-dark;
+  font-size: 0.875rem;
+}
+
+// =============================================
+// Actions
+// =============================================
+.action-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: $transition;
+  background: transparent;
+}
+
+.btn-delete {
+  background: $danger-light;
+  border-color: lighten($danger, 25%);
+  color: $danger;
+
+  &:hover {
+    background: $danger;
+    border-color: $danger;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba($danger, 0.3);
+  }
+}
+
+// =============================================
+// Pagination
+// =============================================
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid $border;
+  background: $bg;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  ::ng-deep {
+    .pagination {
+      margin: 0;
+      gap: 4px;
+
+      .page-item {
+        .page-link {
+          border: 1.5px solid $border;
+          border-radius: 7px !important;
+          color: $text-label;
+          font-size: 0.82rem;
+          font-weight: 500;
+          padding: 5px 11px;
+          transition: $transition;
+
+          &:hover {
+            background: #eef0fc;
+            border-color: $primary-light;
+            color: $primary;
+          }
+        }
+
+        &.active .page-link {
+          background: $primary;
+          border-color: $primary;
+          color: #fff;
+          box-shadow: 0 2px 8px rgba($primary, 0.35);
+        }
+
+        &.disabled .page-link {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

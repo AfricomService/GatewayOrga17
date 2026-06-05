@@ -11,6 +11,8 @@ export interface IOrganigramme {
   dateExpiration?: dayjs.Dayjs | null;
   etat?: Etat;
   societe?: ISociete | null;
+  societeId?: number | null;
+  societeRaisonSociale?: string | null;
 }
 
 export interface IOrganigrammeCode {
@@ -27,7 +29,8 @@ export class Organigramme implements IOrganigramme {
     public dateAction?: dayjs.Dayjs | null,
     public dateExpiration?: dayjs.Dayjs | null,
     public etat?: Etat,
-    public societe?: ISociete | null
+    public societe?: ISociete | null,
+    public societeId?: number | null // ← ajouter
   ) {}
 }
 

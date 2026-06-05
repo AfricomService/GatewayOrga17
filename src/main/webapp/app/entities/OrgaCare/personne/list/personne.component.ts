@@ -11,6 +11,7 @@ import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants
 import { PersonneService } from '../service/personne.service';
 import { PersonneDeleteDialogComponent } from '../delete/personne-delete-dialog.component';
 import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/type-contrat.service';
+import { FrontendConfigService } from '../service/frontend-config.service';
 
 @Component({
   selector: 'jhi-personne',
@@ -39,24 +40,47 @@ export class PersonneComponent implements OnInit {
   typesContrat: ITypeContrat[] = [];
   selectedFile: File | null = null;
 
+  keycloakAdminUrl?: string;
+
   constructor(
     protected personneService: PersonneService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected modalService: NgbModal,
     protected typeContratService: TypeContratService,
+    protected frontendConfigService: FrontendConfigService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.handleNavigation();
     this.loadTypesContrat();
+    this.loadKeycloakConfig();
   }
 
   loadTypesContrat(): void {
     this.typeContratService.query().subscribe((res: HttpResponse<ITypeContrat[]>) => {
       this.typesContrat = res.body ?? [];
     });
+  }
+
+  loadKeycloakConfig(): void {
+    this.frontendConfigService.getKeycloakConfig().subscribe({
+      next: cfg => {
+        this.keycloakAdminUrl = cfg.adminUserCreateUrl;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.keycloakAdminUrl = undefined;
+      },
+    });
+  }
+
+  openKeycloakCreateUser(): void {
+    if (!this.keycloakAdminUrl) {
+      return;
+    }
+    window.open(this.keycloakAdminUrl, '_blank');
   }
 
   hasAccount(personne: IPersonne): boolean {

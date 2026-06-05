@@ -1,104 +1,140 @@
-<div>
-  <h2 id="page-heading" data-cy="OrganigrammeHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.title">Organigrammes</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.refreshListLabel">Refresh List</span>
+<div class="organigramme-list-container">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="6" height="6" rx="1" />
+          <rect x="15" y="3" width="6" height="6" rx="1" />
+          <rect x="9" y="15" width="6" height="6" rx="1" />
+          <line x1="6" y1="9" x2="6" y2="12" />
+          <line x1="18" y1="9" x2="18" y2="12" />
+          <line x1="6" y1="12" x2="18" y2="12" />
+          <line x1="12" y1="12" x2="12" y2="15" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.title">Organigrammes</h1>
+        <p>Gérez les organigrammes enregistrés</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header-refresh" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
       </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-organigramme"
-        [routerLink]="['/organigramme/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.createLabel"> Create a new Organigramme </span>
+      <button class="btn-header-create" [routerLink]="['/organigramme/new']">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
       </button>
     </div>
-  </h2>
-
-  <jhi-alert-error></jhi-alert-error>
-
-  <jhi-alert></jhi-alert>
-
-  <div class="alert alert-warning" id="no-result" *ngIf="organigrammes?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.notFound">No organigrammes found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="organigrammes && organigrammes.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Empty state ─────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="organigrammes?.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <rect x="3" y="3" width="6" height="6" rx="1" />
+        <rect x="15" y="3" width="6" height="6" rx="1" />
+        <rect x="9" y="15" width="6" height="6" rx="1" />
+        <line x1="6" y1="9" x2="6" y2="12" />
+        <line x1="18" y1="9" x2="18" y2="12" />
+        <line x1="6" y1="12" x2="18" y2="12" />
+        <line x1="12" y1="12" x2="12" y2="15" />
+      </svg>
+    </div>
+    <p jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.notFound">Aucun organigramme trouvé</p>
+    <button class="btn-empty-create" [routerLink]="['/organigramme/new']">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Créer un organigramme
+    </button>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <div class="table-card" *ngIf="organigrammes && organigrammes.length > 0">
+    <table class="orga-table" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="code">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">Code</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="nom">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">NOM</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="nom">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">Nom</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="code">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">CODE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="dateCreation">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateCreation">Date Creation</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="etat">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.etat">ÉTAT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="dateAction">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateAction">Date Action</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="societe.id">
+            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">SOCIÉTÉ</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="dateExpiration">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateExpiration">Date Expiration</span>
-            <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="etat">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.etat">Etat</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="societe.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">Societe</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
+          <th class="col-actions">ACTIONS</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let organigramme of organigrammes; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/organigramme', organigramme.id, 'view']">{{ organigramme.id }}</a>
-          </td>
-          <td>{{ organigramme.code }}</td>
-          <td>{{ organigramme.nom }}</td>
-          <td>{{ organigramme.dateCreation | formatMediumDatetime }}</td>
-          <td>{{ organigramme.dateAction | formatMediumDatetime }}</td>
-          <td>{{ organigramme.dateExpiration | formatMediumDatetime }}</td>
-          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + organigramme.etat }}">{{ organigramme.etat }}</td>
-          <td>
-            <div *ngIf="organigramme.societe">
-              <a [routerLink]="['/societe', organigramme.societe?.id, 'view']">{{ organigramme.societe?.id }}</a>
+        <tr
+          *ngFor="let organigramme of organigrammes; trackBy: trackId"
+          class="orga-row"
+          (dblclick)="navigateToEdit(organigramme)"
+          title="Double-cliquer pour modifier"
+        >
+          <!-- Nom -->
+          <td class="col-nom">
+            <div class="nom-wrapper">
+              <div class="nom-avatar">
+                {{ (organigramme.nom ?? organigramme.code ?? '?').charAt(0).toUpperCase() }}
+              </div>
+              <span class="nom-text">{{ organigramme.nom ?? '—' }}</span>
             </div>
           </td>
-          <td class="text-right">
-            <div class="btn-group">
-              <button
-                type="submit"
-                [routerLink]="['/organigramme', organigramme.id, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </button>
 
-              <button
-                type="submit"
-                [routerLink]="['/organigramme', organigramme.id, 'edit']"
-                class="btn btn-primary btn-sm"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
+          <!-- Code -->
+          <td class="col-code">
+            <span class="code-badge" *ngIf="organigramme.code">{{ organigramme.code }}</span>
+            <span class="text-muted" *ngIf="!organigramme.code">—</span>
+          </td>
 
-              <button type="submit" (click)="delete(organigramme)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+          <!-- Etat -->
+          <td class="col-etat">
+            <span
+              class="etat-badge {{ getEtatClass(organigramme.etat) }}"
+              jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + organigramme.etat }}"
+            >
+              {{ organigramme.etat }}
+            </span>
+          </td>
+
+          <!-- Société -->
+          <td class="col-societe">
+            <span class="societe-name" *ngIf="organigramme.societeRaisonSociale">
+              {{ organigramme.societeRaisonSociale }}
+            </span>
+            <span class="text-muted" *ngIf="!organigramme.societeRaisonSociale">—</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions">
+            <div class="action-group">
+              <button type="button" class="btn-action btn-delete" (click)="delete(organigramme, $event)" title="Supprimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
               </button>
             </div>
           </td>
@@ -107,21 +143,17 @@
     </table>
   </div>
 
-  <div *ngIf="organigrammes && organigrammes.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
-    </div>
-
-    <div class="row justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [(page)]="ngbPaginationPage"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="loadPage($event)"
-      ></ngb-pagination>
-    </div>
+  <!-- ── Pagination ──────────────────────────────────────── -->
+  <div class="pagination-wrapper" *ngIf="organigrammes && organigrammes.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
   </div>
 </div>

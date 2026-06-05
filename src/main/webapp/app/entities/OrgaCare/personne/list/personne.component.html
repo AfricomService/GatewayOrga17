@@ -30,6 +30,15 @@
       </button>
 
       <button
+        class="btn-header-secondary"
+        (click)="openKeycloakCreateUser()"
+        [disabled]="!keycloakAdminUrl"
+        title="Ouvrir Keycloak pour créer un compte utilisateur"
+      >
+        <fa-icon icon="user-plus"></fa-icon>
+      </button>
+
+      <button
         class="btn-header-primary"
         [routerLink]="['/personne/new']"
         title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.createLabel' | translate }}"

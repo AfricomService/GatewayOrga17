@@ -5,9 +5,10 @@ import { OrganigrammeDetailComponent } from './detail/organigramme-detail.compon
 import { OrganigrammeUpdateComponent } from './update/organigramme-update.component';
 import { OrganigrammeDeleteDialogComponent } from './delete/organigramme-delete-dialog.component';
 import { OrganigrammeRoutingModule } from './route/organigramme-routing.module';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  imports: [SharedModule, OrganigrammeRoutingModule],
+  imports: [SharedModule, OrganigrammeRoutingModule, NgbModalModule],
   declarations: [OrganigrammeComponent, OrganigrammeDetailComponent, OrganigrammeUpdateComponent, OrganigrammeDeleteDialogComponent],
   entryComponents: [OrganigrammeDeleteDialogComponent],
 })

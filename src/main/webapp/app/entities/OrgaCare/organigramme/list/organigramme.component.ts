@@ -13,6 +13,7 @@ import { OrganigrammeDeleteDialogComponent } from '../delete/organigramme-delete
 @Component({
   selector: 'jhi-organigramme',
   templateUrl: './organigramme.component.html',
+  styleUrls: ['./organigramme.component.scss'],
 })
 export class OrganigrammeComponent implements OnInit {
   organigrammes?: IOrganigramme[];
@@ -61,15 +62,41 @@ export class OrganigrammeComponent implements OnInit {
     return item.id!;
   }
 
-  delete(organigramme: IOrganigramme): void {
-    const modalRef = this.modalService.open(OrganigrammeDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+  // Double-click → navigate to edit
+  navigateToEdit(organigramme: IOrganigramme): void {
+    this.router.navigate(['/organigramme', organigramme.id, 'edit']);
+  }
+
+  delete(organigramme: IOrganigramme, event: Event): void {
+    event.stopPropagation(); // prevent row dblclick
+    const modalRef = this.modalService.open(OrganigrammeDeleteDialogComponent, {
+      size: 'lg',
+      backdrop: 'static',
+    });
     modalRef.componentInstance.organigramme = organigramme;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();
       }
     });
+  }
+
+  // Return CSS class for etat badge
+  getEtatClass(etat: string | undefined): string {
+    switch (etat) {
+      case 'ACTIF':
+        return 'badge-actif';
+      case 'DRAFT':
+        return 'badge-draft';
+      case 'CANCELED':
+        return 'badge-canceled';
+      case 'CLOSED':
+        return 'badge-closed';
+      case 'INEXECUTION':
+        return 'badge-inexecution';
+      default:
+        return 'badge-default';
+    }
   }
 
   protected sort(): string[] {
