@@ -162,6 +162,8 @@ export class OrganigrammeUpdateComponent implements OnInit {
 
     const selectedSite: ISite | null = this.deptForm.get('site')!.value;
 
+    const selectedSociete: ISociete | null = this.editForm.get('societe')!.value ?? null;
+
     const dept: IDepartement = {
       ...new Departement(),
       nom: this.deptForm.get('nom')!.value ?? null,
@@ -170,6 +172,7 @@ export class OrganigrammeUpdateComponent implements OnInit {
       organigrammeId: this.editForm.get('id')!.value ?? null,
       siteId: selectedSite?.id ?? null,
       departementParentId: this.deptForm.get('departementParentId')!.value ?? null,
+      societeId: selectedSociete?.id ?? null,
       status: Etat.ACTIF,
     };
 

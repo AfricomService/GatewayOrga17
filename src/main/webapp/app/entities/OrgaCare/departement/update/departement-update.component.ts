@@ -9,8 +9,6 @@ import { IDepartement, Departement } from '../departement.model';
 import { DepartementService } from '../service/departement.service';
 import { IOrganigramme } from 'app/entities/OrgaCare/organigramme/organigramme.model';
 import { OrganigrammeService } from 'app/entities/OrgaCare/organigramme/service/organigramme.service';
-import { ISite } from 'app/entities/OrgaCare/site/site.model';
-import { SiteService } from 'app/entities/OrgaCare/site/service/site.service';
 import { IPersonne } from 'app/entities/OrgaCare/personne/personne.model';
 import { PersonneService } from 'app/entities/OrgaCare/personne/service/personne.service';
 import { Etat } from 'app/entities/enumerations/etat.model';
@@ -28,26 +26,30 @@ export class DepartementUpdateComponent implements OnInit {
 
   // Collections pour les selects
   organigrammesSharedCollection: IOrganigramme[] = [];
-  sitesSharedCollection: ISite[] = [];
   departementsSharedCollection: IDepartement[] = [];
   personnesSharedCollection: IPersonne[] = [];
 
-  // Accordion / panels (même pattern que personne-update)
-  sectionItems = ['Informations Générales', 'Relations & Hiérarchie'];
+  // Accordion
   activePanels: string[] = ['panel-0'];
-  disablePanelTitle: boolean[] = [];
 
-  // Logique métier de l'ancienne version : génération automatique du code
+  // Affectations par type (pour le panel Membres)
+  chefs: IPersonne[] = [];
+  assistants: IPersonne[] = [];
+  membres: IPersonne[] = [];
+  interims: IPersonne[] = [];
+
+  // Société affichée (lue depuis l'organigramme sélectionné)
+  societeRaisonSociale: string | null = null;
+
   generateCodeAutomatically = false;
 
   editForm = this.fb.group({
     id: [],
     code: [],
     nom: [],
-    status: [null, [Validators.required]],
+    status: [Etat.ACTIF], // valeur par défaut ACTIF
     email: [null],
     organigramme: [],
-    site: [],
     departementParent: [],
     personnes: [],
   });
@@ -55,7 +57,6 @@ export class DepartementUpdateComponent implements OnInit {
   constructor(
     protected departementService: DepartementService,
     protected organigrammeService: OrganigrammeService,
-    protected siteService: SiteService,
     protected personneService: PersonneService,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
@@ -66,12 +67,16 @@ export class DepartementUpdateComponent implements OnInit {
       this.updateForm(departement);
       this.loadRelationshipsOptions();
 
-      // Génération automatique du code (logique conservée de l'ancienne version)
       if (this.generateCodeAutomatically && departement.id === undefined) {
         this.departementService.generateNextCode('DEPT-').subscribe(nextCode => {
           this.editForm.get('code')?.setValue(nextCode);
         });
       }
+
+      // Écouter les changements d'organigramme pour mettre à jour la société
+      this.editForm.get('organigramme')!.valueChanges.subscribe((orga: IOrganigramme | null) => {
+        this.societeRaisonSociale = orga?.societeRaisonSociale ?? null;
+      });
     });
   }
 
@@ -95,10 +100,6 @@ export class DepartementUpdateComponent implements OnInit {
     return item.id!;
   }
 
-  trackSiteById(index: number, item: ISite): number {
-    return item.id!;
-  }
-
   trackDepartementById(index: number, item: IDepartement): number {
     return item.id!;
   }
@@ -118,6 +119,17 @@ export class DepartementUpdateComponent implements OnInit {
       }
     }
     return option;
+  }
+
+  // ── Gestion des membres par type ─────────────────────────────────────────
+
+  openModifierPersonnes(type: 'CHEF' | 'ASSISTANT' | 'MEMBRE' | 'INTERIM'): void {
+    // Hook à brancher sur votre modal/page d'affectation
+    // Exemple : this.router.navigate(['/affectation/new'], { queryParams: { type, departementId: this.editForm.get('id')!.value } });
+  }
+
+  getPersonnesLabel(personnes: IPersonne[]): string {
+    return personnes.map(p => p.nomPrenom ?? p.id).join(', ');
   }
 
   // ── Save helpers ─────────────────────────────────────────────────────────
@@ -148,19 +160,24 @@ export class DepartementUpdateComponent implements OnInit {
       id: departement.id,
       code: departement.code,
       nom: departement.nom,
-      status: departement.status,
+      status: departement.status ?? Etat.ACTIF,
       email: departement.email,
       organigramme: departement.organigramme,
-      site: departement.site,
       departementParent: departement.departementParent,
       personnes: departement.personnes,
     });
+
+    // Société depuis l'organigramme
+    this.societeRaisonSociale = departement.organigramme?.societeRaisonSociale ?? null;
+
+    // Répartir les personnes par type d'affectation
+    // (si votre backend renvoie les affectations typées, adaptez ici)
+    this.membres = departement.personnes ?? [];
 
     this.organigrammesSharedCollection = this.organigrammeService.addOrganigrammeToCollectionIfMissing(
       this.organigrammesSharedCollection,
       departement.organigramme
     );
-    this.sitesSharedCollection = this.siteService.addSiteToCollectionIfMissing(this.sitesSharedCollection, departement.site);
     this.departementsSharedCollection = this.departementService.addDepartementToCollectionIfMissing(
       this.departementsSharedCollection,
       departement.departementParent
@@ -181,12 +198,6 @@ export class DepartementUpdateComponent implements OnInit {
         )
       )
       .subscribe((organigrammes: IOrganigramme[]) => (this.organigrammesSharedCollection = organigrammes));
-
-    this.siteService
-      .query()
-      .pipe(map((res: HttpResponse<ISite[]>) => res.body ?? []))
-      .pipe(map((sites: ISite[]) => this.siteService.addSiteToCollectionIfMissing(sites, this.editForm.get('site')!.value)))
-      .subscribe((sites: ISite[]) => (this.sitesSharedCollection = sites));
 
     this.departementService
       .query()
@@ -215,10 +226,9 @@ export class DepartementUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       code: this.editForm.get(['code'])!.value,
       nom: this.editForm.get(['nom'])!.value,
-      status: this.editForm.get(['status'])!.value,
+      status: this.editForm.get(['status'])!.value ?? Etat.ACTIF,
       email: this.editForm.get(['email'])!.value,
       organigramme: this.editForm.get(['organigramme'])!.value,
-      site: this.editForm.get(['site'])!.value,
       departementParent: this.editForm.get(['departementParent'])!.value,
       personnes: this.editForm.get(['personnes'])!.value,
     };

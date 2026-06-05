@@ -16,6 +16,7 @@ export interface IDepartement {
   departementParent?: IDepartement | null;
   departementParentId?: number | null; // ← ajouter (cohérence)
   personnes?: IPersonne[] | null;
+  societeId?: number | null;
 }
 
 export class Departement implements IDepartement {
@@ -31,7 +32,8 @@ export class Departement implements IDepartement {
     public siteId?: number | null, // ← ajouter
     public departementParent?: IDepartement | null,
     public departementParentId?: number | null, // ← ajouter
-    public personnes?: IPersonne[] | null
+    public personnes?: IPersonne[] | null,
+    public societeId?: number | null
   ) {}
 }
 
