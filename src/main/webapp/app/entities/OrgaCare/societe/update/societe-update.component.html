@@ -179,14 +179,15 @@
               <label class="field-label" for="field_formeJuridiquee" jhiTranslate="orgacaregatewayApp.orgaCareSociete.formeJuridiquee">
                 Forme Juridique
               </label>
-              <select class="form-control custom-input custom-select" id="field_formeJuridiquee" formControlName="formeJuridiquee">
+              <select
+                class="form-control custom-input custom-select"
+                id="field_formeJuridiquee"
+                formControlName="formeJuridiquee"
+                [compareWith]="compareFormeJuridique"
+              >
                 <option [ngValue]="null">-- Sélectionner --</option>
                 <option
-                  [ngValue]="
-                    formeJuridiqueOption.id === editForm.get('formeJuridiquee')!.value?.id
-                      ? editForm.get('formeJuridiquee')!.value
-                      : formeJuridiqueOption
-                  "
+                  [ngValue]="formeJuridiqueOption"
                   *ngFor="let formeJuridiqueOption of formeJuridiquesSharedCollection; trackBy: trackFormeJuridiqueById"
                 >
                   {{ formeJuridiqueOption.nom ?? formeJuridiqueOption.id }}

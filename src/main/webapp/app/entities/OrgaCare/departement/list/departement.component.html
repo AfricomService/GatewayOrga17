@@ -1,112 +1,162 @@
-<div>
-  <h2 id="page-heading" data-cy="DepartementHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.title">Departements</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.refreshListLabel">Refresh List</span>
+<div class="departement-list-container">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="6" height="6" rx="1" />
+          <rect x="15" y="3" width="6" height="6" rx="1" />
+          <rect x="9" y="15" width="6" height="6" rx="1" />
+          <line x1="6" y1="9" x2="6" y2="12" />
+          <line x1="18" y1="9" x2="18" y2="12" />
+          <line x1="6" y1="12" x2="18" y2="12" />
+          <line x1="12" y1="12" x2="12" y2="15" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.title">Départements</h1>
+        <p>Gérez les départements enregistrés</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header-refresh" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
       </button>
-
-      <button
-        id="jh-create-entity"
-        data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-departement"
-        [routerLink]="['/departement/new']"
-      >
-        <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.createLabel"> Create a new Departement </span>
+      <button class="btn-header-create" [routerLink]="['/departement/new']" title="Nouveau département">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
       </button>
     </div>
-  </h2>
-
-  <jhi-alert-error></jhi-alert-error>
-
-  <jhi-alert></jhi-alert>
-
-  <div class="alert alert-warning" id="no-result" *ngIf="departements?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.notFound">No departements found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="departements && departements.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Empty state ─────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="departements?.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <rect x="3" y="3" width="6" height="6" rx="1" />
+        <rect x="15" y="3" width="6" height="6" rx="1" />
+        <rect x="9" y="15" width="6" height="6" rx="1" />
+        <line x1="6" y1="9" x2="6" y2="12" />
+        <line x1="18" y1="9" x2="18" y2="12" />
+        <line x1="6" y1="12" x2="18" y2="12" />
+        <line x1="12" y1="12" x2="12" y2="15" />
+      </svg>
+    </div>
+    <p jhiTranslate="orgacaregatewayApp.orgaCareDepartement.home.notFound">Aucun département trouvé</p>
+    <button class="btn-empty-create" [routerLink]="['/departement/new']">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Créer un département
+    </button>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <div class="table-card" *ngIf="departements && departements.length > 0">
+    <table class="dept-table" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="code">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.code">Code</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="nom">
+            <span>NOM</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="nom">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.nom">Nom</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="code">
+            <span>CODE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="status">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.status">Status</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="status">
+            <span>STATUT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="email">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.email">Email</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="email">
+            <span>EMAIL</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="organigramme.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.organigramme">Organigramme</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="organigramme.id">
+            <span>ORGANIGRAMME</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="site.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.site">Site</span> <fa-icon icon="sort"></fa-icon>
+          <th jhiSortBy="societeId">
+            <span>SOCIÉTÉ</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th scope="col" jhiSortBy="departementParent.id">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.departementParent">Departement Parent</span>
-            <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
+          <th class="col-actions">ACTIONS</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let departement of departements; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/departement', departement.id, 'view']">{{ departement.id }}</a>
-          </td>
-          <td>{{ departement.code }}</td>
-          <td>{{ departement.nom }}</td>
-          <td jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + departement.status }}">{{ departement.status }}</td>
-          <td>{{ departement.email }}</td>
-          <td>
-            <div *ngIf="departement.organigramme">
-              <a [routerLink]="['/organigramme', departement.organigramme?.id, 'view']">{{ departement.organigramme?.id }}</a>
+        <tr
+          *ngFor="let departement of departements; trackBy: trackId"
+          class="dept-row"
+          (dblclick)="navigateToEdit(departement)"
+          title="Double-cliquer pour modifier"
+        >
+          <!-- Nom -->
+          <td class="col-nom">
+            <div class="nom-wrapper">
+              <div class="nom-avatar">
+                {{ (departement.nom ?? departement.code ?? '?').charAt(0).toUpperCase() }}
+              </div>
+              <span class="nom-text">{{ departement.nom ?? '—' }}</span>
             </div>
           </td>
-          <td>
-            <div *ngIf="departement.site">
-              <a [routerLink]="['/site', departement.site?.id, 'view']">{{ departement.site?.id }}</a>
-            </div>
-          </td>
-          <td>
-            <div *ngIf="departement.departementParent">
-              <a [routerLink]="['/departement', departement.departementParent?.id, 'view']">{{ departement.departementParent?.id }}</a>
-            </div>
-          </td>
-          <td class="text-right">
-            <div class="btn-group">
-              <button
-                type="submit"
-                [routerLink]="['/departement', departement.id, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </button>
 
-              <button
-                type="submit"
-                [routerLink]="['/departement', departement.id, 'edit']"
-                class="btn btn-primary btn-sm"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
+          <!-- Code -->
+          <td class="col-code">
+            <span class="code-badge" *ngIf="departement.code">{{ departement.code }}</span>
+            <span class="text-muted" *ngIf="!departement.code">—</span>
+          </td>
 
-              <button type="submit" (click)="delete(departement)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+          <!-- Statut -->
+          <td class="col-status">
+            <span
+              class="status-badge {{ getStatusClass(departement.status) }}"
+              jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + departement.status }}"
+            >
+              {{ departement.status }}
+            </span>
+          </td>
+
+          <!-- Email -->
+          <td class="col-email">
+            <span *ngIf="departement.email">{{ departement.email }}</span>
+            <span class="text-muted" *ngIf="!departement.email">—</span>
+          </td>
+
+          <!-- Organigramme -->
+          <td class="col-orga">
+            <span class="orga-badge" *ngIf="departement.organigrammeNom ?? departement.organigrammeId">
+              {{ departement.organigrammeNom ?? departement.organigrammeId }}
+            </span>
+            <span class="text-muted" *ngIf="!departement.organigrammeNom && !departement.organigrammeId">—</span>
+          </td>
+
+          <!-- Société -->
+          <td class="col-societe">
+            <span class="societe-badge" *ngIf="departement.societeRaisonSociale ?? departement.societeId">
+              {{ departement.societeRaisonSociale ?? departement.societeId }}
+            </span>
+            <span class="text-muted" *ngIf="!departement.societeRaisonSociale && !departement.societeId">—</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions">
+            <div class="action-group">
+              <button type="button" class="btn-action btn-delete" (click)="delete(departement, $event)" title="Supprimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
               </button>
             </div>
           </td>
@@ -115,21 +165,17 @@
     </table>
   </div>
 
-  <div *ngIf="departements && departements.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
-    </div>
-
-    <div class="row justify-content-center">
-      <ngb-pagination
-        [collectionSize]="totalItems"
-        [(page)]="ngbPaginationPage"
-        [pageSize]="itemsPerPage"
-        [maxSize]="5"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="loadPage($event)"
-      ></ngb-pagination>
-    </div>
+  <!-- ── Pagination ──────────────────────────────────────── -->
+  <div class="pagination-wrapper" *ngIf="departements && departements.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
   </div>
 </div>

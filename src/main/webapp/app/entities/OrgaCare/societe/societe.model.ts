@@ -38,6 +38,7 @@ export interface ISociete {
   sites?: ISite[] | null;
   contrats?: IContrat[] | null;
   formeJuridiquee?: IFormeJuridique | null;
+  formeJuridiqueeId?: number | null;
 }
 
 export class Societe implements ISociete {
@@ -73,7 +74,8 @@ export class Societe implements ISociete {
     public organigrammes?: IOrganigramme[] | null,
     public sites?: ISite[] | null,
     public contrats?: IContrat[] | null,
-    public formeJuridiquee?: IFormeJuridique | null
+    public formeJuridiquee?: IFormeJuridique | null,
+    public formeJuridiqueeId?: number | null
   ) {}
 }
 

@@ -136,24 +136,22 @@
         <ng-template ngbPanelContent>
           <div class="panel-body">
             <div class="form-grid">
-              <!-- Département Parent -->
+              <!-- Département Parent (lecture seule) -->
               <div class="field-group">
-                <label class="field-label" for="field_departementParent">Département Parent</label>
-                <div class="input-wrapper select-wrapper">
+                <label class="field-label">Département Parent</label>
+                <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="sitemap"></fa-icon></span>
-                  <select class="field-input field-select with-prefix" id="field_departementParent" formControlName="departementParent">
-                    <option [ngValue]="null">— Aucun (racine) —</option>
-                    <option
-                      [ngValue]="
-                        departementOption.id === editForm.get('departementParent')!.value?.id
-                          ? editForm.get('departementParent')!.value
-                          : departementOption
-                      "
-                      *ngFor="let departementOption of departementsSharedCollection; trackBy: trackDepartementById"
-                    >
-                      {{ departementOption.nom ?? departementOption.code ?? departementOption.id }}
-                    </option>
-                  </select>
+                  <input
+                    class="field-input with-prefix"
+                    type="text"
+                    [value]="
+                      editForm.get('departementParent')!.value?.nom ??
+                      editForm.get('departementParent')!.value?.code ??
+                      (editForm.get('departementParent')!.value ? '—' : '— Aucun (racine) —')
+                    "
+                    [readonly]="true"
+                    placeholder="— Aucun (racine) —"
+                  />
                 </div>
               </div>
             </div>

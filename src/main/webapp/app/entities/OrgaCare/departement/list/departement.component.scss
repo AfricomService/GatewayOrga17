@@ -1,0 +1,557 @@
+// =============================================
+// departement.component.scss
+// Liste des départements — cohérent avec organigramme list
+// Couleur signature : bleu marine + accent indigo
+// =============================================
+
+$primary: #1a3a5c;
+$primary-light: #2563a8;
+$accent: #6366f1;
+$surface: #ffffff;
+$bg: #f1f5f9;
+$border: #e2e8f0;
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$text-label: #475569;
+$danger: #e53e3e;
+$danger-light: #fff0f0;
+$radius-card: 12px;
+$shadow-card: 0 2px 12px rgba(26, 58, 92, 0.07);
+$shadow-hover: 0 4px 20px rgba(26, 58, 92, 0.12);
+$transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── Status badge colors ────────────────────
+$actif-color: #16a34a;
+$actif-bg: #f0fff4;
+$actif-border: #86efac;
+
+$draft-color: #7c3aed;
+$draft-bg: #faf5ff;
+$draft-border: #c4b5fd;
+
+$canceled-color: #c2410c;
+$canceled-bg: #fff7ed;
+$canceled-border: #fdba74;
+
+$closed-color: #374151;
+$closed-bg: #f3f4f6;
+$closed-border: #d1d5db;
+
+$inexecution-color: #1d4ed8;
+$inexecution-bg: #eff6ff;
+$inexecution-border: #93c5fd;
+
+// =============================================
+// Container
+// =============================================
+.departement-list-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 0 40px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+// =============================================
+// Page Header
+// =============================================
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+  border-radius: $radius-card;
+  padding: 22px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 24px rgba(26, 58, 92, 0.25);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+  }
+
+  .header-text {
+    h1 {
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 2px;
+      letter-spacing: -0.3px;
+    }
+    p {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.82rem;
+      margin: 0;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+.btn-header-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg.spinning {
+    animation: spin 0.9s linear infinite;
+  }
+}
+
+.btn-header-create {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: $transition;
+  backdrop-filter: blur(4px);
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.32);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// =============================================
+// Empty State
+// =============================================
+.empty-state {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  padding: 64px 32px;
+  text-align: center;
+
+  .empty-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: $text-muted;
+    opacity: 0.4;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: $text-dark;
+    margin: 0 0 24px;
+  }
+}
+
+.btn-empty-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: $primary;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    background: $primary-light;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba($primary, 0.35);
+  }
+}
+
+// =============================================
+// Table Card
+// =============================================
+.table-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+  }
+}
+
+.dept-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+
+  thead {
+    background: $bg;
+    border-bottom: 1.5px solid $border;
+
+    tr th {
+      padding: 14px 20px;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: $text-label;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: $transition;
+
+      &.col-actions {
+        text-align: right;
+        padding-right: 24px;
+        cursor: default;
+      }
+
+      &:hover:not(.col-actions) {
+        color: $primary;
+      }
+
+      .sort-icon {
+        font-size: 11px;
+        color: $text-muted;
+        margin-left: 5px;
+      }
+    }
+  }
+
+  tbody {
+    .dept-row {
+      border-bottom: 1px solid $border;
+      transition: $transition;
+      cursor: pointer;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: rgba($primary, 0.03);
+        .nom-avatar {
+          background: $primary;
+          color: #fff;
+        }
+      }
+
+      &:active {
+        background: rgba($primary, 0.06);
+      }
+
+      td {
+        padding: 14px 20px;
+        font-size: 0.875rem;
+        color: $text-dark;
+        vertical-align: middle;
+      }
+
+      .col-actions {
+        text-align: right;
+        padding-right: 20px;
+      }
+    }
+  }
+}
+
+// =============================================
+// Cell — Nom
+// =============================================
+.col-nom {
+  .nom-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.nom-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #dbeafe;
+  color: $primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: $transition;
+}
+
+.nom-text {
+  font-weight: 500;
+  color: $text-dark;
+}
+
+// =============================================
+// Cell — Code
+// =============================================
+.code-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #dbeafe;
+  color: $primary;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.text-muted {
+  color: $text-muted;
+  font-size: 0.875rem;
+}
+
+// =============================================
+// Cell — Status badges
+// =============================================
+.status-badge {
+  display: inline-block;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.badge-actif {
+  background: $actif-bg;
+  color: $actif-color;
+  border-color: $actif-border;
+}
+
+.badge-draft {
+  background: $draft-bg;
+  color: $draft-color;
+  border-color: $draft-border;
+}
+
+.badge-canceled {
+  background: $canceled-bg;
+  color: $canceled-color;
+  border-color: $canceled-border;
+}
+
+.badge-closed {
+  background: $closed-bg;
+  color: $closed-color;
+  border-color: $closed-border;
+}
+
+.badge-inexecution {
+  background: $inexecution-bg;
+  color: $inexecution-color;
+  border-color: $inexecution-border;
+}
+
+.badge-default {
+  background: $bg;
+  color: $text-muted;
+  border-color: $border;
+}
+
+// =============================================
+// Cell — Email
+// =============================================
+.col-email {
+  font-size: 0.85rem;
+  color: $text-muted;
+}
+
+// =============================================
+// Cell — Organigramme
+// =============================================
+.orga-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: #ede9fe;
+  color: #6d28d9;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+// =============================================
+// Cell — Société
+// =============================================
+.societe-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: #e0f7f6;
+  color: #0e7490;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+// =============================================
+// Actions
+// =============================================
+.action-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: $transition;
+  background: transparent;
+}
+
+.btn-delete {
+  background: $danger-light;
+  border-color: lighten($danger, 25%);
+  color: $danger;
+
+  &:hover {
+    background: $danger;
+    border-color: $danger;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba($danger, 0.3);
+  }
+}
+
+// =============================================
+// Pagination
+// =============================================
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid $border;
+  background: $bg;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  ::ng-deep {
+    .pagination {
+      margin: 0;
+      gap: 4px;
+
+      .page-item {
+        .page-link {
+          border: 1.5px solid $border;
+          border-radius: 7px !important;
+          color: $text-label;
+          font-size: 0.82rem;
+          font-weight: 500;
+          padding: 5px 11px;
+          transition: $transition;
+
+          &:hover {
+            background: #dbeafe;
+            border-color: $primary-light;
+            color: $primary;
+          }
+        }
+
+        &.active .page-link {
+          background: $primary;
+          border-color: $primary;
+          color: #fff;
+          box-shadow: 0 2px 8px rgba($primary, 0.35);
+        }
+
+        &.disabled .page-link {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+// =============================================
+// Responsive
+// =============================================
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 20px;
+    gap: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .dept-table {
+    min-width: 500px;
+  }
+
+  .col-email,
+  .col-orga,
+  .col-societe {
+    display: none;
+  }
+}

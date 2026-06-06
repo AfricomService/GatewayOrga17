@@ -13,6 +13,7 @@ import { DepartementDeleteDialogComponent } from '../delete/departement-delete-d
 @Component({
   selector: 'jhi-departement',
   templateUrl: './departement.component.html',
+  styleUrls: ['./departement.component.scss'],
 })
 export class DepartementComponent implements OnInit {
   departements?: IDepartement[];
@@ -61,15 +62,37 @@ export class DepartementComponent implements OnInit {
     return item.id!;
   }
 
-  delete(departement: IDepartement): void {
+  // Double-click → navigate to edit
+  navigateToEdit(departement: IDepartement): void {
+    this.router.navigate(['/departement', departement.id, 'edit']);
+  }
+
+  delete(departement: IDepartement, event: Event): void {
+    event.stopPropagation();
     const modalRef = this.modalService.open(DepartementDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.departement = departement;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();
       }
     });
+  }
+
+  getStatusClass(status: string | undefined): string {
+    switch (status) {
+      case 'ACTIF':
+        return 'badge-actif';
+      case 'DRAFT':
+        return 'badge-draft';
+      case 'CANCELED':
+        return 'badge-canceled';
+      case 'CLOSED':
+        return 'badge-closed';
+      case 'INEXECUTION':
+        return 'badge-inexecution';
+      default:
+        return 'badge-default';
+    }
   }
 
   protected sort(): string[] {

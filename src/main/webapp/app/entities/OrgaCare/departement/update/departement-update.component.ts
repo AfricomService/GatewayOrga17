@@ -66,6 +66,7 @@ export class DepartementUpdateComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ departement }) => {
       this.updateForm(departement);
       this.loadRelationshipsOptions();
+      this.editForm.get('departementParent')!.disable();
 
       if (this.generateCodeAutomatically && departement.id === undefined) {
         this.departementService.generateNextCode('DEPT-').subscribe(nextCode => {
@@ -162,16 +163,11 @@ export class DepartementUpdateComponent implements OnInit {
       nom: departement.nom,
       status: departement.status ?? Etat.ACTIF,
       email: departement.email,
-      organigramme: departement.organigramme,
-      departementParent: departement.departementParent,
+      organigramme: departement.organigramme ?? null,
+      departementParent: departement.departementParent ?? null,
       personnes: departement.personnes,
     });
 
-    // Société depuis l'organigramme
-    this.societeRaisonSociale = departement.organigramme?.societeRaisonSociale ?? null;
-
-    // Répartir les personnes par type d'affectation
-    // (si votre backend renvoie les affectations typées, adaptez ici)
     this.membres = departement.personnes ?? [];
 
     this.organigrammesSharedCollection = this.organigrammeService.addOrganigrammeToCollectionIfMissing(
@@ -186,6 +182,37 @@ export class DepartementUpdateComponent implements OnInit {
       this.personnesSharedCollection,
       ...(departement.personnes ?? [])
     );
+
+    // Si organigramme est null mais organigrammeId est présent → charger depuis l'API
+    if (!departement.organigramme && departement.organigrammeId) {
+      this.organigrammeService.find(departement.organigrammeId).subscribe(res => {
+        const orga = res.body;
+        if (orga) {
+          this.organigrammesSharedCollection = this.organigrammeService.addOrganigrammeToCollectionIfMissing(
+            this.organigrammesSharedCollection,
+            orga
+          );
+          this.editForm.patchValue({ organigramme: orga });
+          this.societeRaisonSociale = orga.societeRaisonSociale ?? null;
+        }
+      });
+    } else {
+      this.societeRaisonSociale = departement.organigramme?.societeRaisonSociale ?? null;
+    }
+
+    // Si departementParent est null mais departementParentId est présent → charger depuis l'API
+    if (!departement.departementParent && departement.departementParentId) {
+      this.departementService.find(departement.departementParentId).subscribe(res => {
+        const parent = res.body;
+        if (parent) {
+          this.departementsSharedCollection = this.departementService.addDepartementToCollectionIfMissing(
+            this.departementsSharedCollection,
+            parent
+          );
+          this.editForm.patchValue({ departementParent: parent });
+        }
+      });
+    }
   }
 
   protected loadRelationshipsOptions(): void {
@@ -221,16 +248,17 @@ export class DepartementUpdateComponent implements OnInit {
   }
 
   protected createFromForm(): IDepartement {
+    const raw = this.editForm.getRawValue();
     return {
       ...new Departement(),
-      id: this.editForm.get(['id'])!.value,
-      code: this.editForm.get(['code'])!.value,
-      nom: this.editForm.get(['nom'])!.value,
-      status: this.editForm.get(['status'])!.value ?? Etat.ACTIF,
-      email: this.editForm.get(['email'])!.value,
-      organigramme: this.editForm.get(['organigramme'])!.value,
-      departementParent: this.editForm.get(['departementParent'])!.value,
-      personnes: this.editForm.get(['personnes'])!.value,
+      id: raw.id,
+      code: raw.code,
+      nom: raw.nom,
+      status: raw.status ?? Etat.ACTIF,
+      email: raw.email,
+      organigramme: raw.organigramme,
+      departementParent: raw.departementParent,
+      personnes: raw.personnes,
     };
   }
 }

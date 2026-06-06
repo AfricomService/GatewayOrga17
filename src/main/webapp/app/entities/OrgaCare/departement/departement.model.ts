@@ -10,13 +10,15 @@ export interface IDepartement {
   status?: Etat;
   email?: string | null;
   organigramme?: IOrganigramme | null;
-  organigrammeId?: number | null; // ← ajouter
+  organigrammeId?: number | null;
+  organigrammeNom?: string | null; // ← ajouter
   site?: ISite | null;
-  siteId?: number | null; // ← ajouter
+  siteId?: number | null;
   departementParent?: IDepartement | null;
-  departementParentId?: number | null; // ← ajouter (cohérence)
+  departementParentId?: number | null;
   personnes?: IPersonne[] | null;
   societeId?: number | null;
+  societeRaisonSociale?: string | null; // ← ajouter
 }
 
 export class Departement implements IDepartement {
@@ -27,13 +29,15 @@ export class Departement implements IDepartement {
     public status?: Etat,
     public email?: string | null,
     public organigramme?: IOrganigramme | null,
-    public organigrammeId?: number | null, // ← ajouter
+    public organigrammeId?: number | null,
+    public organigrammeNom?: string | null, // ← ajouter
     public site?: ISite | null,
-    public siteId?: number | null, // ← ajouter
+    public siteId?: number | null,
     public departementParent?: IDepartement | null,
-    public departementParentId?: number | null, // ← ajouter
+    public departementParentId?: number | null,
     public personnes?: IPersonne[] | null,
-    public societeId?: number | null
+    public societeId?: number | null,
+    public societeRaisonSociale?: string | null // ← ajouter
   ) {}
 }
 

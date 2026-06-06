@@ -87,8 +87,14 @@ export class SocieteUpdateComponent implements OnInit {
         societe.dateActivation = today;
         societe.dateCloture = today;
       }
-      this.loadRelationshipsOptions();
-      this.loadOrganigrammesCodes(() => this.updateForm(societe));
+      // Charger les formes juridiques en premier, puis les codes, puis le formulaire
+      this.formeJuridiqueService
+        .query()
+        .pipe(map((res: HttpResponse<IFormeJuridique[]>) => res.body ?? []))
+        .subscribe((formeJuridiques: IFormeJuridique[]) => {
+          this.formeJuridiquesSharedCollection = formeJuridiques;
+          this.loadOrganigrammesCodes(() => this.updateForm(societe));
+        });
     });
   }
 
@@ -163,6 +169,10 @@ export class SocieteUpdateComponent implements OnInit {
     );
   }
 
+  compareFormeJuridique(fj1: IFormeJuridique | null, fj2: IFormeJuridique | null): boolean {
+    return fj1 && fj2 ? fj1.id === fj2.id : fj1 === fj2;
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ISociete>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       () => this.onSaveSuccess(),
@@ -183,6 +193,11 @@ export class SocieteUpdateComponent implements OnInit {
   }
 
   protected updateForm(societe: ISociete): void {
+    // Résoudre formeJuridiquee depuis formeJuridiqueeId si l'objet n'est pas fourni
+    const resolvedFormeJuridiquee: IFormeJuridique | null =
+      societe.formeJuridiquee ??
+      (societe.formeJuridiqueeId ? this.formeJuridiquesSharedCollection.find(fj => fj.id === societe.formeJuridiqueeId) ?? null : null);
+
     this.editForm.patchValue({
       id: societe.id,
       raisonSociale: societe.raisonSociale,
@@ -212,28 +227,17 @@ export class SocieteUpdateComponent implements OnInit {
       importTemplateContentType: societe.importTemplateContentType,
       codeSociete: societe.codeSociete,
       codeOrganigramme: societe.codeOrganigramme,
-      formeJuridiquee: societe.formeJuridiquee,
+      formeJuridiquee: resolvedFormeJuridiquee,
     });
 
     this.formeJuridiquesSharedCollection = this.formeJuridiqueService.addFormeJuridiqueToCollectionIfMissing(
       this.formeJuridiquesSharedCollection,
-      societe.formeJuridiquee
+      resolvedFormeJuridiquee
     );
   }
 
-  protected loadRelationshipsOptions(): void {
-    this.formeJuridiqueService
-      .query()
-      .pipe(map((res: HttpResponse<IFormeJuridique[]>) => res.body ?? []))
-      .pipe(
-        map((formeJuridiques: IFormeJuridique[]) =>
-          this.formeJuridiqueService.addFormeJuridiqueToCollectionIfMissing(formeJuridiques, this.editForm.get('formeJuridiquee')!.value)
-        )
-      )
-      .subscribe((formeJuridiques: IFormeJuridique[]) => (this.formeJuridiquesSharedCollection = formeJuridiques));
-  }
-
   protected createFromForm(): ISociete {
+    const formeJuridiquee: IFormeJuridique | null = this.editForm.get(['formeJuridiquee'])!.value;
     return {
       ...new Societe(),
       id: this.editForm.get(['id'])!.value,
@@ -270,7 +274,8 @@ export class SocieteUpdateComponent implements OnInit {
       importTemplate: this.editForm.get(['importTemplate'])!.value,
       codeSociete: this.editForm.get(['codeSociete'])!.value,
       codeOrganigramme: this.editForm.get(['codeOrganigramme'])!.value,
-      formeJuridiquee: this.editForm.get(['formeJuridiquee'])!.value,
+      formeJuridiquee,
+      formeJuridiqueeId: formeJuridiquee?.id ?? null,
     };
   }
 }
