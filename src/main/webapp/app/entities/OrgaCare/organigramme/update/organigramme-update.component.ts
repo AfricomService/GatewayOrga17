@@ -41,6 +41,7 @@ export class OrganigrammeUpdateComponent implements OnInit {
   departementTree: any[] = [];
 
   expandedNodes = new Set<number>();
+  // nouveau
   expandedAccordionNodes = new Set<number>();
 
   editForm = this.fb.group({
@@ -58,7 +59,14 @@ export class OrganigrammeUpdateComponent implements OnInit {
     departementParentId: [null],
   });
 
+  // ── Public fields ─────────────────────────────────────
+  editModeActive = false;
+  selectedDeptNode: any = null;
+  isRenaming = false;
+  renameValue = '';
+
   // ── Private fields ────────────────────────────────────
+  private moveModalRef?: NgbModalRef;
   private modalRef?: NgbModalRef;
   private currentSocieteId: number | null = null;
 
@@ -216,6 +224,7 @@ export class OrganigrammeUpdateComponent implements OnInit {
     });
   }
 
+  // nouveau
   toggleAccordionNode(nodeId: number, event: Event): void {
     event.stopPropagation();
     if (this.expandedAccordionNodes.has(nodeId)) {
@@ -223,6 +232,90 @@ export class OrganigrammeUpdateComponent implements OnInit {
     } else {
       this.expandedAccordionNodes.add(nodeId);
     }
+  }
+
+  // ── Modifier département ──────────────────────────────
+
+  toggleEditMode(): void {
+    this.editModeActive = !this.editModeActive;
+    if (!this.editModeActive) {
+      this.selectedDeptNode = null;
+      this.isRenaming = false;
+      this.renameValue = '';
+    }
+  }
+
+  selectDeptNodeForEdit(node: any, event: Event): void {
+    event.stopPropagation();
+    if (!this.editModeActive) {
+      return;
+    }
+    if (this.selectedDeptNode?.id === node.id) {
+      this.selectedDeptNode = null;
+      this.isRenaming = false;
+      this.renameValue = '';
+    } else {
+      this.selectedDeptNode = node;
+      this.isRenaming = false;
+      this.renameValue = node.nom ?? '';
+    }
+  }
+
+  startRename(): void {
+    this.isRenaming = true;
+    this.renameValue = this.selectedDeptNode?.nom ?? '';
+  }
+
+  confirmRename(): void {
+    if (!this.selectedDeptNode || !this.renameValue.trim()) {
+      return;
+    }
+    this.departementService
+      .partialUpdate({
+        id: this.selectedDeptNode.id,
+        nom: this.renameValue.trim(),
+      })
+      .subscribe(() => {
+        this.refreshDepartementTree();
+        this.selectedDeptNode = null;
+        this.isRenaming = false;
+        this.renameValue = '';
+      });
+  }
+
+  cancelRename(): void {
+    this.isRenaming = false;
+    this.renameValue = this.selectedDeptNode?.nom ?? '';
+  }
+
+  openMoveModal(template: TemplateRef<any>): void {
+    this.loadDepartementTree();
+    this.deptForm.get('departementParentId')!.setValue(null);
+    this.moveModalRef = this.modalService.open(template, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  closeMoveModal(): void {
+    this.moveModalRef?.close();
+  }
+
+  confirmMove(): void {
+    if (!this.selectedDeptNode) {
+      return;
+    }
+    const newParentId: number | null = this.deptForm.get('departementParentId')!.value;
+    if (!newParentId) {
+      return;
+    }
+    this.departementService.deplacer(this.selectedDeptNode.id, newParentId).subscribe(() => {
+      this.closeMoveModal();
+      this.refreshDepartementTree();
+      this.selectedDeptNode = null;
+      this.isRenaming = false;
+    });
   }
 
   isAccordionExpanded(nodeId: number): boolean {

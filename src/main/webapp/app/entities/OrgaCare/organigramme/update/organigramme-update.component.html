@@ -139,6 +139,7 @@
 
       <div class="accordion-body" *ngIf="sectionDepartements">
         <!-- Bouton Ajouter -->
+        <!-- nouveau -->
         <div class="dept-toolbar">
           <button type="button" class="btn-add-dept" (click)="openDepartementModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -147,6 +148,59 @@
             </svg>
             Ajouter un département
           </button>
+
+          <button type="button" class="btn-edit-dept" [class.active]="editModeActive" (click)="toggleEditMode()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            {{ editModeActive ? 'Annuler modification' : 'Modifier' }}
+          </button>
+
+          <!-- Actions après sélection d'un nœud -->
+          <ng-container *ngIf="editModeActive && selectedDeptNode">
+            <span class="selected-dept-label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" /></svg>
+              {{ selectedDeptNode.nom ?? selectedDeptNode.code }}
+            </span>
+
+            <!-- Renommer inline -->
+            <ng-container *ngIf="!isRenaming">
+              <button type="button" class="btn-action-dept btn-rename" (click)="startRename()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                Renommer
+              </button>
+            </ng-container>
+            <ng-container *ngIf="isRenaming">
+              <input
+                type="text"
+                class="rename-input"
+                [(ngModel)]="renameValue"
+                [ngModelOptions]="{ standalone: true }"
+                (keyup.enter)="confirmRename()"
+                (keyup.escape)="cancelRename()"
+                placeholder="Nouveau nom..."
+              />
+              <button type="button" class="btn-action-dept btn-confirm" (click)="confirmRename()">✓</button>
+              <button type="button" class="btn-action-dept btn-cancel-sm" (click)="cancelRename()">✕</button>
+            </ng-container>
+
+            <!-- Déplacer -->
+            <button type="button" class="btn-action-dept btn-move" (click)="openMoveModal(moveModal)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="5 9 2 12 5 15" />
+                <polyline points="9 5 12 2 15 5" />
+                <polyline points="15 19 12 22 9 19" />
+                <polyline points="19 9 22 12 19 15" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
+              </svg>
+              Déplacer
+            </button>
+          </ng-container>
         </div>
 
         <!-- Liste des départements créés -->
@@ -172,9 +226,16 @@
     </div>
 
     <!-- ── Template arbre accordéon ──────────────────────── -->
+    <!-- nouveau — remplacer toute la ng-template jusqu'à son </ng-template> fermant -->
     <ng-template #deptAccordionNode let-nodes="nodes" let-depth="depth">
       <div *ngFor="let node of nodes" class="dept-acc-node-wrapper">
-        <div class="dept-acc-row" [style.padding-left.px]="16 + depth * 24">
+        <div
+          class="dept-acc-row"
+          [class.edit-selectable]="editModeActive"
+          [class.edit-selected]="selectedDeptNode?.id === node.id"
+          [style.padding-left.px]="16 + depth * 24"
+          (click)="selectDeptNodeForEdit(node, $event)"
+        >
           <!-- Bouton expand/collapse -->
           <button *ngIf="node.children?.length > 0" type="button" class="dept-acc-toggle" (click)="toggleAccordionNode(node.id, $event)">
             <svg
@@ -388,6 +449,107 @@
         <button type="button" class="btn-save" [disabled]="isSavingDept" (click)="saveDepartement()">
           <span *ngIf="isSavingDept" class="spinner-border spinner-border-sm me-1"></span>
           Créer le département
+        </button>
+      </div>
+    </ng-template>
+    <!-- ── Modal Déplacement Département ──────────────────── -->
+    <ng-template #moveModal>
+      <div class="modal-header-custom">
+        <div class="modal-header-left">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="5 9 2 12 5 15" />
+              <polyline points="9 5 12 2 15 5" />
+              <polyline points="15 19 12 22 9 19" />
+              <polyline points="19 9 22 12 19 15" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
+          </div>
+          <div>
+            <h5 class="modal-title-text">Déplacer le département</h5>
+            <p class="modal-subtitle-text">
+              Choisissez le nouveau parent de
+              <strong>{{ selectedDeptNode?.nom ?? selectedDeptNode?.code }}</strong>
+            </p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" (click)="closeMoveModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body-custom" [formGroup]="deptForm">
+        <p class="move-hint">Sélectionnez le département qui deviendra le <strong>parent</strong>.</p>
+
+        <!-- Sélection actuelle -->
+        <div class="dept-parent-label" *ngIf="deptForm.get('departementParentId')!.value">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Nouveau parent sélectionné :
+          <strong>{{ getSelectedParentNom() }}</strong>
+          <button type="button" class="btn-clear-parent" (click)="deptForm.get('departementParentId')!.setValue(null)">×</button>
+        </div>
+
+        <!-- Arbre de sélection -->
+        <div class="tree-empty" *ngIf="departementTree.length === 0">
+          <p>Aucun département disponible</p>
+        </div>
+        <div class="tree-container" *ngIf="departementTree.length > 0">
+          <ng-container *ngTemplateOutlet="treeMoveNode; context: { nodes: departementTree, depth: 0 }"> </ng-container>
+        </div>
+
+        <!-- Template récursif pour la sélection du nouveau parent -->
+        <ng-template #treeMoveNode let-nodes="nodes" let-depth="depth">
+          <div *ngFor="let node of nodes" class="tree-node-wrapper">
+            <div
+              class="tree-node"
+              [class.selected]="deptForm.get('departementParentId')!.value === node.id"
+              [class.disabled-node]="node.id === selectedDeptNode?.id"
+              [style.padding-left.px]="14 + depth * 20"
+              (click)="node.id !== selectedDeptNode?.id && selectDepartementParent(node)"
+            >
+              <button *ngIf="node.children?.length > 0" type="button" class="tree-toggle-btn" (click)="toggleNode(node.id, $event)">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  [style.transform]="isExpanded(node.id) ? 'rotate(90deg)' : 'rotate(0deg)'"
+                  style="transition: transform 0.18s ease; display: block"
+                >
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
+              </button>
+              <span class="tree-node-icon leaf" *ngIf="!node.children?.length">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5" /></svg>
+              </span>
+              <span class="tree-node-code" *ngIf="node.code">{{ node.code }}</span>
+              <span class="tree-node-nom">{{ node.nom ?? '—' }}</span>
+              <span class="tree-node-check" *ngIf="deptForm.get('departementParentId')!.value === node.id">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+            </div>
+            <div class="tree-children" *ngIf="node.children?.length > 0 && isExpanded(node.id)">
+              <ng-container [ngTemplateOutlet]="treeMoveNode" [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }">
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-cancel" (click)="closeMoveModal()">Annuler</button>
+        <button type="button" class="btn-save" [disabled]="!deptForm.get('departementParentId')!.value" (click)="confirmMove()">
+          Confirmer le déplacement
         </button>
       </div>
     </ng-template>
