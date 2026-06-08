@@ -5,9 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import * as dayjs from 'dayjs';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
-
 import { ISite, Site } from '../site.model';
 import { SiteService } from '../service/site.service';
 import { ISociete } from 'app/entities/OrgaCare/societe/societe.model';
@@ -41,9 +38,6 @@ export class SiteUpdateComponent implements OnInit {
     tel: [],
     fax: [],
     email: [],
-    dateCreation: [],
-    dateActivation: [],
-    dateCloture: [],
     societe: [],
   });
 
@@ -56,13 +50,6 @@ export class SiteUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ site }) => {
-      if (site.id === undefined) {
-        const today = dayjs().startOf('day');
-        site.dateCreation = today;
-        site.dateActivation = today;
-        site.dateCloture = today;
-      }
-
       this.updateForm(site);
       this.loadRelationshipsOptions();
     });
@@ -121,9 +108,6 @@ export class SiteUpdateComponent implements OnInit {
       tel: site.tel,
       fax: site.fax,
       email: site.email,
-      dateCreation: site.dateCreation ? site.dateCreation.format(DATE_TIME_FORMAT) : null,
-      dateActivation: site.dateActivation ? site.dateActivation.format(DATE_TIME_FORMAT) : null,
-      dateCloture: site.dateCloture ? site.dateCloture.format(DATE_TIME_FORMAT) : null,
       societe: site.societe,
     });
 
@@ -153,15 +137,6 @@ export class SiteUpdateComponent implements OnInit {
       tel: this.editForm.get(['tel'])!.value,
       fax: this.editForm.get(['fax'])!.value,
       email: this.editForm.get(['email'])!.value,
-      dateCreation: this.editForm.get(['dateCreation'])!.value
-        ? dayjs(this.editForm.get(['dateCreation'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-      dateActivation: this.editForm.get(['dateActivation'])!.value
-        ? dayjs(this.editForm.get(['dateActivation'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-      dateCloture: this.editForm.get(['dateCloture'])!.value
-        ? dayjs(this.editForm.get(['dateCloture'])!.value, DATE_TIME_FORMAT)
-        : undefined,
       societe: this.editForm.get(['societe'])!.value,
     };
   }

@@ -250,23 +250,6 @@ $text-muted: #78909c;
   &.full-width {
     grid-column: 1 / -1;
   }
-
-  &.dates-row {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-  }
-}
-
-.date-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 // ============================================================

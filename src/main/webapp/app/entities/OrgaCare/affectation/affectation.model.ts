@@ -19,6 +19,7 @@ export interface IAffectation {
   departement?: IDepartement | null;
   groupe?: IGroupe | null;
   societe?: ISociete | null;
+  totalHierarchy?: { departementId?: number; nom?: string; departementParentId?: number | null }[] | null;
 }
 
 export class Affectation implements IAffectation {

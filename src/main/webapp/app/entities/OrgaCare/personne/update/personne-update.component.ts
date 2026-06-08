@@ -89,9 +89,14 @@ export class PersonneUpdateComponent implements OnInit {
   organigrammesCollection: IOrganigramme[] = [];
   departementsCollection: IDepartement[] = [];
 
+  departementTree: any[] = [];
+  expandedDeptNodes = new Set<number>();
+
   selectedSocieteId: number | null = null;
   selectedOrganigrammeId: number | null = null;
   selectedDepartementId: number | null = null;
+
+  selectedDeptLabel = '';
 
   // NOUVEAU
   editForm = this.fb.group({
@@ -329,6 +334,9 @@ export class PersonneUpdateComponent implements OnInit {
     this.departementsCollection = [];
     this.affectationSaveError = null;
     this.affectationSaveSuccess = false;
+    this.departementTree = [];
+    this.selectedDeptLabel = '';
+    this.expandedDeptNodes = new Set<number>();
 
     this.societeService.query({ size: 100 }).subscribe((res: HttpResponse<ISociete[]>) => {
       this.societesCollection = res.body ?? [];
@@ -364,14 +372,23 @@ export class PersonneUpdateComponent implements OnInit {
   onOrganigrammeChange(organigrammeId: number | null): void {
     this.selectedOrganigrammeId = organigrammeId;
     this.selectedDepartementId = null;
-    this.departementsCollection = [];
+    this.departementTree = [];
+    this.expandedDeptNodes.clear();
 
     if (!organigrammeId) {
       return;
     }
 
-    this.departementService.findByOrganigramme(organigrammeId).subscribe((departements: IDepartement[]) => {
-      this.departementsCollection = departements;
+    // Récupérer le code de l'organigramme sélectionné
+    const orga = this.organigrammesCollection.find(o => o.id === organigrammeId);
+    if (!orga?.code) {
+      return;
+    }
+
+    this.departementService.getTree(orga.code).subscribe((tree: any[]) => {
+      this.departementTree = tree;
+      // Auto-expand le premier niveau
+      tree.forEach((node: any) => this.expandedDeptNodes.add(node.id));
       this.cdr.markForCheck();
     });
   }
@@ -413,6 +430,24 @@ export class PersonneUpdateComponent implements OnInit {
         this.cdr.markForCheck();
       }
     );
+  }
+
+  toggleDeptNode(nodeId: number, event: Event): void {
+    event.stopPropagation();
+    if (this.expandedDeptNodes.has(nodeId)) {
+      this.expandedDeptNodes.delete(nodeId);
+    } else {
+      this.expandedDeptNodes.add(nodeId);
+    }
+  }
+
+  isDeptNodeExpanded(nodeId: number): boolean {
+    return this.expandedDeptNodes.has(nodeId);
+  }
+
+  selectDeptFromTree(node: any): void {
+    this.selectedDepartementId = node.id;
+    this.selectedDeptLabel = node.nom ?? node.code ?? String(node.id);
   }
 
   // ── Sélection du rôle ─────────────────────────────────

@@ -295,7 +295,19 @@
                     {{ aff.type }}
                   </div>
                   <div class="aff-info">
-                    <span class="aff-dept">Département #{{ aff.departementId }}</span>
+                    <!-- Breadcrumb hiérarchie : racine → département direct -->
+                    <div class="aff-breadcrumb" *ngIf="aff.totalHierarchy && aff.totalHierarchy.length > 0; else deptFallback">
+                      <ng-container *ngFor="let level of aff.totalHierarchy.slice().reverse(); let i = index; let last = last">
+                        <span class="aff-breadcrumb__node" [class.aff-breadcrumb__node--leaf]="last">
+                          {{ level.nom ?? 'Dept #' + level.departementId }}
+                        </span>
+                        <span class="aff-breadcrumb__sep" *ngIf="!last">›</span>
+                      </ng-container>
+                    </div>
+                    <!-- Fallback si totalHierarchy absent ou vide -->
+                    <ng-template #deptFallback>
+                      <span class="aff-dept">Département #{{ aff.departementId }}</span>
+                    </ng-template>
                     <span class="aff-dates" *ngIf="aff.dateAction">
                       Depuis le {{ aff.dateAction.toDate() | date: 'dd/MM/yyyy' }}
                       <span *ngIf="aff.dateFin"> — Fin : {{ aff.dateFin.toDate() | date: 'dd/MM/yyyy' }}</span>
@@ -548,15 +560,76 @@
         </div>
       </div>
 
-      <!-- Département -->
+      <!-- Département — arbre -->
       <div class="field-group mb-3" *ngIf="selectedSocieteId && selectedOrganigrammeId">
-        <label class="field-label">Département <span style="color: red">*</span></label>
-        <select class="field-input field-select" [(ngModel)]="selectedDepartementId">
-          <option [ngValue]="null">— Sélectionner —</option>
-          <option *ngFor="let d of departementsCollection" [ngValue]="d.id">
-            {{ d.nom }}
-          </option>
-        </select>
+        <label class="field-label">
+          Département <span style="color: red">*</span>
+          <span class="dept-selected-badge" *ngIf="selectedDeptLabel">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {{ selectedDeptLabel }}
+            <button type="button" class="dept-clear-btn" (click)="selectedDepartementId = null; selectedDeptLabel = ''">×</button>
+          </span>
+        </label>
+
+        <!-- Arbre vide -->
+        <div class="dept-tree-empty" *ngIf="departementTree.length === 0">
+          <span>Aucun département trouvé</span>
+        </div>
+
+        <!-- Arbre -->
+        <div class="dept-tree-box" *ngIf="departementTree.length > 0">
+          <ng-container *ngTemplateOutlet="deptTreeNode; context: { nodes: departementTree, depth: 0 }"> </ng-container>
+        </div>
+
+        <!-- Template récursif -->
+        <ng-template #deptTreeNode let-nodes="nodes" let-depth="depth">
+          <div *ngFor="let node of nodes" class="dept-tree-node-wrap">
+            <div
+              class="dept-tree-row"
+              [class.dept-tree-row--selected]="selectedDepartementId === node.id"
+              [style.padding-left.px]="12 + depth * 20"
+              (click)="selectDeptFromTree(node)"
+            >
+              <!-- Toggle enfants -->
+              <button *ngIf="node.children?.length > 0" type="button" class="dept-tree-toggle" (click)="toggleDeptNode(node.id, $event)">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  [style.transform]="isDeptNodeExpanded(node.id) ? 'rotate(90deg)' : 'rotate(0)'"
+                  style="transition: transform 0.15s; display: block"
+                >
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
+              </button>
+              <!-- Point feuille -->
+              <span class="dept-tree-leaf" *ngIf="!node.children?.length">
+                <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="12" r="6" />
+                </svg>
+              </span>
+              <!-- Infos -->
+              <span class="dept-tree-code" *ngIf="node.code">{{ node.code }}</span>
+              <span class="dept-tree-nom">{{ node.nom ?? '—' }}</span>
+              <!-- Check -->
+              <span class="dept-tree-check" *ngIf="selectedDepartementId === node.id">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+            </div>
+            <!-- Récursion -->
+            <div *ngIf="node.children?.length > 0 && isDeptNodeExpanded(node.id)">
+              <ng-container [ngTemplateOutlet]="deptTreeNode" [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }">
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
       </div>
 
       <!-- Erreur / Succès -->

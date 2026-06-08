@@ -798,6 +798,35 @@ $transition: all 0.2s ease;
   }
 }
 
+// ── Breadcrumb hiérarchie département ────────────────
+.aff-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  line-height: 1.4;
+
+  &__node {
+    font-size: 0.82rem;
+    color: $text-muted;
+    font-weight: 500;
+
+    &--leaf {
+      color: $primary;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+  }
+
+  &__sep {
+    color: $border;
+    font-size: 0.9rem;
+    font-weight: 400;
+    line-height: 1;
+    user-select: none;
+  }
+}
+
 // ── Modal affecter département ───────────────────────
 .affectation-modal-personne {
   display: flex;
@@ -851,4 +880,140 @@ $transition: all 0.2s ease;
   @media (max-width: 576px) {
     grid-template-columns: 1fr;
   }
+}
+
+// ── Arbre département dans modal affectation ─────────
+.dept-selected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ede9fe;
+  color: #7c3aed;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 8px;
+}
+
+.dept-clear-btn {
+  border: none;
+  background: transparent;
+  color: #7c3aed;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  &:hover {
+    color: #6d28d9;
+  }
+}
+
+.dept-tree-empty {
+  padding: 12px;
+  text-align: center;
+  color: $text-muted;
+  font-size: 0.82rem;
+  border: 1.5px dashed $border;
+  border-radius: $radius-sm;
+  background: $bg-input;
+}
+
+.dept-tree-box {
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.dept-tree-node-wrap {
+  border-bottom: 1px solid #f1f5f9;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.dept-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-right: 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: #f5f3ff;
+  }
+
+  &--selected {
+    background: #ede9fe !important;
+    .dept-tree-nom {
+      color: #7c3aed;
+      font-weight: 600;
+    }
+    .dept-tree-code {
+      background: #7c3aed;
+      color: #fff;
+    }
+  }
+}
+
+.dept-tree-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: $text-muted;
+  &:hover {
+    background: #e2e8f0;
+  }
+}
+
+.dept-tree-leaf {
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #cbd5e1;
+}
+
+.dept-tree-code {
+  font-size: 10px;
+  font-weight: 700;
+  color: $text-muted;
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dept-tree-nom {
+  font-size: 0.875rem;
+  color: $text-dark;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dept-tree-check {
+  color: #7c3aed;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }

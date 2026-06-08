@@ -5,9 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-import * as dayjs from 'dayjs';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
-
 import { ISociete, Societe } from '../societe.model';
 import { SocieteService } from '../service/societe.service';
 import { AlertError } from 'app/shared/alert/alert-error.model';
@@ -58,9 +55,6 @@ export class SocieteUpdateComponent implements OnInit {
     imagesSitePrincipaleContentType: [],
     holding: [],
     etat: [null, [Validators.required]],
-    dateCreation: [],
-    dateActivation: [],
-    dateCloture: [],
     importTemplate: [],
     importTemplateContentType: [],
     codeSociete: [null, []],
@@ -81,12 +75,6 @@ export class SocieteUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ societe }) => {
-      if (societe.id === undefined) {
-        const today = dayjs().startOf('day');
-        societe.dateCreation = today;
-        societe.dateActivation = today;
-        societe.dateCloture = today;
-      }
       // Charger les formes juridiques en premier, puis les codes, puis le formulaire
       this.formeJuridiqueService
         .query()
@@ -220,9 +208,6 @@ export class SocieteUpdateComponent implements OnInit {
       imagesSitePrincipaleContentType: societe.imagesSitePrincipaleContentType,
       holding: societe.holding,
       etat: societe.etat,
-      dateCreation: societe.dateCreation ? societe.dateCreation.format(DATE_TIME_FORMAT) : null,
-      dateActivation: societe.dateActivation ? societe.dateActivation.format(DATE_TIME_FORMAT) : null,
-      dateCloture: societe.dateCloture ? societe.dateCloture.format(DATE_TIME_FORMAT) : null,
       importTemplate: societe.importTemplate,
       importTemplateContentType: societe.importTemplateContentType,
       codeSociete: societe.codeSociete,
@@ -261,15 +246,6 @@ export class SocieteUpdateComponent implements OnInit {
       imagesSitePrincipale: this.editForm.get(['imagesSitePrincipale'])!.value,
       holding: this.editForm.get(['holding'])!.value,
       etat: this.editForm.get(['etat'])!.value,
-      dateCreation: this.editForm.get(['dateCreation'])!.value
-        ? dayjs(this.editForm.get(['dateCreation'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-      dateActivation: this.editForm.get(['dateActivation'])!.value
-        ? dayjs(this.editForm.get(['dateActivation'])!.value, DATE_TIME_FORMAT)
-        : undefined,
-      dateCloture: this.editForm.get(['dateCloture'])!.value
-        ? dayjs(this.editForm.get(['dateCloture'])!.value, DATE_TIME_FORMAT)
-        : undefined,
       importTemplateContentType: this.editForm.get(['importTemplateContentType'])!.value,
       importTemplate: this.editForm.get(['importTemplate'])!.value,
       codeSociete: this.editForm.get(['codeSociete'])!.value,
