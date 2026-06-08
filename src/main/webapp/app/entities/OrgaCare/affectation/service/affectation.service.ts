@@ -22,8 +22,6 @@ export interface IAffecterPersonneRequest {
 export type EntityResponseType = HttpResponse<IAffectation>;
 export type EntityArrayResponseType = HttpResponse<IAffectation[]>;
 
-export type TypeAffectation = 'PRINCIPALE' | 'SECONDAIRE' | string; // à adapter selon votre enum Java
-
 @Injectable({ providedIn: 'root' })
 export class AffectationService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/affectations', 'orgacare');
@@ -101,18 +99,12 @@ export class AffectationService {
       .pipe(map((res: IAffectation) => this.convertDatesFromObject(res)));
   }
 
+  // NOUVEAU
   // GET /affectations/by-personne/{personneId}/active
   findAffectationsActivesByPersonneId(personneId: number): Observable<IAffectation[]> {
     return this.http
       .get<IAffectation[]>(`${this.resourceUrl}/by-personne/${personneId}/active`)
       .pipe(map((affectations: IAffectation[]) => this.convertDateArrayFromList(affectations)));
-  }
-
-  private convertDatesFromObject(affectation: IAffectation): IAffectation {
-    affectation.dateCreation = affectation.dateCreation ? dayjs(affectation.dateCreation) : undefined;
-    affectation.dateAction = affectation.dateAction ? dayjs(affectation.dateAction) : undefined;
-    affectation.dateFin = affectation.dateFin ? dayjs(affectation.dateFin) : undefined;
-    return affectation;
   }
 
   addAffectationToCollectionIfMissing(
@@ -170,5 +162,12 @@ export class AffectationService {
       affectation.dateFin = affectation.dateFin ? dayjs(affectation.dateFin) : undefined;
     });
     return affectations;
+  }
+
+  private convertDatesFromObject(affectation: IAffectation): IAffectation {
+    affectation.dateCreation = affectation.dateCreation ? dayjs(affectation.dateCreation) : undefined;
+    affectation.dateAction = affectation.dateAction ? dayjs(affectation.dateAction) : undefined;
+    affectation.dateFin = affectation.dateFin ? dayjs(affectation.dateFin) : undefined;
+    return affectation;
   }
 }

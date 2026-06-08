@@ -22,6 +22,14 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'app/entities/user/user.model';
 import { UserService } from 'app/entities/user/user.service';
 import { KeycloakSyncService, KeycloakSyncResult } from 'app/core/keycloak/keycloak-sync.service';
+import { ISociete } from 'app/entities/OrgaCare/societe/societe.model';
+import { SocieteService } from 'app/entities/OrgaCare/societe/service/societe.service';
+import { IOrganigramme } from 'app/entities/OrgaCare/organigramme/organigramme.model';
+import { OrganigrammeService } from 'app/entities/OrgaCare/organigramme/service/organigramme.service';
+import { IDepartement } from 'app/entities/OrgaCare/departement/departement.model';
+import { DepartementService } from 'app/entities/OrgaCare/departement/service/departement.service';
+import { IAffecterPersonneRequest } from 'app/entities/OrgaCare/affectation/service/affectation.service';
+import { TypeAffectation } from 'app/entities/enumerations/type-affectation.model';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -64,7 +72,28 @@ export class PersonneUpdateComponent implements OnInit {
   isSyncing = false;
   syncResult: KeycloakSyncResult | null = null;
   syncError: string | null = null;
+  // ── Accordéon Affectation ────────────────────────────
+  affectationsPersonne: IAffectation[] = [];
+  isLoadingAffectations = false;
 
+  // Modal affecter département
+  isAffectationSaving = false;
+  affectationSaveError: string | null = null;
+  affectationSaveSuccess = false;
+
+  affectationRoleActif: TypeAffectation = TypeAffectation.CHEF;
+  affectationDateAction: string = dayjs().format('YYYY-MM-DD');
+  affectationDateFin: string | null = null;
+
+  societesCollection: ISociete[] = [];
+  organigrammesCollection: IOrganigramme[] = [];
+  departementsCollection: IDepartement[] = [];
+
+  selectedSocieteId: number | null = null;
+  selectedOrganigrammeId: number | null = null;
+  selectedDepartementId: number | null = null;
+
+  // NOUVEAU
   editForm = this.fb.group({
     id: [],
     matricule: [],
@@ -84,6 +113,8 @@ export class PersonneUpdateComponent implements OnInit {
     grade: [],
     fonction: [],
   });
+
+  private affectationModalRef?: NgbModalRef;
   private assignModalRef?: NgbModalRef;
 
   constructor(
@@ -96,7 +127,10 @@ export class PersonneUpdateComponent implements OnInit {
     protected modalService: NgbModal,
     protected userService: UserService,
     private cdr: ChangeDetectorRef,
-    private keycloakSyncService: KeycloakSyncService
+    private keycloakSyncService: KeycloakSyncService,
+    protected societeService: SocieteService,
+    protected organigrammeService: OrganigrammeService,
+    protected departementService: DepartementService
   ) {}
 
   ngOnInit(): void {
@@ -119,6 +153,9 @@ export class PersonneUpdateComponent implements OnInit {
             .subscribe(fonctions => {
               this.fonctionsSharedCollection = fonctions;
               this.updateForm(personne);
+              if (personne.id !== undefined) {
+                this.loadAffectationsPersonne(personne.id);
+              }
               this.cdr.markForCheck();
             });
         });
@@ -263,6 +300,124 @@ export class PersonneUpdateComponent implements OnInit {
 
   trackFonctionById(index: number, item: IFonction): number {
     return item.id!;
+  }
+  // ── Chargement affectations existantes ───────────────
+  loadAffectationsPersonne(personneId: number): void {
+    this.isLoadingAffectations = true;
+    this.affectationService.findAffectationsActivesByPersonneId(personneId).subscribe(
+      (affectations: IAffectation[]) => {
+        this.affectationsPersonne = affectations;
+        this.isLoadingAffectations = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.isLoadingAffectations = false;
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  // ── Ouverture modal affecter département ─────────────
+  openAffecterDepartementModal(content: unknown): void {
+    this.affectationRoleActif = TypeAffectation.CHEF;
+    this.affectationDateAction = dayjs().format('YYYY-MM-DD');
+    this.affectationDateFin = null;
+    this.selectedSocieteId = null;
+    this.selectedOrganigrammeId = null;
+    this.selectedDepartementId = null;
+    this.organigrammesCollection = [];
+    this.departementsCollection = [];
+    this.affectationSaveError = null;
+    this.affectationSaveSuccess = false;
+
+    this.societeService.query({ size: 100 }).subscribe((res: HttpResponse<ISociete[]>) => {
+      this.societesCollection = res.body ?? [];
+      this.cdr.markForCheck();
+    });
+
+    this.affectationModalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  // ── Cascade Société → Organigramme ───────────────────
+  onSocieteChange(societeId: number | null): void {
+    this.selectedSocieteId = societeId;
+    this.selectedOrganigrammeId = null;
+    this.selectedDepartementId = null;
+    this.organigrammesCollection = [];
+    this.departementsCollection = [];
+
+    if (!societeId) {
+      return;
+    }
+
+    this.organigrammeService.findBySocieteId(societeId).subscribe((organigrammes: IOrganigramme[]) => {
+      this.organigrammesCollection = organigrammes;
+      this.cdr.markForCheck();
+    });
+  }
+
+  // ── Cascade Organigramme → Département ───────────────
+  onOrganigrammeChange(organigrammeId: number | null): void {
+    this.selectedOrganigrammeId = organigrammeId;
+    this.selectedDepartementId = null;
+    this.departementsCollection = [];
+
+    if (!organigrammeId) {
+      return;
+    }
+
+    this.departementService.findByOrganigramme(organigrammeId).subscribe((departements: IDepartement[]) => {
+      this.departementsCollection = departements;
+      this.cdr.markForCheck();
+    });
+  }
+
+  // ── Confirmation affectation ──────────────────────────
+  confirmAffecterDepartement(): void {
+    if (!this.selectedDepartementId) {
+      this.affectationSaveError = 'Veuillez sélectionner un département.';
+      return;
+    }
+
+    const personneId = this.editForm.get('id')!.value as number;
+    this.isAffectationSaving = true;
+    this.affectationSaveError = null;
+
+    const request: IAffecterPersonneRequest = {
+      personneId,
+      departementId: this.selectedDepartementId,
+      societeId: this.selectedSocieteId,
+      type: this.affectationRoleActif,
+      dateAction: this.affectationDateAction ? dayjs(this.affectationDateAction).toISOString() : null,
+      dateFin: this.affectationDateFin ? dayjs(this.affectationDateFin).toISOString() : null,
+    };
+
+    this.affectationService.affecterPersonne(request).subscribe(
+      () => {
+        this.isAffectationSaving = false;
+        this.affectationSaveSuccess = true;
+        this.loadAffectationsPersonne(personneId);
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.affectationModalRef?.close();
+          this.affectationSaveSuccess = false;
+        }, 1000);
+      },
+      () => {
+        this.isAffectationSaving = false;
+        this.affectationSaveError = "Erreur lors de l'affectation. Veuillez réessayer.";
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  // ── Sélection du rôle ─────────────────────────────────
+  setAffectationRole(role: string): void {
+    this.affectationRoleActif = role as TypeAffectation;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPersonne>>): void {

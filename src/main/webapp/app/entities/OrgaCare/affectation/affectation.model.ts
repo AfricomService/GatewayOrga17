@@ -12,6 +12,10 @@ export interface IAffectation {
   dateAction?: dayjs.Dayjs | null;
   dateFin?: dayjs.Dayjs | null;
   etat?: Etat;
+  departementId?: number;
+  personneId?: number;
+  groupeId?: number;
+  societeId?: number;
   departement?: IDepartement | null;
   groupe?: IGroupe | null;
   societe?: ISociete | null;

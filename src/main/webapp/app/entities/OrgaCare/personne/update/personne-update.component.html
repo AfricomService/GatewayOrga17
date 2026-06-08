@@ -251,9 +251,58 @@
             </button>
           </ng-template>
           <ng-template ngbPanelContent>
-            <div class="panel-body panel-empty">
-              <fa-icon icon="sitemap" class="panel-empty__icon"></fa-icon>
-              <p class="panel-empty__text">Section Affectation en cours — à implémenter</p>
+            <div class="panel-body">
+              <!-- Barre d'action -->
+              <div class="affectation-toolbar">
+                <span class="affectation-count">
+                  <fa-icon icon="sitemap"></fa-icon>
+                  {{ affectationsPersonne.length }} affectation(s) active(s)
+                </span>
+                <button
+                  type="button"
+                  class="btn-action btn-action--affectation"
+                  (click)="openAffecterDepartementModal(affecterDepartementModal)"
+                >
+                  <fa-icon icon="plus"></fa-icon>
+                  <span>Affecter</span>
+                </button>
+              </div>
+
+              <!-- Loading -->
+              <div *ngIf="isLoadingAffectations" class="text-center py-3">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Chargement...
+              </div>
+
+              <!-- Liste vide -->
+              <div *ngIf="!isLoadingAffectations && affectationsPersonne.length === 0" class="panel-empty">
+                <fa-icon icon="sitemap" class="panel-empty__icon"></fa-icon>
+                <p class="panel-empty__text">Aucune affectation active</p>
+              </div>
+
+              <!-- Liste des affectations -->
+              <div class="affectation-list" *ngIf="!isLoadingAffectations && affectationsPersonne.length > 0">
+                <div class="affectation-item" *ngFor="let aff of affectationsPersonne">
+                  <div
+                    class="aff-badge"
+                    [ngClass]="{
+                      'aff-badge--chef': aff.type === 'CHEF',
+                      'aff-badge--membre': aff.type === 'MEMBRE',
+                      'aff-badge--assistant': aff.type === 'ASSISTANT',
+                      'aff-badge--interim': aff.type === 'INTERIM'
+                    }"
+                  >
+                    {{ aff.type }}
+                  </div>
+                  <div class="aff-info">
+                    <span class="aff-dept">Département #{{ aff.departementId }}</span>
+                    <span class="aff-dates" *ngIf="aff.dateAction">
+                      Depuis le {{ aff.dateAction.toDate() | date: 'dd/MM/yyyy' }}
+                      <span *ngIf="aff.dateFin"> — Fin : {{ aff.dateFin.toDate() | date: 'dd/MM/yyyy' }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </ng-template>
         </ngb-panel>
@@ -409,6 +458,128 @@
       <button type="button" class="btn btn-primary" [disabled]="!selectedUser || isAssigning" (click)="confirmAssignUser()">
         <span *ngIf="isAssigning" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isAssigning" icon="link" class="me-1"></fa-icon>
+        Affecter
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- ══════════════ MODAL AFFECTER DÉPARTEMENT ══════════════ -->
+  <ng-template #affecterDepartementModal let-modal>
+    <div class="modal-header">
+      <div class="modal-title-block">
+        <span class="modal-icon-primary"><fa-icon icon="sitemap"></fa-icon></span>
+        <h5 class="modal-title">Affecter à un département</h5>
+      </div>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Nom personne -->
+      <div class="affectation-modal-personne mb-3">
+        <span class="label-personne">Nom :</span>
+        <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
+      </div>
+
+      <!-- Rôle tabs -->
+      <div class="mb-3">
+        <label class="field-label">Rôle</label>
+        <div class="role-tabs">
+          <button type="button" class="role-tab" [class.active]="affectationRoleActif === 'CHEF'" (click)="setAffectationRole('CHEF')">
+            Chef de
+          </button>
+          <button type="button" class="role-tab" [class.active]="affectationRoleActif === 'MEMBRE'" (click)="setAffectationRole('MEMBRE')">
+            Membre de
+          </button>
+          <button
+            type="button"
+            class="role-tab"
+            [class.active]="affectationRoleActif === 'ASSISTANT'"
+            (click)="setAffectationRole('ASSISTANT')"
+          >
+            Assistant de
+          </button>
+          <button
+            type="button"
+            class="role-tab"
+            [class.active]="affectationRoleActif === 'INTERIM'"
+            (click)="setAffectationRole('INTERIM')"
+          >
+            Intérim de
+          </button>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Date Action</label>
+          <input class="field-input" type="date" [(ngModel)]="affectationDateAction" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Date Fin</label>
+          <input class="field-input" type="date" [(ngModel)]="affectationDateFin" />
+        </div>
+      </div>
+
+      <!-- Société + Organigramme -->
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Société</label>
+          <select class="field-input field-select" [(ngModel)]="selectedSocieteId" (ngModelChange)="onSocieteChange($event)">
+            <option [ngValue]="null">— Sélectionner —</option>
+            <option *ngFor="let s of societesCollection" [ngValue]="s.id">
+              {{ s.raisonSociale }}
+            </option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Organigramme</label>
+          <select
+            class="field-input field-select"
+            [(ngModel)]="selectedOrganigrammeId"
+            (ngModelChange)="onOrganigrammeChange($event)"
+            [disabled]="!selectedSocieteId"
+          >
+            <option [ngValue]="null">— Sélectionner —</option>
+            <option *ngFor="let o of organigrammesCollection" [ngValue]="o.id">
+              {{ o.nom ?? o.code }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Département -->
+      <div class="field-group mb-3" *ngIf="selectedSocieteId && selectedOrganigrammeId">
+        <label class="field-label">Département <span style="color: red">*</span></label>
+        <select class="field-input field-select" [(ngModel)]="selectedDepartementId">
+          <option [ngValue]="null">— Sélectionner —</option>
+          <option *ngFor="let d of departementsCollection" [ngValue]="d.id">
+            {{ d.nom }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Erreur / Succès -->
+      <div *ngIf="affectationSaveError" class="sync-banner sync-banner--error">
+        <fa-icon icon="exclamation-circle"></fa-icon>
+        <span>{{ affectationSaveError }}</span>
+      </div>
+      <div *ngIf="affectationSaveSuccess" class="sync-banner sync-banner--success">
+        <fa-icon icon="check-circle"></fa-icon>
+        <span>Affectation enregistrée avec succès !</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!selectedDepartementId || isAffectationSaving"
+        (click)="confirmAffecterDepartement()"
+      >
+        <span *ngIf="isAffectationSaving" class="spinner-border spinner-border-sm me-1"></span>
+        <fa-icon *ngIf="!isAffectationSaving" icon="sitemap" class="me-1"></fa-icon>
         Affecter
       </button>
     </div>
