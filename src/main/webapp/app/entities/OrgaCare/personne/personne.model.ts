@@ -25,7 +25,9 @@ export interface IPersonne {
   contrats?: IContrat[] | null;
   affectation?: IAffectation | null;
   grade?: IGrade | null;
+  gradeId?: number | null;
   fonction?: IFonction | null;
+  fonctionId?: number | null;
   departements?: IDepartement[] | null;
 }
 
@@ -48,7 +50,9 @@ export class Personne implements IPersonne {
     public contrats?: IContrat[] | null,
     public affectation?: IAffectation | null,
     public grade?: IGrade | null,
+    public gradeId?: number | null,
     public fonction?: IFonction | null,
+    public fonctionId?: number | null,
     public departements?: IDepartement[] | null
   ) {}
 }

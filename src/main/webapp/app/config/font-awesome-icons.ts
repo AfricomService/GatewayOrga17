@@ -75,6 +75,8 @@ import {
   faUpload,
   faSitemap,
   faProjectDiagram,
+  faCalendarTimes,
+  faKey,
 
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
@@ -157,6 +159,8 @@ export const fontAwesomeIcons = [
   faUpload,
   faSitemap,
   faProjectDiagram,
+  faCalendarTimes,
+  faKey,
 
   // jhipster-needle-add-icon-import
 ];

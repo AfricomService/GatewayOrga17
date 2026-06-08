@@ -191,38 +191,19 @@
                 </div>
               </div>
 
-              <!-- Etat -->
-              <div class="field-group required">
-                <label class="field-label" for="field_etat" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat"> État </label>
-                <div class="input-wrapper select-wrapper">
-                  <span class="input-prefix"><fa-icon icon="check-circle"></fa-icon></span>
-                  <select class="field-input field-select with-prefix" id="field_etat" formControlName="etat">
-                    <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
-                    <option *ngFor="let etat of etatValues" [ngValue]="etat">
-                      {{ 'orgacaregatewayApp.Etat.' + etat | translate }}
-                    </option>
-                  </select>
-                </div>
-                <div
-                  class="field-error"
-                  *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)"
-                >
-                  <fa-icon icon="exclamation-circle"></fa-icon>
-                  <small jhiTranslate="entity.validation.required">Ce champ est requis.</small>
-                </div>
-              </div>
-
               <!-- Grade -->
               <div class="field-group">
                 <label class="field-label" for="field_grade" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade"> Grade </label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="layer-group"></fa-icon></span>
-                  <select class="field-input field-select with-prefix" id="field_grade" formControlName="grade">
+                  <select
+                    class="field-input field-select with-prefix"
+                    id="field_grade"
+                    formControlName="grade"
+                    [compareWith]="compareGrade"
+                  >
                     <option [ngValue]="null">— Sélectionner —</option>
-                    <option
-                      [ngValue]="gradeOption.id === editForm.get('grade')!.value?.id ? editForm.get('grade')!.value : gradeOption"
-                      *ngFor="let gradeOption of gradesSharedCollection; trackBy: trackGradeById"
-                    >
+                    <option [ngValue]="gradeOption" *ngFor="let gradeOption of gradesSharedCollection; trackBy: trackGradeById">
                       {{ gradeOption.label }}
                     </option>
                   </select>
@@ -236,157 +217,111 @@
                 </label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="briefcase"></fa-icon></span>
-                  <select class="field-input field-select with-prefix" id="field_fonction" formControlName="fonction">
+                  <select
+                    class="field-input field-select with-prefix"
+                    id="field_fonction"
+                    formControlName="fonction"
+                    [compareWith]="compareFonction"
+                  >
                     <option [ngValue]="null">— Sélectionner —</option>
-                    <option
-                      [ngValue]="
-                        fonctionOption.id === editForm.get('fonction')!.value?.id ? editForm.get('fonction')!.value : fonctionOption
-                      "
-                      *ngFor="let fonctionOption of fonctionsSharedCollection; trackBy: trackFonctionById"
-                    >
+                    <option [ngValue]="fonctionOption" *ngFor="let fonctionOption of fonctionsSharedCollection; trackBy: trackFonctionById">
                       {{ fonctionOption.label }}
                     </option>
                   </select>
                 </div>
               </div>
-
-              <!-- Affectation -->
-              <div class="field-group">
-                <label class="field-label" for="field_affectation" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.affectation">
-                  Affectation
-                </label>
-                <div class="input-wrapper select-wrapper">
-                  <span class="input-prefix"><fa-icon icon="map-marker-alt"></fa-icon></span>
-                  <select class="field-input field-select with-prefix" id="field_affectation" formControlName="affectation">
-                    <option [ngValue]="null">— Sélectionner —</option>
-                    <option
-                      [ngValue]="
-                        affectationOption.id === editForm.get('affectation')!.value?.id
-                          ? editForm.get('affectation')!.value
-                          : affectationOption
-                      "
-                      *ngFor="let affectationOption of affectationsSharedCollection; trackBy: trackAffectationById"
-                    >
-                      {{ affectationOption.id }}
-                    </option>
-                  </select>
-                </div>
-              </div>
             </div>
           </div>
         </ng-template>
       </ngb-panel>
 
-      <!-- ─── Panel 1 : Informations Contractuelles ─── -->
-      <ngb-panel id="panel-1">
-        <ng-template ngbPanelHeader let-opened="opened">
-          <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
-            <div class="panel-header-content">
-              <div class="panel-icon contractual">
-                <fa-icon icon="file-contract"></fa-icon>
+      <!-- ─── Panels supplémentaires : mode ÉDITION uniquement ─── -->
+      <ng-container *ngIf="editForm.get('id')!.value != null">
+        <!-- ─── Panel 1 : Affectation en cours ─── -->
+        <ngb-panel id="panel-1">
+          <ng-template ngbPanelHeader let-opened="opened">
+            <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
+              <div class="panel-header-content">
+                <div class="panel-icon affectation">
+                  <fa-icon icon="sitemap"></fa-icon>
+                </div>
+                <span>Affectation en cours</span>
               </div>
-              <span>Informations Contractuelles</span>
+              <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+            </button>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <div class="panel-body panel-empty">
+              <fa-icon icon="sitemap" class="panel-empty__icon"></fa-icon>
+              <p class="panel-empty__text">Section Affectation en cours — à implémenter</p>
             </div>
-            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
-          </button>
-        </ng-template>
+          </ng-template>
+        </ngb-panel>
 
-        <ng-template ngbPanelContent>
-          <div class="panel-body">
-            <div class="form-grid">
-              <!-- État Contractuelle -->
-              <div class="field-group required">
-                <label
-                  class="field-label"
-                  for="field_etatContractuelle"
-                  jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etatContractuelle"
-                >
-                  État Contractuel
-                </label>
-                <div class="input-wrapper select-wrapper">
-                  <span class="input-prefix"><fa-icon icon="file-alt"></fa-icon></span>
-                  <select class="field-input field-select with-prefix" id="field_etatContractuelle" formControlName="etatContractuelle">
-                    <option [ngValue]="null">{{ 'orgacaregatewayApp.EtatContractuelle.null' | translate }}</option>
-                    <option *ngFor="let etatContractuelle of etatContractuelleValues" [ngValue]="etatContractuelle">
-                      {{ 'orgacaregatewayApp.EtatContractuelle.' + etatContractuelle | translate }}
-                    </option>
-                  </select>
+        <!-- ─── Panel 2 : Contrat ─── -->
+        <ngb-panel id="panel-2">
+          <ng-template ngbPanelHeader let-opened="opened">
+            <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
+              <div class="panel-header-content">
+                <div class="panel-icon contrat">
+                  <fa-icon icon="file-contract"></fa-icon>
                 </div>
-                <div
-                  class="field-error"
-                  *ngIf="
-                    editForm.get('etatContractuelle')!.invalid &&
-                    (editForm.get('etatContractuelle')!.dirty || editForm.get('etatContractuelle')!.touched)
-                  "
-                >
-                  <fa-icon icon="exclamation-circle"></fa-icon>
-                  <small jhiTranslate="entity.validation.required">Ce champ est requis.</small>
-                </div>
+                <span>Contrat</span>
               </div>
-
-              <!-- Date Création -->
-              <div class="field-group">
-                <label class="field-label" for="field_dateCreation" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateCreation">
-                  Date de Création
-                </label>
-                <div class="input-wrapper">
-                  <span class="input-prefix"><fa-icon icon="calendar-plus"></fa-icon></span>
-                  <input
-                    class="field-input with-prefix"
-                    id="field_dateCreation"
-                    type="datetime-local"
-                    formControlName="dateCreation"
-                    placeholder="YYYY-MM-DD HH:mm"
-                  />
-                </div>
-              </div>
-
-              <!-- Date Début Contrat -->
-              <div class="field-group">
-                <label class="field-label" for="field_dateDebutContrat" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.dateDebutContrat">
-                  Date Début Contrat
-                </label>
-                <div class="input-wrapper">
-                  <span class="input-prefix"><fa-icon icon="calendar-check"></fa-icon></span>
-                  <input
-                    class="field-input with-prefix"
-                    id="field_dateDebutContrat"
-                    type="datetime-local"
-                    formControlName="dateDebutContrat"
-                    placeholder="YYYY-MM-DD HH:mm"
-                  />
-                </div>
-              </div>
-
-              <!-- ID Contrat Actif -->
-              <div class="field-group" [hidden]="editForm.get('id')!.value == null">
-                <label class="field-label" for="field_idContratActif" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idContratActif">
-                  ID Contrat Actif
-                </label>
-                <div class="input-wrapper">
-                  <span class="input-prefix"><fa-icon icon="file-signature"></fa-icon></span>
-                  <input class="field-input with-prefix" id="field_idContratActif" type="number" formControlName="idContratActif" />
-                </div>
-              </div>
-
-              <!-- ID Type Contrat Actif -->
-              <div class="field-group" [hidden]="editForm.get('id')!.value == null">
-                <label
-                  class="field-label"
-                  for="field_idTypeContratActif"
-                  jhiTranslate="orgacaregatewayApp.orgaCarePersonne.idTypeContratActif"
-                >
-                  ID Type Contrat Actif
-                </label>
-                <div class="input-wrapper">
-                  <span class="input-prefix"><fa-icon icon="tag"></fa-icon></span>
-                  <input class="field-input with-prefix" id="field_idTypeContratActif" type="number" formControlName="idTypeContratActif" />
-                </div>
-              </div>
+              <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+            </button>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <div class="panel-body panel-empty">
+              <fa-icon icon="file-contract" class="panel-empty__icon"></fa-icon>
+              <p class="panel-empty__text">Section Contrat — à implémenter</p>
             </div>
-          </div>
-        </ng-template>
-      </ngb-panel>
+          </ng-template>
+        </ngb-panel>
+
+        <!-- ─── Panel 3 : Absence ─── -->
+        <ngb-panel id="panel-3">
+          <ng-template ngbPanelHeader let-opened="opened">
+            <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
+              <div class="panel-header-content">
+                <div class="panel-icon absence">
+                  <fa-icon icon="calendar-times"></fa-icon>
+                </div>
+                <span>Absence</span>
+              </div>
+              <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+            </button>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <div class="panel-body panel-empty">
+              <fa-icon icon="calendar-times" class="panel-empty__icon"></fa-icon>
+              <p class="panel-empty__text">Section Absence — à implémenter</p>
+            </div>
+          </ng-template>
+        </ngb-panel>
+
+        <!-- ─── Panel 4 : Changer mot de passe ─── -->
+        <ngb-panel id="panel-4">
+          <ng-template ngbPanelHeader let-opened="opened">
+            <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
+              <div class="panel-header-content">
+                <div class="panel-icon password">
+                  <fa-icon icon="key"></fa-icon>
+                </div>
+                <span>Changer mot de passe</span>
+              </div>
+              <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+            </button>
+          </ng-template>
+          <ng-template ngbPanelContent>
+            <div class="panel-body panel-empty">
+              <fa-icon icon="key" class="panel-empty__icon"></fa-icon>
+              <p class="panel-empty__text">Section Changer mot de passe — à implémenter</p>
+            </div>
+          </ng-template>
+        </ngb-panel>
+      </ng-container>
+      <!-- ─── Fin panels édition ─── -->
     </ngb-accordion>
   </form>
   <!-- ══════════════ MODAL AFFECTATION USER ══════════════ -->

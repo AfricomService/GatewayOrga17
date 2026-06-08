@@ -44,7 +44,8 @@ export class PersonneUpdateComponent implements OnInit {
   generateMatriculeAutomatically = false;
 
   // Accordion / panels (conservé de l'ancienne version)
-  personItems = ['Section Générale', 'Informations Contractuelles'];
+  personItems = ['Section Générale'];
+  editPanels = ['Affectation en cours', 'Contrat', 'Absence', 'Changer mot de passe'];
   activePanels: string[] = ['panel-0'];
   disablePanelTitle: boolean[] = [];
   // Propriétés pour la modal d'affectation user
@@ -72,8 +73,8 @@ export class PersonneUpdateComponent implements OnInit {
     numTelephone: [],
     genre: [],
     cin: [],
-    etat: [null, [Validators.required]],
-    etatContractuelle: [null, [Validators.required]],
+    etat: [null],
+    etatContractuelle: [null],
     dateCreation: [],
     dateDebutContrat: [],
     idContratActif: [],
@@ -106,9 +107,21 @@ export class PersonneUpdateComponent implements OnInit {
         personne.dateDebutContrat = today;
       }
 
-      this.updateForm(personne);
-      this.loadRelationshipsOptions();
-      this.cdr.markForCheck();
+      // Charger grades et fonctions en premier, puis initialiser le formulaire
+      this.gradeService
+        .query()
+        .pipe(map((res: HttpResponse<IGrade[]>) => res.body ?? []))
+        .subscribe(grades => {
+          this.gradesSharedCollection = grades;
+          this.fonctionService
+            .query()
+            .pipe(map((res: HttpResponse<IFonction[]>) => res.body ?? []))
+            .subscribe(fonctions => {
+              this.fonctionsSharedCollection = fonctions;
+              this.updateForm(personne);
+              this.cdr.markForCheck();
+            });
+        });
 
       if (this.generateMatriculeAutomatically && personne.id === undefined) {
         this.personneService.generateNextMatricule('Empl-').subscribe(nextCode => {
@@ -232,6 +245,14 @@ export class PersonneUpdateComponent implements OnInit {
     );
   }
 
+  compareGrade(g1: IGrade | null, g2: IGrade | null): boolean {
+    return g1 && g2 ? g1.id === g2.id : g1 === g2;
+  }
+
+  compareFonction(f1: IFonction | null, f2: IFonction | null): boolean {
+    return f1 && f2 ? f1.id === f2.id : f1 === f2;
+  }
+
   trackAffectationById(index: number, item: IAffectation): number {
     return item.id!;
   }
@@ -264,6 +285,13 @@ export class PersonneUpdateComponent implements OnInit {
   }
 
   protected updateForm(personne: IPersonne): void {
+    // Résoudre grade et fonction depuis leurs IDs si les objets ne sont pas fournis
+    const resolvedGrade: IGrade | null =
+      personne.grade ?? (personne.gradeId ? this.gradesSharedCollection.find(g => g.id === personne.gradeId) ?? null : null);
+
+    const resolvedFonction: IFonction | null =
+      personne.fonction ?? (personne.fonctionId ? this.fonctionsSharedCollection.find(f => f.id === personne.fonctionId) ?? null : null);
+
     this.editForm.patchValue({
       id: personne.id,
       matricule: personne.matricule,
@@ -278,11 +306,10 @@ export class PersonneUpdateComponent implements OnInit {
       idTypeContratActif: personne.idTypeContratActif,
       userId: personne.userId,
       affectation: personne.affectation,
-      grade: personne.grade,
-      fonction: personne.fonction,
+      grade: resolvedGrade,
+      fonction: resolvedFonction,
     });
 
-    // Patch les selects enum dans un setTimeout pour forcer le rendu Angular
     setTimeout(() => {
       this.editForm.patchValue({
         etat: personne.etat,
@@ -295,24 +322,14 @@ export class PersonneUpdateComponent implements OnInit {
       this.affectationsSharedCollection,
       personne.affectation
     );
-    this.gradesSharedCollection = this.gradeService.addGradeToCollectionIfMissing(this.gradesSharedCollection, personne.grade);
+    this.gradesSharedCollection = this.gradeService.addGradeToCollectionIfMissing(this.gradesSharedCollection, resolvedGrade);
     this.fonctionsSharedCollection = this.fonctionService.addFonctionToCollectionIfMissing(
       this.fonctionsSharedCollection,
-      personne.fonction
+      resolvedFonction
     );
   }
 
   protected loadRelationshipsOptions(): void {
-    this.affectationService
-      .query()
-      .pipe(map((res: HttpResponse<IAffectation[]>) => res.body ?? []))
-      .pipe(
-        map((affectations: IAffectation[]) =>
-          this.affectationService.addAffectationToCollectionIfMissing(affectations, this.editForm.get('affectation')!.value)
-        )
-      )
-      .subscribe((affectations: IAffectation[]) => (this.affectationsSharedCollection = affectations));
-
     this.gradeService
       .query()
       .pipe(map((res: HttpResponse<IGrade[]>) => res.body ?? []))
@@ -353,7 +370,9 @@ export class PersonneUpdateComponent implements OnInit {
       userId: this.editForm.get(['userId'])!.value,
       affectation: this.editForm.get(['affectation'])!.value,
       grade: this.editForm.get(['grade'])!.value,
+      gradeId: (this.editForm.get(['grade'])!.value as IGrade | null)?.id ?? null,
       fonction: this.editForm.get(['fonction'])!.value,
+      fonctionId: (this.editForm.get(['fonction'])!.value as IFonction | null)?.id ?? null,
     };
   }
 }

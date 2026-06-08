@@ -8,6 +8,16 @@ import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IAffectation, getAffectationIdentifier } from '../affectation.model';
+import { TypeAffectation } from 'app/entities/enumerations/type-affectation.model';
+
+export interface IAffecterPersonneRequest {
+  personneId: number;
+  departementId: number;
+  societeId?: number | null;
+  type: TypeAffectation;
+  dateAction?: string | null;
+  dateFin?: string | null;
+}
 
 export type EntityResponseType = HttpResponse<IAffectation>;
 export type EntityArrayResponseType = HttpResponse<IAffectation[]>;
@@ -82,6 +92,27 @@ export class AffectationService {
   findEmailsByDepartementAndType(departementId: number, type: TypeAffectation): Observable<string[]> {
     const params = new HttpParams().set('departementId', departementId.toString()).set('type', type);
     return this.http.get<string[]>(`${this.resourceUrl}/emails-by-departement-and-type`, { params });
+  }
+
+  // POST /affectations/affecter-personne
+  affecterPersonne(request: IAffecterPersonneRequest): Observable<IAffectation> {
+    return this.http
+      .post<IAffectation>(`${this.resourceUrl}/affecter-personne`, request)
+      .pipe(map((res: IAffectation) => this.convertDatesFromObject(res)));
+  }
+
+  // GET /affectations/by-personne/{personneId}/active
+  findAffectationsActivesByPersonneId(personneId: number): Observable<IAffectation[]> {
+    return this.http
+      .get<IAffectation[]>(`${this.resourceUrl}/by-personne/${personneId}/active`)
+      .pipe(map((affectations: IAffectation[]) => this.convertDateArrayFromList(affectations)));
+  }
+
+  private convertDatesFromObject(affectation: IAffectation): IAffectation {
+    affectation.dateCreation = affectation.dateCreation ? dayjs(affectation.dateCreation) : undefined;
+    affectation.dateAction = affectation.dateAction ? dayjs(affectation.dateAction) : undefined;
+    affectation.dateFin = affectation.dateFin ? dayjs(affectation.dateFin) : undefined;
+    return affectation;
   }
 
   addAffectationToCollectionIfMissing(
