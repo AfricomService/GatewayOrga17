@@ -12,6 +12,8 @@ export interface IContrat {
   societe?: ISociete | null;
   typeContrat?: ITypeContrat | null;
   personne?: IPersonne | null;
+  nomTypeContrat?: string | null;
+  raisonSocialeSociete?: string | null;
 }
 
 export class Contrat implements IContrat {

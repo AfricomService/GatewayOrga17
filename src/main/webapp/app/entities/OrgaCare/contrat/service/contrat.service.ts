@@ -73,6 +73,19 @@ export class ContratService {
     return contratCollection;
   }
 
+  findByPersonneId(personneId: number): Observable<IContrat[]> {
+    return this.http.get<IContrat[]>(`${this.resourceUrl}/by-personne/${personneId}`, { observe: 'response' }).pipe(
+      map((res: HttpResponse<IContrat[]>) => {
+        const body = res.body ?? [];
+        body.forEach(c => {
+          c.dateDebut = c.dateDebut ? dayjs(c.dateDebut) : undefined;
+          c.dateFin = c.dateFin ? dayjs(c.dateFin) : undefined;
+        });
+        return body;
+      })
+    );
+  }
+
   protected convertDateFromClient(contrat: IContrat): IContrat {
     return Object.assign({}, contrat, {
       dateDebut: contrat.dateDebut?.isValid() ? contrat.dateDebut.toJSON() : undefined,

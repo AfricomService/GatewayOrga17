@@ -1017,3 +1017,79 @@ $transition: all 0.2s ease;
   display: flex;
   align-items: center;
 }
+
+// ── Panel Contrat ─────────────────────────────────────
+.btn-action--contrat {
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+}
+
+.contrat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.contrat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #ccfbf1;
+  border-radius: 8px;
+  background: #f0fdfa;
+}
+
+.contrat-badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  &--actif {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  &--expire {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  &--passif {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+}
+
+.contrat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  .contrat-type {
+    font-weight: 600;
+    color: $text-dark;
+    font-size: 0.9rem;
+  }
+  .contrat-societe {
+    font-size: 0.8rem;
+    color: $text-muted;
+  }
+  .contrat-dates {
+    font-size: 0.78rem;
+    color: $text-muted;
+  }
+}

@@ -30,6 +30,10 @@ import { IDepartement } from 'app/entities/OrgaCare/departement/departement.mode
 import { DepartementService } from 'app/entities/OrgaCare/departement/service/departement.service';
 import { IAffecterPersonneRequest } from 'app/entities/OrgaCare/affectation/service/affectation.service';
 import { TypeAffectation } from 'app/entities/enumerations/type-affectation.model';
+import { IContrat } from 'app/entities/OrgaCare/contrat/contrat.model';
+import { ContratService } from 'app/entities/OrgaCare/contrat/service/contrat.service';
+import { ITypeContrat } from 'app/entities/OrgaCare/type-contrat/type-contrat.model';
+import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/type-contrat.service';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -80,6 +84,22 @@ export class PersonneUpdateComponent implements OnInit {
   isAffectationSaving = false;
   affectationSaveError: string | null = null;
   affectationSaveSuccess = false;
+  // Modal ajout contrat
+  isContratSaving = false;
+  contratSaveError: string | null = null;
+  contratSaveSuccess = false;
+  contratsPersonne: IContrat[] = [];
+  isLoadingContrats = false;
+
+  typesContratCollection: ITypeContrat[] = [];
+  societesContratCollection: ISociete[] = [];
+
+  newContratDateDebut: string = dayjs().format('YYYY-MM-DD');
+  newContratDateFin: string | null = null;
+  newContratTypeContratId: number | null = null;
+  newContratSocieteId: number | null = null;
+
+  private contratModalRef?: NgbModalRef;
 
   affectationRoleActif: TypeAffectation = TypeAffectation.CHEF;
   affectationDateAction: string = dayjs().format('YYYY-MM-DD');
@@ -135,7 +155,9 @@ export class PersonneUpdateComponent implements OnInit {
     private keycloakSyncService: KeycloakSyncService,
     protected societeService: SocieteService,
     protected organigrammeService: OrganigrammeService,
-    protected departementService: DepartementService
+    protected departementService: DepartementService,
+    protected contratService: ContratService,
+    protected typeContratService: TypeContratService
   ) {}
 
   ngOnInit(): void {
@@ -160,6 +182,7 @@ export class PersonneUpdateComponent implements OnInit {
               this.updateForm(personne);
               if (personne.id !== undefined) {
                 this.loadAffectationsPersonne(personne.id);
+                this.loadContratsPersonne(personne.id);
               }
               this.cdr.markForCheck();
             });
@@ -427,6 +450,84 @@ export class PersonneUpdateComponent implements OnInit {
       () => {
         this.isAffectationSaving = false;
         this.affectationSaveError = "Erreur lors de l'affectation. Veuillez réessayer.";
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  loadContratsPersonne(personneId: number): void {
+    this.isLoadingContrats = true;
+    this.contratService.findByPersonneId(personneId).subscribe(
+      (contrats: IContrat[]) => {
+        this.contratsPersonne = contrats;
+        this.isLoadingContrats = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.isLoadingContrats = false;
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  openAjouterContratModal(content: unknown): void {
+    this.newContratDateDebut = dayjs().format('YYYY-MM-DD');
+    this.newContratDateFin = null;
+    this.newContratTypeContratId = null;
+    this.newContratSocieteId = null;
+    this.contratSaveError = null;
+    this.contratSaveSuccess = false;
+
+    this.typeContratService.query({ size: 100 }).subscribe((res: HttpResponse<ITypeContrat[]>) => {
+      this.typesContratCollection = res.body ?? [];
+      this.cdr.markForCheck();
+    });
+
+    this.societeService.query({ size: 100 }).subscribe((res: HttpResponse<ISociete[]>) => {
+      this.societesContratCollection = res.body ?? [];
+      this.cdr.markForCheck();
+    });
+
+    this.contratModalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  confirmAjouterContrat(): void {
+    if (!this.newContratDateDebut) {
+      this.contratSaveError = 'La date de début est obligatoire.';
+      return;
+    }
+
+    const personneId = this.editForm.get('id')!.value as number;
+    this.isContratSaving = true;
+    this.contratSaveError = null;
+
+    const contratDTO = {
+      dateDebut: dayjs(this.newContratDateDebut).toISOString(),
+      dateFin: this.newContratDateFin ? dayjs(this.newContratDateFin).toISOString() : null,
+      typeContratId: this.newContratTypeContratId,
+      societeId: this.newContratSocieteId,
+      personneId,
+      status: 'ACTIF',
+    };
+
+    this.contratService.create(contratDTO as any).subscribe(
+      () => {
+        this.isContratSaving = false;
+        this.contratSaveSuccess = true;
+        this.loadContratsPersonne(personneId);
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.contratModalRef?.close();
+          this.contratSaveSuccess = false;
+        }, 1000);
+      },
+      () => {
+        this.isContratSaving = false;
+        this.contratSaveError = "Erreur lors de l'enregistrement du contrat.";
         this.cdr.markForCheck();
       }
     );

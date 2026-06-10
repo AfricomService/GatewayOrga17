@@ -333,9 +333,54 @@
             </button>
           </ng-template>
           <ng-template ngbPanelContent>
-            <div class="panel-body panel-empty">
-              <fa-icon icon="file-contract" class="panel-empty__icon"></fa-icon>
-              <p class="panel-empty__text">Section Contrat — à implémenter</p>
+            <div class="panel-body">
+              <!-- Barre d'action -->
+              <div class="affectation-toolbar">
+                <span class="affectation-count">
+                  <fa-icon icon="file-contract"></fa-icon>
+                  {{ contratsPersonne.length }} contrat(s)
+                </span>
+                <button type="button" class="btn-action btn-action--contrat" (click)="openAjouterContratModal(ajouterContratModal)">
+                  <fa-icon icon="plus"></fa-icon>
+                  <span>Ajouter un contrat</span>
+                </button>
+              </div>
+
+              <!-- Loading -->
+              <div *ngIf="isLoadingContrats" class="text-center py-3">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Chargement...
+              </div>
+
+              <!-- Liste vide -->
+              <div *ngIf="!isLoadingContrats && contratsPersonne.length === 0" class="panel-empty">
+                <fa-icon icon="file-contract" class="panel-empty__icon"></fa-icon>
+                <p class="panel-empty__text">Aucun contrat enregistré</p>
+              </div>
+
+              <!-- Liste des contrats -->
+              <div class="contrat-list" *ngIf="!isLoadingContrats && contratsPersonne.length > 0">
+                <div class="contrat-item" *ngFor="let c of contratsPersonne">
+                  <div
+                    class="contrat-badge"
+                    [ngClass]="{
+                      'contrat-badge--actif': c.status === 'ACTIF',
+                      'contrat-badge--expire': c.status === 'EXPIRE',
+                      'contrat-badge--passif': c.status === 'PASSIF'
+                    }"
+                  >
+                    {{ c.status }}
+                  </div>
+                  <div class="contrat-info">
+                    <span class="contrat-type">{{ c.nomTypeContrat ?? 'Type #' + c.typeContratId }}</span>
+                    <span class="contrat-societe" *ngIf="c.raisonSocialeSociete">{{ c.raisonSocialeSociete }}</span>
+                    <span class="contrat-dates">
+                      Du {{ c.dateDebut?.toDate() | date: 'dd/MM/yyyy' }}
+                      <span *ngIf="c.dateFin"> — au {{ c.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </ng-template>
         </ngb-panel>
@@ -654,6 +699,78 @@
         <span *ngIf="isAffectationSaving" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isAffectationSaving" icon="sitemap" class="me-1"></fa-icon>
         Affecter
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- ══════════════ MODAL AJOUT CONTRAT ══════════════ -->
+  <ng-template #ajouterContratModal let-modal>
+    <div class="modal-header">
+      <div class="modal-title-block">
+        <span class="modal-icon-primary"><fa-icon icon="file-contract"></fa-icon></span>
+        <h5 class="modal-title">Ajouter un contrat</h5>
+      </div>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Nom personne -->
+      <div class="affectation-modal-personne mb-3">
+        <span class="label-personne">Personne :</span>
+        <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Date Début <span style="color: red">*</span></label>
+          <input class="field-input" type="date" [(ngModel)]="newContratDateDebut" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Date Fin</label>
+          <input class="field-input" type="date" [(ngModel)]="newContratDateFin" />
+        </div>
+      </div>
+
+      <!-- Type de contrat + Société -->
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Type de Contrat</label>
+          <select class="field-input field-select" [(ngModel)]="newContratTypeContratId">
+            <option [ngValue]="null">— Sélectionner —</option>
+            <option *ngFor="let tc of typesContratCollection" [ngValue]="tc.id">
+              {{ tc.nom }}
+            </option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Société</label>
+          <select class="field-input field-select" [(ngModel)]="newContratSocieteId">
+            <option [ngValue]="null">— Sélectionner —</option>
+            <option *ngFor="let s of societesContratCollection" [ngValue]="s.id">
+              {{ s.raisonSociale }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Erreur / Succès -->
+      <div *ngIf="contratSaveError" class="sync-banner sync-banner--error">
+        <fa-icon icon="exclamation-circle"></fa-icon>
+        <span>{{ contratSaveError }}</span>
+      </div>
+      <div *ngIf="contratSaveSuccess" class="sync-banner sync-banner--success">
+        <fa-icon icon="check-circle"></fa-icon>
+        <span>Contrat enregistré avec succès !</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-primary" [disabled]="!newContratDateDebut || isContratSaving" (click)="confirmAjouterContrat()">
+        <span *ngIf="isContratSaving" class="spinner-border spinner-border-sm me-1"></span>
+        <fa-icon *ngIf="!isContratSaving" icon="save" class="me-1"></fa-icon>
+        Enregistrer
       </button>
     </div>
   </ng-template>
