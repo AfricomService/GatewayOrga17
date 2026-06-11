@@ -76,6 +76,17 @@
     "default_environment": "prod",
     "packaging": "jar"
   },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Edge versions",
+    "last 2 Safari versions",
+    "last 2 iOS versions",
+    "Firefox ESR",
+    "not dead",
+    "not IE 9-11"
+  ],
   "dependencies": {
     "@angular/common": "12.2.12",
     "@angular/compiler": "12.2.12",
