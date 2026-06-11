@@ -155,7 +155,6 @@
     "reportFile": "TESTS-results-sonar.xml"
   },
   "overrides": {
-    "browser-sync-client": "2.27.7",
-    "caniuse-lite": "1.0.30001400"
+    "browser-sync-client": "2.27.7"
   }
 }
