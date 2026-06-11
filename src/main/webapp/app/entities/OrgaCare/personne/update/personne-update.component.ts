@@ -99,8 +99,6 @@ export class PersonneUpdateComponent implements OnInit {
   newContratTypeContratId: number | null = null;
   newContratSocieteId: number | null = null;
 
-  private contratModalRef?: NgbModalRef;
-
   affectationRoleActif: TypeAffectation = TypeAffectation.CHEF;
   affectationDateAction: string = dayjs().format('YYYY-MM-DD');
   affectationDateFin: string | null = null;
@@ -141,6 +139,7 @@ export class PersonneUpdateComponent implements OnInit {
 
   private affectationModalRef?: NgbModalRef;
   private assignModalRef?: NgbModalRef;
+  private contratModalRef?: NgbModalRef;
 
   constructor(
     protected personneService: PersonneService,
@@ -505,16 +504,16 @@ export class PersonneUpdateComponent implements OnInit {
     this.isContratSaving = true;
     this.contratSaveError = null;
 
-    const contratDTO = {
-      dateDebut: dayjs(this.newContratDateDebut).toISOString(),
-      dateFin: this.newContratDateFin ? dayjs(this.newContratDateFin).toISOString() : null,
+    const contratDTO: IContrat = {
+      dateDebut: dayjs(this.newContratDateDebut),
+      dateFin: this.newContratDateFin ? dayjs(this.newContratDateFin) : null,
       typeContratId: this.newContratTypeContratId,
       societeId: this.newContratSocieteId,
       personneId,
       status: 'ACTIF',
     };
 
-    this.contratService.create(contratDTO as any).subscribe(
+    this.contratService.create(contratDTO).subscribe(
       () => {
         this.isContratSaving = false;
         this.contratSaveSuccess = true;

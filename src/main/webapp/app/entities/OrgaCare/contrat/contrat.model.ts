@@ -12,8 +12,14 @@ export interface IContrat {
   societe?: ISociete | null;
   typeContrat?: ITypeContrat | null;
   personne?: IPersonne | null;
+  // Champs dénormalisés retournés par le backend
+  typeContratId?: number | null;
+  societeId?: number | null;
+  personneId?: number | null;
   nomTypeContrat?: string | null;
   raisonSocialeSociete?: string | null;
+  nomPersonne?: string | null;
+  matriculePersonne?: string | null;
 }
 
 export class Contrat implements IContrat {
