@@ -32,7 +32,7 @@ OAUTH2_CLIENT_SECRET: 26XumX1lWT0U2PCfPVsrxvejwy6jNYm0
 OAUTH2_SCOPE: openid,profile,email
 
 # ── ApplicationProperties du Gateway ──────────────────
-KEYCLOAK_ADMIN_USER_CREATE_URL: http://${hostserverKeyCloak}:9080/admin/realms/AfricomProd/users
+KEYCLOAK_ADMIN_USER_CREATE_URL: http://${hostserverKeyCloak}:9080/admin/AfricomProd/console/#/AfricomProd/users/add-user
 KEYCLOAK_SERVER_URL: http://${hostserverKeyCloak}:9080
 KEYCLOAK_ADMIN_USERNAME: admin
 KEYCLOAK_ADMIN_PASSWORD: admin
