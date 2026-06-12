@@ -56,7 +56,7 @@ spring:
     url: jdbc:postgresql://${hostserver}:5433/orgacaregateway
   r2dbc:
     url: r2dbc:postgresql://${hostserver}:5433/orgacaregateway
-    username: orgacaregateway
+    username: postgres
     password: africomSaVpPostGreSQL10DataBase
   security:
     oauth2:
