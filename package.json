@@ -117,7 +117,7 @@
     "@typescript-eslint/parser": "5.4.0",
     "browser-sync": "2.27.7",
     "browser-sync-webpack-plugin": "2.3.0",
-    "caniuse-lite": "1.0.30001578",
+    "caniuse-lite": "1.0.30001500",
     "concurrently": "6.4.0",
     "copy-webpack-plugin": "10.0.0",
     "esbuild": "0.17.19",
@@ -159,6 +159,6 @@
   "overrides": {
     "browser-sync-client": "2.27.7",
     "esbuild": "0.17.19",
-    "caniuse-lite": "1.0.30001578"
+    "caniuse-lite": "1.0.30001500"
   }
 }
