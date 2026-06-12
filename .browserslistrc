@@ -3,3 +3,10 @@ Firefox >= 115
 Edge >= 90
 Safari >= 14
 iOS >= 14
+
+# Workaround for esbuild CSS minimizer bug in Angular 12 (< 12.2.16):
+# browserslist can emit version ranges that esbuild cannot parse.
+not ios_saf 15.2-15.3
+not safari 15.2-15.3
+not ios_saf 18.5-18.7
+not safari 18.5-18.7
