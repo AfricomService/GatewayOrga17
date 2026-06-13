@@ -557,13 +557,24 @@ export class PersonneUpdateComponent implements OnInit {
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPersonne>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
-      () => this.onSaveSuccess(),
+      (res: HttpResponse<IPersonne>) => this.onSaveSuccess(res.body),
       () => this.onSaveError()
     );
   }
 
-  protected onSaveSuccess(): void {
-    this.previousState();
+  protected onSaveSuccess(personne: IPersonne | null): void {
+    if (personne) {
+      // Met à jour le formulaire avec les données renvoyées (notamment le nouvel id)
+      this.updateForm(personne);
+
+      // Si c'était une création, on a maintenant un id : on peut charger
+      // les sections "Affectation" et "Contrat" qui n'apparaissaient pas avant
+      if (personne.id !== undefined) {
+        this.loadAffectationsPersonne(personne.id);
+        this.loadContratsPersonne(personne.id);
+      }
+    }
+    this.cdr.markForCheck();
   }
 
   protected onSaveError(): void {

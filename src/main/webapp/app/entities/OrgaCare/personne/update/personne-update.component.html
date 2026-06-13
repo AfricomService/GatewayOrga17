@@ -19,19 +19,17 @@
       </button>
 
       <!-- ══ BOUTON SYNC ══ -->
-      <ng-container *jhiHasAnyAuthority="'ROLE_ADMIN'">
-        <button
-          type="button"
-          class="btn-action btn-action--sync"
-          [disabled]="isSyncing"
-          (click)="syncKeycloakUsers()"
-          title="Synchroniser les comptes Keycloak vers la base de données"
-        >
-          <span *ngIf="isSyncing" class="spinner-border spinner-border-sm" role="status"></span>
-          <fa-icon *ngIf="!isSyncing" icon="sync"></fa-icon>
-          <span>{{ isSyncing ? 'Synchronisation...' : 'Synchroniser' }}</span>
-        </button>
-      </ng-container>
+      <button
+        type="button"
+        class="btn-action btn-action--sync"
+        [disabled]="isSyncing"
+        (click)="syncKeycloakUsers()"
+        title="Synchroniser les comptes Keycloak vers la base de données"
+      >
+        <span *ngIf="isSyncing" class="spinner-border spinner-border-sm" role="status"></span>
+        <fa-icon *ngIf="!isSyncing" icon="sync"></fa-icon>
+        <span>{{ isSyncing ? 'Synchronisation...' : 'Synchroniser' }}</span>
+      </button>
 
       <ng-container *ngIf="editForm.get('id')!.value != null">
         <!-- Bouton Affecter un compte -->
