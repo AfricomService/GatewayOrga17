@@ -19,6 +19,8 @@ export class MainComponent implements OnInit {
   account: Account | null = null;
   sidebarCollapsed = false;
 
+  currentLang = 'fr';
+
   private renderer: Renderer2;
 
   constructor(
@@ -41,6 +43,11 @@ export class MainComponent implements OnInit {
     });
 
     const saved = localStorage.getItem('oc-sidebar-collapsed');
+    const savedLang = localStorage.getItem('oc-lang') ?? 'fr';
+    const validLangs = ['fr', 'en', 'ar-ly'];
+    const lang = validLangs.includes(savedLang) ? savedLang : 'fr';
+    this.currentLang = lang;
+    this.translateService.use(lang);
     if (saved !== null) {
       this.sidebarCollapsed = saved === 'true';
     }
@@ -57,6 +64,12 @@ export class MainComponent implements OnInit {
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
       this.updatePageDirection();
     });
+  }
+
+  changeLanguage(lang: string): void {
+    this.currentLang = lang;
+    this.translateService.use(lang);
+    localStorage.setItem('oc-lang', lang);
   }
 
   toggleSidebar(): void {

@@ -2,3 +2,63 @@
   display: block;
   width: 100%;
 }
+// ── Sélecteur de langue dans la sidebar ──────────────
+.oc-sidebar__lang {
+  padding: 0 12px 8px;
+
+  .oc-sidebar__section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 8px 4px 6px;
+    margin: 0;
+
+    i {
+      font-size: 12px;
+    }
+  }
+}
+
+.oc-sidebar__lang-buttons {
+  display: flex;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.oc-sidebar__lang-btn {
+  flex: 1;
+  padding: 5px 0;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.15s ease;
+  letter-spacing: 0.5px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  &.active {
+    background: #2563eb;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+  }
+}
+
+// En mode collapsed : masquer le bloc langue
+.oc-sidebar.collapsed .oc-sidebar__lang {
+  display: none;
+}

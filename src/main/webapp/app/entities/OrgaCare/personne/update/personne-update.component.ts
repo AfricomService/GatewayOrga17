@@ -632,6 +632,14 @@ export class PersonneUpdateComponent implements OnInit {
       : [...this.personnesRemplacantCollection];
   }
 
+  getRemplacantNom(): string {
+    if (!this.newAbsencePersonneRemplacantId) {
+      return '—';
+    }
+    const p = this.personnesRemplacantCollection.find(x => x.id === this.newAbsencePersonneRemplacantId);
+    return p?.nomPrenom ?? '—';
+  }
+
   // ── Confirmation ajout absence ────────────────────────
   confirmAjouterAbsence(): void {
     if (!this.newAbsenceDateDebut) {

@@ -815,31 +815,59 @@
         </div>
       </div>
 
-      <!-- Personne Remplaçant + Motif -->
-      <div class="form-grid-2 mb-3">
-        <div class="field-group">
-          <label class="field-label">Personne Remplaçant</label>
-          <div class="remplacant-search-wrapper mb-1">
-            <fa-icon icon="search" class="remplacant-search-icon"></fa-icon>
-            <input
-              class="field-input remplacant-search-input"
-              type="text"
-              [(ngModel)]="remplacantSearchKeyword"
-              (ngModelChange)="filterRemplacant()"
-              placeholder="Rechercher par nom ou matricule..."
-            />
-          </div>
-          <select class="field-input field-select" [(ngModel)]="newAbsencePersonneRemplacantId" size="5">
-            <option [ngValue]="null">— Aucun —</option>
-            <option *ngFor="let p of personnesRemplacantFiltered" [ngValue]="p.id">
-              {{ p.nomPrenom }} <span *ngIf="p.matricule"> — {{ p.matricule }}</span>
-            </option>
-          </select>
-          <small class="text-muted mt-1" *ngIf="personnesRemplacantFiltered.length === 0"> Aucun résultat trouvé </small>
+      <!-- Motif -->
+      <div class="field-group mb-3">
+        <label class="field-label">Motif</label>
+        <input class="field-input" type="text" [(ngModel)]="newAbsenceMotif" placeholder="Motif de l'absence..." />
+      </div>
+
+      <!-- Personne Remplaçant -->
+      <div class="field-group mb-3">
+        <label class="field-label">Personne Remplaçant</label>
+
+        <!-- Barre de recherche -->
+        <div class="remplacant-search-bar mb-2">
+          <fa-icon icon="search" class="remplacant-search-icon"></fa-icon>
+          <input
+            class="form-control ps-4"
+            type="text"
+            [(ngModel)]="remplacantSearchKeyword"
+            (ngModelChange)="filterRemplacant()"
+            placeholder="Rechercher par nom ou matricule..."
+          />
         </div>
-        <div class="field-group">
-          <label class="field-label">Motif</label>
-          <input class="field-input" type="text" [(ngModel)]="newAbsenceMotif" placeholder="Motif de l'absence..." />
+
+        <!-- Sélection actuelle -->
+        <div *ngIf="newAbsencePersonneRemplacantId" class="remplacant-selected-preview mb-2">
+          <fa-icon icon="user-check"></fa-icon>
+          Remplaçant sélectionné :
+          <strong>{{ getRemplacantNom() }}</strong>
+          <button type="button" class="remplacant-clear-btn" (click)="newAbsencePersonneRemplacantId = null">×</button>
+        </div>
+
+        <!-- Liste -->
+        <div class="remplacant-list">
+          <div *ngIf="personnesRemplacantFiltered.length === 0" class="remplacant-empty">
+            <fa-icon icon="user-slash"></fa-icon>
+            <span>Aucun résultat trouvé</span>
+          </div>
+          <div
+            *ngFor="let p of personnesRemplacantFiltered"
+            class="remplacant-item"
+            [class.selected]="newAbsencePersonneRemplacantId === p.id"
+            (click)="newAbsencePersonneRemplacantId = newAbsencePersonneRemplacantId === p.id ? null : p.id ?? null"
+          >
+            <div class="remplacant-avatar">
+              {{ (p.nomPrenom ?? '?').charAt(0).toUpperCase() }}
+            </div>
+            <div class="remplacant-info">
+              <div class="remplacant-nom">{{ p.nomPrenom }}</div>
+              <div class="remplacant-matricule" *ngIf="p.matricule">{{ p.matricule }}</div>
+            </div>
+            <div class="remplacant-check" *ngIf="newAbsencePersonneRemplacantId === p.id">
+              <fa-icon icon="check-circle"></fa-icon>
+            </div>
+          </div>
         </div>
       </div>
 

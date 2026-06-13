@@ -76,6 +76,25 @@
       </ng-container>
     </nav>
 
+    <!-- ── Sélecteur de langue ── -->
+    <div class="oc-sidebar__lang">
+      <p class="oc-sidebar__section-label">
+        <i class="ti ti-world"></i>
+        <span>Langue</span>
+      </p>
+      <div class="oc-sidebar__lang-buttons">
+        <button class="oc-sidebar__lang-btn" [class.active]="currentLang === 'fr'" (click)="changeLanguage('fr')" title="Français">
+          FR
+        </button>
+        <button class="oc-sidebar__lang-btn" [class.active]="currentLang === 'en'" (click)="changeLanguage('en')" title="English">
+          EN
+        </button>
+        <button class="oc-sidebar__lang-btn" [class.active]="currentLang === 'ar-ly'" (click)="changeLanguage('ar-ly')" title="العربية">
+          AR
+        </button>
+      </div>
+    </div>
+
     <!-- Footer : déconnexion -->
     <div class="oc-sidebar__footer">
       <button class="oc-sidebar__item oc-sidebar__item--danger" (click)="logout()">
