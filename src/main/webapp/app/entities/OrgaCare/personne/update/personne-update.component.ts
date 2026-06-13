@@ -57,7 +57,7 @@ export class PersonneUpdateComponent implements OnInit {
 
   // Accordion / panels (conservé de l'ancienne version)
   personItems = ['Section Générale'];
-  editPanels = ['Affectation en cours', 'Contrat', 'Absence', 'Changer mot de passe'];
+  editPanels = ['Affectation en cours', 'Contrat', 'Absence'];
   activePanels: string[] = ['panel-0'];
   disablePanelTitle: boolean[] = [];
   // Propriétés pour la modal d'affectation user

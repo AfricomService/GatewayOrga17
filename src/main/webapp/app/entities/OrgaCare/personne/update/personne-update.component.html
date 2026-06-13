@@ -405,27 +405,6 @@
             </div>
           </ng-template>
         </ngb-panel>
-
-        <!-- ─── Panel 4 : Changer mot de passe ─── -->
-        <ngb-panel id="panel-4">
-          <ng-template ngbPanelHeader let-opened="opened">
-            <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
-              <div class="panel-header-content">
-                <div class="panel-icon password">
-                  <fa-icon icon="key"></fa-icon>
-                </div>
-                <span>Changer mot de passe</span>
-              </div>
-              <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
-            </button>
-          </ng-template>
-          <ng-template ngbPanelContent>
-            <div class="panel-body panel-empty">
-              <fa-icon icon="key" class="panel-empty__icon"></fa-icon>
-              <p class="panel-empty__text">Section Changer mot de passe — à implémenter</p>
-            </div>
-          </ng-template>
-        </ngb-panel>
       </ng-container>
       <!-- ─── Fin panels édition ─── -->
     </ngb-accordion>
