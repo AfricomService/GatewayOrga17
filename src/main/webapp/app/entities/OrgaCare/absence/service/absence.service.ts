@@ -56,6 +56,19 @@ export class AbsenceService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  findByPersonneAbscentId(personneId: number): Observable<IAbsence[]> {
+    return this.http.get<IAbsence[]>(`${this.resourceUrl}/by-personne/${personneId}`).pipe(
+      map((absences: IAbsence[]) => {
+        absences.forEach(a => {
+          a.dateCreation = a.dateCreation ? dayjs(a.dateCreation) : undefined;
+          a.dateDebut = a.dateDebut ? dayjs(a.dateDebut) : undefined;
+          a.dateFin = a.dateFin ? dayjs(a.dateFin) : undefined;
+        });
+        return absences;
+      })
+    );
+  }
+
   addAbsenceToCollectionIfMissing(absenceCollection: IAbsence[], ...absencesToCheck: (IAbsence | null | undefined)[]): IAbsence[] {
     const absences: IAbsence[] = absencesToCheck.filter(isPresent);
     if (absences.length > 0) {

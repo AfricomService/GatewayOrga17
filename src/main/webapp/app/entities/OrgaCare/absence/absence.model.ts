@@ -11,6 +11,8 @@ export interface IAbsence {
   motif?: string | null;
   personneAbscent?: IPersonne | null;
   personneRemplacant?: IPersonne | null;
+  personneAbscentId?: number | null;
+  personneRemplacantId?: number | null;
 }
 
 export class Absence implements IAbsence {
@@ -22,7 +24,9 @@ export class Absence implements IAbsence {
     public dateFin?: dayjs.Dayjs | null,
     public motif?: string | null,
     public personneAbscent?: IPersonne | null,
-    public personneRemplacant?: IPersonne | null
+    public personneRemplacant?: IPersonne | null,
+    public personneAbscentId?: number | null,
+    public personneRemplacantId?: number | null
   ) {}
 }
 

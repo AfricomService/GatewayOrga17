@@ -397,9 +397,44 @@
             </button>
           </ng-template>
           <ng-template ngbPanelContent>
-            <div class="panel-body panel-empty">
-              <fa-icon icon="calendar-times" class="panel-empty__icon"></fa-icon>
-              <p class="panel-empty__text">Section Absence — à implémenter</p>
+            <div class="panel-body">
+              <!-- Barre d'action -->
+              <div class="affectation-toolbar">
+                <span class="affectation-count">
+                  <fa-icon icon="calendar-times"></fa-icon>
+                  {{ absencesPersonne.length }} absence(s)
+                </span>
+                <button type="button" class="btn-action btn-action--absence" (click)="openAjouterAbsenceModal(ajouterAbsenceModal)">
+                  <fa-icon icon="plus"></fa-icon>
+                  <span>Ajouter une absence</span>
+                </button>
+              </div>
+
+              <!-- Loading -->
+              <div *ngIf="isLoadingAbsences" class="text-center py-3">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Chargement...
+              </div>
+
+              <!-- Liste vide -->
+              <div *ngIf="!isLoadingAbsences && absencesPersonne.length === 0" class="panel-empty">
+                <fa-icon icon="calendar-times" class="panel-empty__icon"></fa-icon>
+                <p class="panel-empty__text">Aucune absence enregistrée</p>
+              </div>
+
+              <!-- Liste des absences -->
+              <div class="absence-list" *ngIf="!isLoadingAbsences && absencesPersonne.length > 0">
+                <div class="absence-item" *ngFor="let abs of absencesPersonne">
+                  <div class="absence-badge absence-badge--actif">{{ abs.etat }}</div>
+                  <div class="absence-info">
+                    <span class="absence-motif">{{ abs.motif ?? 'Sans motif' }}</span>
+                    <span class="absence-dates">
+                      Du {{ abs.dateDebut?.toDate() | date: 'dd/MM/yyyy' }}
+                      <span *ngIf="abs.dateFin"> — au {{ abs.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </ng-template>
         </ngb-panel>
@@ -747,6 +782,72 @@
       <button type="button" class="btn btn-primary" [disabled]="!newContratDateDebut || isContratSaving" (click)="confirmAjouterContrat()">
         <span *ngIf="isContratSaving" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isContratSaving" icon="save" class="me-1"></fa-icon>
+        Enregistrer
+      </button>
+    </div>
+  </ng-template>
+  <!-- ══════════════ MODAL AJOUT ABSENCE ══════════════ -->
+  <ng-template #ajouterAbsenceModal let-modal>
+    <div class="modal-header">
+      <div class="modal-title-block">
+        <span class="modal-icon-primary"><fa-icon icon="calendar-times"></fa-icon></span>
+        <h5 class="modal-title">Ajouter une absence</h5>
+      </div>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Nom personne -->
+      <div class="affectation-modal-personne mb-3">
+        <span class="label-personne">Personne :</span>
+        <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Date Début <span style="color: red">*</span></label>
+          <input class="field-input" type="date" [(ngModel)]="newAbsenceDateDebut" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Date Fin</label>
+          <input class="field-input" type="date" [(ngModel)]="newAbsenceDateFin" />
+        </div>
+      </div>
+
+      <!-- Personne Remplaçant + Motif -->
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Personne Remplaçant</label>
+          <select class="field-input field-select" [(ngModel)]="newAbsencePersonneRemplacantId">
+            <option [ngValue]="null">— Sélectionner —</option>
+            <option *ngFor="let p of personnesRemplacantCollection" [ngValue]="p.id">
+              {{ p.nomPrenom }}
+            </option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Motif</label>
+          <input class="field-input" type="text" [(ngModel)]="newAbsenceMotif" placeholder="Motif de l'absence..." />
+        </div>
+      </div>
+
+      <!-- Erreur / Succès -->
+      <div *ngIf="absenceSaveError" class="sync-banner sync-banner--error">
+        <fa-icon icon="exclamation-circle"></fa-icon>
+        <span>{{ absenceSaveError }}</span>
+      </div>
+      <div *ngIf="absenceSaveSuccess" class="sync-banner sync-banner--success">
+        <fa-icon icon="check-circle"></fa-icon>
+        <span>Absence enregistrée avec succès !</span>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-primary" [disabled]="!newAbsenceDateDebut || isAbsenceSaving" (click)="confirmAjouterAbsence()">
+        <span *ngIf="isAbsenceSaving" class="spinner-border spinner-border-sm me-1"></span>
+        <fa-icon *ngIf="!isAbsenceSaving" icon="save" class="me-1"></fa-icon>
         Enregistrer
       </button>
     </div>

@@ -16,7 +16,6 @@ import { IGrade } from 'app/entities/OrgaCare/grade/grade.model';
 import { GradeService } from 'app/entities/OrgaCare/grade/service/grade.service';
 import { IFonction } from 'app/entities/OrgaCare/fonction/fonction.model';
 import { FonctionService } from 'app/entities/OrgaCare/fonction/service/fonction.service';
-import { Etat } from 'app/entities/enumerations/etat.model';
 import { EtatContractuelle } from 'app/entities/enumerations/etat-contractuelle.model';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { IUser } from 'app/entities/user/user.model';
@@ -34,6 +33,9 @@ import { IContrat } from 'app/entities/OrgaCare/contrat/contrat.model';
 import { ContratService } from 'app/entities/OrgaCare/contrat/service/contrat.service';
 import { ITypeContrat } from 'app/entities/OrgaCare/type-contrat/type-contrat.model';
 import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/type-contrat.service';
+import { IAbsence } from 'app/entities/OrgaCare/absence/absence.model';
+import { AbsenceService } from 'app/entities/OrgaCare/absence/service/absence.service';
+import { Etat } from 'app/entities/enumerations/etat.model';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -137,9 +139,24 @@ export class PersonneUpdateComponent implements OnInit {
     fonction: [],
   });
 
+  // Modal ajout absence
+  isAbsenceSaving = false;
+  absenceSaveError: string | null = null;
+  absenceSaveSuccess = false;
+  absencesPersonne: IAbsence[] = [];
+  isLoadingAbsences = false;
+
+  newAbsenceDateDebut = dayjs().format('YYYY-MM-DD');
+  newAbsenceDateFin: string | null = null;
+  newAbsenceMotif = '';
+  newAbsencePersonneRemplacantId: number | null = null;
+
+  personnesRemplacantCollection: IPersonne[] = [];
+
   private affectationModalRef?: NgbModalRef;
   private assignModalRef?: NgbModalRef;
   private contratModalRef?: NgbModalRef;
+  private absenceModalRef?: NgbModalRef;
 
   constructor(
     protected personneService: PersonneService,
@@ -156,7 +173,8 @@ export class PersonneUpdateComponent implements OnInit {
     protected organigrammeService: OrganigrammeService,
     protected departementService: DepartementService,
     protected contratService: ContratService,
-    protected typeContratService: TypeContratService
+    protected typeContratService: TypeContratService,
+    protected absenceService: AbsenceService
   ) {}
 
   ngOnInit(): void {
@@ -182,6 +200,7 @@ export class PersonneUpdateComponent implements OnInit {
               if (personne.id !== undefined) {
                 this.loadAffectationsPersonne(personne.id);
                 this.loadContratsPersonne(personne.id);
+                this.loadAbsencesPersonne(personne.id);
               }
               this.cdr.markForCheck();
             });
@@ -555,6 +574,88 @@ export class PersonneUpdateComponent implements OnInit {
     this.affectationRoleActif = role as TypeAffectation;
   }
 
+  // ── Chargement absences ───────────────────────────────
+  loadAbsencesPersonne(personneId: number): void {
+    this.isLoadingAbsences = true;
+    this.absenceService.findByPersonneAbscentId(personneId).subscribe(
+      (absences: IAbsence[]) => {
+        this.absencesPersonne = absences;
+        this.isLoadingAbsences = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.isLoadingAbsences = false;
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  // ── Ouverture modal ajout absence ─────────────────────
+  openAjouterAbsenceModal(content: unknown): void {
+    this.newAbsenceDateDebut = dayjs().format('YYYY-MM-DD');
+    this.newAbsenceDateFin = null;
+    this.newAbsenceMotif = '';
+    this.newAbsencePersonneRemplacantId = null;
+    this.absenceSaveError = null;
+    this.absenceSaveSuccess = false;
+
+    // Charger la liste des personnes pour le remplaçant
+    this.personneService.query({ size: 200 }, {}).subscribe(
+      (res: HttpResponse<IPersonne[]>) => {
+        this.personnesRemplacantCollection = res.body ?? [];
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.personnesRemplacantCollection = [];
+      }
+    );
+
+    this.absenceModalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  // ── Confirmation ajout absence ────────────────────────
+  confirmAjouterAbsence(): void {
+    if (!this.newAbsenceDateDebut) {
+      this.absenceSaveError = 'La date de début est obligatoire.';
+      return;
+    }
+
+    const personneId = this.editForm.get('id')!.value as number;
+    this.isAbsenceSaving = true;
+    this.absenceSaveError = null;
+
+    const absenceDTO: IAbsence = {
+      dateDebut: dayjs(this.newAbsenceDateDebut),
+      dateFin: this.newAbsenceDateFin ? dayjs(this.newAbsenceDateFin) : undefined,
+      motif: this.newAbsenceMotif || undefined,
+      etat: Etat.ACTIF,
+      personneAbscentId: personneId,
+      personneRemplacantId: this.newAbsencePersonneRemplacantId ?? undefined,
+    };
+
+    this.absenceService.create(absenceDTO).subscribe(
+      () => {
+        this.isAbsenceSaving = false;
+        this.absenceSaveSuccess = true;
+        this.loadAbsencesPersonne(personneId);
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.absenceModalRef?.close();
+          this.absenceSaveSuccess = false;
+        }, 1000);
+      },
+      () => {
+        this.isAbsenceSaving = false;
+        this.absenceSaveError = "Erreur lors de l'enregistrement de l'absence.";
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPersonne>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (res: HttpResponse<IPersonne>) => this.onSaveSuccess(res.body),
@@ -572,6 +673,7 @@ export class PersonneUpdateComponent implements OnInit {
       if (personne.id !== undefined) {
         this.loadAffectationsPersonne(personne.id);
         this.loadContratsPersonne(personne.id);
+        this.loadAbsencesPersonne(personne.id);
       }
     }
     this.cdr.markForCheck();
