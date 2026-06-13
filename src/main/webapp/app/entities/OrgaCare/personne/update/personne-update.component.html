@@ -819,12 +819,23 @@
       <div class="form-grid-2 mb-3">
         <div class="field-group">
           <label class="field-label">Personne Remplaçant</label>
-          <select class="field-input field-select" [(ngModel)]="newAbsencePersonneRemplacantId">
-            <option [ngValue]="null">— Sélectionner —</option>
-            <option *ngFor="let p of personnesRemplacantCollection" [ngValue]="p.id">
-              {{ p.nomPrenom }}
+          <div class="remplacant-search-wrapper mb-1">
+            <fa-icon icon="search" class="remplacant-search-icon"></fa-icon>
+            <input
+              class="field-input remplacant-search-input"
+              type="text"
+              [(ngModel)]="remplacantSearchKeyword"
+              (ngModelChange)="filterRemplacant()"
+              placeholder="Rechercher par nom ou matricule..."
+            />
+          </div>
+          <select class="field-input field-select" [(ngModel)]="newAbsencePersonneRemplacantId" size="5">
+            <option [ngValue]="null">— Aucun —</option>
+            <option *ngFor="let p of personnesRemplacantFiltered" [ngValue]="p.id">
+              {{ p.nomPrenom }} <span *ngIf="p.matricule"> — {{ p.matricule }}</span>
             </option>
           </select>
+          <small class="text-muted mt-1" *ngIf="personnesRemplacantFiltered.length === 0"> Aucun résultat trouvé </small>
         </div>
         <div class="field-group">
           <label class="field-label">Motif</label>

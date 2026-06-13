@@ -1151,3 +1151,43 @@ $transition: all 0.2s ease;
     color: $text-muted;
   }
 }
+// ── Recherche remplaçant dans modal absence ───────────
+.remplacant-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .remplacant-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: $text-muted;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.remplacant-search-input {
+  padding-left: 2.2rem !important;
+  height: 36px;
+  font-size: 0.85rem;
+}
+
+select[size] {
+  height: auto !important;
+  overflow-y: auto;
+  border-radius: $radius-sm;
+  padding: 0.25rem 0;
+
+  option {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+
+    &:checked {
+      background: $accent-light;
+      color: darken($accent, 15%);
+      font-weight: 600;
+    }
+  }
+}

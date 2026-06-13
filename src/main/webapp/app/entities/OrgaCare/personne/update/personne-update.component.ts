@@ -152,6 +152,8 @@ export class PersonneUpdateComponent implements OnInit {
   newAbsencePersonneRemplacantId: number | null = null;
 
   personnesRemplacantCollection: IPersonne[] = [];
+  personnesRemplacantFiltered: IPersonne[] = [];
+  remplacantSearchKeyword = '';
 
   private affectationModalRef?: NgbModalRef;
   private assignModalRef?: NgbModalRef;
@@ -598,15 +600,18 @@ export class PersonneUpdateComponent implements OnInit {
     this.newAbsencePersonneRemplacantId = null;
     this.absenceSaveError = null;
     this.absenceSaveSuccess = false;
+    this.remplacantSearchKeyword = '';
 
     // Charger la liste des personnes pour le remplaçant
     this.personneService.query({ size: 200 }, {}).subscribe(
       (res: HttpResponse<IPersonne[]>) => {
         this.personnesRemplacantCollection = res.body ?? [];
+        this.personnesRemplacantFiltered = [...this.personnesRemplacantCollection];
         this.cdr.markForCheck();
       },
       () => {
         this.personnesRemplacantCollection = [];
+        this.personnesRemplacantFiltered = [];
       }
     );
 
@@ -615,6 +620,16 @@ export class PersonneUpdateComponent implements OnInit {
       centered: true,
       backdrop: 'static',
     });
+  }
+
+  // ── Filtrage remplaçant ───────────────────────────────
+  filterRemplacant(): void {
+    const kw = this.remplacantSearchKeyword.toLowerCase().trim();
+    this.personnesRemplacantFiltered = kw
+      ? this.personnesRemplacantCollection.filter(
+          p => (p.nomPrenom ?? '').toLowerCase().includes(kw) || (p.matricule ?? '').toLowerCase().includes(kw)
+        )
+      : [...this.personnesRemplacantCollection];
   }
 
   // ── Confirmation ajout absence ────────────────────────
