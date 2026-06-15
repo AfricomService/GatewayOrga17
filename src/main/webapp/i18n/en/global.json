@@ -113,7 +113,8 @@
       "edit": "Edit",
       "open": "Open",
       "save": "Save",
-      "view": "View"
+      "view": "View",
+      "actions": "Actions"
     },
     "detail": {
       "field": "Field",
@@ -153,5 +154,37 @@
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
     }
   },
-  "footer": "This is your footer"
+  "footer": "This is your footer",
+  "sidebar": {
+    "sections": {
+      "principal": "Main",
+      "organisation": "Organization",
+      "rh": "HR",
+      "referentiels": "References",
+      "administration": "Administration",
+      "langue": "Language"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "societes": "Companies",
+      "sites": "Sites",
+      "departements": "Departments",
+      "organigramme": "Org Chart",
+      "employes": "Employees",
+      "contrats": "Contracts",
+      "absences": "Absences",
+      "grades": "Grades",
+      "fonctions": "Functions",
+      "typesContrat": "Contract types",
+      "formesJuridiques": "Legal forms",
+      "metriques": "Metrics",
+      "sante": "System health",
+      "logs": "Logs"
+    },
+    "user": {
+      "admin": "Administrator",
+      "user": "User"
+    },
+    "logout": "Logout"
+  }
 }

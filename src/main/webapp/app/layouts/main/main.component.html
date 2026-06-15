@@ -25,62 +25,95 @@
       <div class="oc-sidebar__user-info">
         <p class="oc-sidebar__user-name">{{ account?.firstName || account?.login }}</p>
         <p class="oc-sidebar__user-role">
-          {{ account?.authorities && account.authorities.indexOf('ROLE_ADMIN') !== -1 ? 'Administrateur' : 'Utilisateur' }}
+          {{
+            account?.authorities && account.authorities.indexOf('ROLE_ADMIN') !== -1
+              ? ('sidebar.user.admin' | translate)
+              : ('sidebar.user.user' | translate)
+          }}
         </p>
       </div>
     </div>
 
     <!-- Navigation -->
     <nav class="oc-sidebar__nav">
-      <p class="oc-sidebar__section-label">Principal</p>
+      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.principal' | translate }}</p>
       <a class="oc-sidebar__item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <i class="ti ti-home"></i><span>Tableau de bord</span>
+        <i class="ti ti-home"></i>
+        <span>{{ 'sidebar.nav.dashboard' | translate }}</span>
       </a>
 
-      <p class="oc-sidebar__section-label">Organisation</p>
-      <a class="oc-sidebar__item" routerLink="/societe" routerLinkActive="active"> <i class="ti ti-building"></i><span>Sociétés</span> </a>
-      <a class="oc-sidebar__item" routerLink="/site" routerLinkActive="active"> <i class="ti ti-map-pin"></i><span>Sites</span> </a>
+      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.organisation' | translate }}</p>
+      <a class="oc-sidebar__item" routerLink="/societe" routerLinkActive="active">
+        <i class="ti ti-building"></i>
+        <span>{{ 'sidebar.nav.societes' | translate }}</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/site" routerLinkActive="active">
+        <i class="ti ti-map-pin"></i>
+        <span>{{ 'sidebar.nav.sites' | translate }}</span>
+      </a>
       <a class="oc-sidebar__item" routerLink="/departement" routerLinkActive="active">
-        <i class="ti ti-briefcase"></i><span>Départements</span>
+        <i class="ti ti-briefcase"></i>
+        <span>{{ 'sidebar.nav.departements' | translate }}</span>
       </a>
       <a class="oc-sidebar__item" routerLink="/organigramme" routerLinkActive="active">
-        <i class="ti ti-sitemap"></i><span>Organigramme</span>
+        <i class="ti ti-sitemap"></i>
+        <span>{{ 'sidebar.nav.organigramme' | translate }}</span>
       </a>
 
-      <p class="oc-sidebar__section-label">RH</p>
-      <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active"> <i class="ti ti-users"></i><span>Employés</span> </a>
-      <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active"> <i class="ti ti-file-text"></i><span>Contrats</span> </a>
+      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.rh' | translate }}</p>
+      <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active">
+        <i class="ti ti-users"></i>
+        <span>{{ 'sidebar.nav.employes' | translate }}</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active">
+        <i class="ti ti-file-text"></i>
+        <span>{{ 'sidebar.nav.contrats' | translate }}</span>
+      </a>
       <a class="oc-sidebar__item" routerLink="/absence" routerLinkActive="active">
-        <i class="ti ti-calendar-off"></i><span>Absences</span>
+        <i class="ti ti-calendar-off"></i>
+        <span>{{ 'sidebar.nav.absences' | translate }}</span>
       </a>
 
-      <p class="oc-sidebar__section-label">Référentiels</p>
-      <a class="oc-sidebar__item" routerLink="/grade" routerLinkActive="active"> <i class="ti ti-award"></i><span>Grades</span> </a>
-      <a class="oc-sidebar__item" routerLink="/fonction" routerLinkActive="active"> <i class="ti ti-tool"></i><span>Fonctions</span> </a>
+      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.referentiels' | translate }}</p>
+      <a class="oc-sidebar__item" routerLink="/grade" routerLinkActive="active">
+        <i class="ti ti-award"></i>
+        <span>{{ 'sidebar.nav.grades' | translate }}</span>
+      </a>
+      <a class="oc-sidebar__item" routerLink="/fonction" routerLinkActive="active">
+        <i class="ti ti-tool"></i>
+        <span>{{ 'sidebar.nav.fonctions' | translate }}</span>
+      </a>
       <a class="oc-sidebar__item" routerLink="/type-contrat" routerLinkActive="active">
-        <i class="ti ti-clipboard-list"></i><span>Types contrat</span>
+        <i class="ti ti-clipboard-list"></i>
+        <span>{{ 'sidebar.nav.typesContrat' | translate }}</span>
       </a>
       <a class="oc-sidebar__item" routerLink="/forme-juridique" routerLinkActive="active">
-        <i class="ti ti-scale"></i><span>Formes juridiques</span>
+        <i class="ti ti-scale"></i>
+        <span>{{ 'sidebar.nav.formesJuridiques' | translate }}</span>
       </a>
 
       <ng-container *jhiHasAnyAuthority="'ROLE_ADMIN'">
-        <p class="oc-sidebar__section-label">Administration</p>
+        <p class="oc-sidebar__section-label">{{ 'sidebar.sections.administration' | translate }}</p>
         <a class="oc-sidebar__item" routerLink="admin/metrics" routerLinkActive="active">
-          <i class="ti ti-chart-bar"></i><span>Métriques</span>
+          <i class="ti ti-chart-bar"></i>
+          <span>{{ 'sidebar.nav.metriques' | translate }}</span>
         </a>
         <a class="oc-sidebar__item" routerLink="admin/health" routerLinkActive="active">
-          <i class="ti ti-heart-rate-monitor"></i><span>Santé système</span>
+          <i class="ti ti-heart-rate-monitor"></i>
+          <span>{{ 'sidebar.nav.sante' | translate }}</span>
         </a>
-        <a class="oc-sidebar__item" routerLink="admin/logs" routerLinkActive="active"> <i class="ti ti-terminal"></i><span>Logs</span> </a>
+        <a class="oc-sidebar__item" routerLink="admin/logs" routerLinkActive="active">
+          <i class="ti ti-terminal"></i>
+          <span>{{ 'sidebar.nav.logs' | translate }}</span>
+        </a>
       </ng-container>
     </nav>
 
-    <!-- ── Sélecteur de langue ── -->
+    <!-- Sélecteur de langue -->
     <div class="oc-sidebar__lang">
       <p class="oc-sidebar__section-label">
         <i class="ti ti-world"></i>
-        <span>Langue</span>
+        <span>{{ 'sidebar.sections.langue' | translate }}</span>
       </p>
       <div class="oc-sidebar__lang-buttons">
         <button class="oc-sidebar__lang-btn" [class.active]="currentLang === 'fr'" (click)="changeLanguage('fr')" title="Français">
@@ -98,20 +131,16 @@
     <!-- Footer : déconnexion -->
     <div class="oc-sidebar__footer">
       <button class="oc-sidebar__item oc-sidebar__item--danger" (click)="logout()">
-        <i class="ti ti-logout"></i><span>Déconnexion</span>
+        <i class="ti ti-logout"></i>
+        <span>{{ 'sidebar.logout' | translate }}</span>
       </button>
     </div>
   </aside>
 
   <!-- ════════════════ CONTENU PRINCIPAL ════════════════ -->
   <div class="oc-main" [class.no-sidebar]="account === null">
-    <!-- navbar supprimée : sidebar gère le logo -->
-
-    <!-- Contenu de la page -->
     <div class="oc-page-content">
       <router-outlet></router-outlet>
     </div>
-
-    <!--    <jhi-footer></jhi-footer>-->
   </div>
 </div>

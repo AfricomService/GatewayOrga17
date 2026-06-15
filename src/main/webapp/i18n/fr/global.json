@@ -113,7 +113,8 @@
       "delete": "Supprimer",
       "open": "Ouvrir",
       "save": "Sauvegarder",
-      "view": "Voir"
+      "view": "Voir",
+      "actions": "Actions"
     },
     "detail": {
       "field": "Champs",
@@ -153,5 +154,37 @@
       "not.image": "Le fichier doit être une image et non du type \"{{ fileType }}\""
     }
   },
-  "footer": "Ceci est votre pied de page"
+  "footer": "Ceci est votre pied de page",
+  "sidebar": {
+    "sections": {
+      "principal": "Principal",
+      "organisation": "Organisation",
+      "rh": "RH",
+      "referentiels": "Référentiels",
+      "administration": "Administration",
+      "langue": "Langue"
+    },
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "societes": "Sociétés",
+      "sites": "Sites",
+      "departements": "Départements",
+      "organigramme": "Organigramme",
+      "employes": "Employés",
+      "contrats": "Contrats",
+      "absences": "Absences",
+      "grades": "Grades",
+      "fonctions": "Fonctions",
+      "typesContrat": "Types contrat",
+      "formesJuridiques": "Formes juridiques",
+      "metriques": "Métriques",
+      "sante": "Santé système",
+      "logs": "Logs"
+    },
+    "user": {
+      "admin": "Administrateur",
+      "user": "Utilisateur"
+    },
+    "logout": "Déconnexion"
+  }
 }

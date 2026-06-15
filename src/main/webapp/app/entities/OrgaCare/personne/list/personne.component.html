@@ -7,7 +7,14 @@
       </div>
       <div class="header-text">
         <h1 jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.title">Personnes</h1>
-        <p>{{ totalItems }} enregistrement{{ totalItems !== 1 ? 's' : '' }}</p>
+        <p>
+          {{ totalItems }}
+          {{
+            totalItems !== 1
+              ? ('orgacaregatewayApp.orgaCarePersonne.home.records' | translate)
+              : ('orgacaregatewayApp.orgaCarePersonne.home.record' | translate)
+          }}
+        </p>
       </div>
     </div>
     <div class="header-actions">
@@ -33,7 +40,7 @@
         class="btn-header-secondary"
         (click)="openKeycloakCreateUser()"
         [disabled]="!keycloakAdminUrl"
-        title="Ouvrir Keycloak pour créer un compte utilisateur"
+        title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.keycloakLabel' | translate }}"
       >
         <fa-icon icon="user-plus"></fa-icon>
       </button>
@@ -60,11 +67,11 @@
         type="text"
         [(ngModel)]="searchField"
         (ngModelChange)="search1()"
-        placeholder="Recherche rapide par nom, matricule, email…"
+        placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.searchPlaceholder' | translate }}"
       />
       <button class="filter-toggle" (click)="showMoreSearch = !showMoreSearch" [class.active]="showMoreSearch">
         <fa-icon icon="filter"></fa-icon>
-        <span>Filtres</span>
+        <span>{{ 'orgacaregatewayApp.orgaCarePersonne.home.filters' | translate }}</span>
       </button>
     </div>
 
@@ -73,24 +80,48 @@
       <div class="filters-grid">
         <div class="filter-field">
           <label class="filter-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule">Matricule</label>
-          <input class="form-control" type="text" [(ngModel)]="matricule" (ngModelChange)="loadPage()" placeholder="Ex: EMP001" />
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="matricule"
+            (ngModelChange)="loadPage()"
+            placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderMatricule' | translate }}"
+          />
         </div>
         <div class="filter-field">
           <label class="filter-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom">Nom & Prénom</label>
-          <input class="form-control" type="text" [(ngModel)]="nomPrenom" (ngModelChange)="loadPage()" placeholder="Ex: Ben Ali" />
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="nomPrenom"
+            (ngModelChange)="loadPage()"
+            placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderNomPrenom' | translate }}"
+          />
         </div>
         <div class="filter-field">
           <label class="filter-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone">Téléphone</label>
-          <input class="form-control" type="text" [(ngModel)]="numTelephone" (ngModelChange)="loadPage()" placeholder="Ex: 21 000 000" />
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="numTelephone"
+            (ngModelChange)="loadPage()"
+            placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderTelephone' | translate }}"
+          />
         </div>
         <div class="filter-field">
           <label class="filter-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin">CIN</label>
-          <input class="form-control" type="text" [(ngModel)]="cin" (ngModelChange)="loadPage()" placeholder="Ex: 12345678" />
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="cin"
+            (ngModelChange)="loadPage()"
+            placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderCin' | translate }}"
+          />
         </div>
         <div class="filter-field">
           <label class="filter-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.contrat">Type de contrat</label>
           <select class="form-select" [(ngModel)]="typeContratId" (change)="loadPage()">
-            <option value="">— Tous les types —</option>
+            <option value="">{{ 'orgacaregatewayApp.orgaCarePersonne.home.allTypes' | translate }}</option>
             <option *ngFor="let type of typesContrat" [value]="type.id">{{ type.nom }}</option>
           </select>
         </div>
@@ -107,10 +138,10 @@
   <div class="empty-state" *ngIf="!isLoading && personnes?.length === 0">
     <div class="empty-icon">👤</div>
     <h3 jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.notFound">Aucune personne trouvée</h3>
-    <p>Commencez par créer une nouvelle personne ou modifiez vos filtres.</p>
+    <p>{{ 'orgacaregatewayApp.orgaCarePersonne.home.emptyHint' | translate }}</p>
     <button class="btn-create" [routerLink]="['/personne/new']">
       <fa-icon icon="plus"></fa-icon>
-      Créer une personne
+      {{ 'orgacaregatewayApp.orgaCarePersonne.home.createLabel' | translate }}
     </button>
   </div>
 
@@ -157,10 +188,10 @@
               </div>
             </th>
             <th scope="col" class="th-center">
-              <span>Compte</span>
+              <span>{{ 'orgacaregatewayApp.orgaCarePersonne.home.compte' | translate }}</span>
             </th>
             <th scope="col" class="th-actions">
-              <span>Actions</span>
+              <span>{{ 'entity.action.actions' | translate }}</span>
             </th>
           </tr>
         </thead>
@@ -170,7 +201,7 @@
             data-cy="entityTable"
             (dblclick)="editPersonne(personne)"
             class="table-row"
-            title="Double-cliquer pour modifier"
+            title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.dblClickHint' | translate }}"
           >
             <!-- Matricule -->
             <td>

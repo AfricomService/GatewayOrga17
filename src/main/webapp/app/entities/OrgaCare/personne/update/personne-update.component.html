@@ -7,40 +7,45 @@
       </div>
       <div>
         <h2 class="page-title" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.createOrEditLabel">Créer / Modifier une Personne</h2>
-        <p class="page-subtitle">Remplissez les informations ci-dessous</p>
+        <p class="page-subtitle">{{ 'orgacaregatewayApp.orgaCarePersonne.home.fillInfo' | translate }}</p>
       </div>
     </div>
 
-    <!-- NOUVEAU -->
     <div class="header-actions">
       <button type="button" class="btn-action btn-secondary-action" (click)="previousState()">
         <fa-icon icon="arrow-left"></fa-icon>
         <span jhiTranslate="entity.action.back">Retour</span>
       </button>
 
-      <!-- ══ BOUTON SYNC ══ -->
       <button
         type="button"
         class="btn-action btn-action--sync"
         [disabled]="isSyncing"
         (click)="syncKeycloakUsers()"
-        title="Synchroniser les comptes Keycloak vers la base de données"
+        title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.syncTooltip' | translate }}"
       >
         <span *ngIf="isSyncing" class="spinner-border spinner-border-sm" role="status"></span>
         <fa-icon *ngIf="!isSyncing" icon="sync"></fa-icon>
-        <span>{{ isSyncing ? 'Synchronisation...' : 'Synchroniser' }}</span>
+        <span>{{
+          isSyncing
+            ? ('orgacaregatewayApp.orgaCarePersonne.home.syncing' | translate)
+            : ('orgacaregatewayApp.orgaCarePersonne.home.sync' | translate)
+        }}</span>
       </button>
 
       <ng-container *ngIf="editForm.get('id')!.value != null">
-        <!-- Bouton Affecter un compte -->
         <button
           type="button"
           class="btn-action btn-action--info"
           (click)="openAssignUserModal(assignUserModal)"
-          title="Affecter un compte utilisateur à cette personne"
+          title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.assignAccountTooltip' | translate }}"
         >
           <fa-icon icon="link"></fa-icon>
-          <span>{{ editForm.get('userId')!.value ? 'Changer le compte' : 'Affecter un compte' }}</span>
+          <span>{{
+            editForm.get('userId')!.value
+              ? ('orgacaregatewayApp.orgaCarePersonne.home.changeAccount' | translate)
+              : ('orgacaregatewayApp.orgaCarePersonne.home.assignAccount' | translate)
+          }}</span>
         </button>
       </ng-container>
 
@@ -75,10 +80,8 @@
         <ng-template ngbPanelHeader let-opened="opened">
           <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
             <div class="panel-header-content">
-              <div class="panel-icon general">
-                <fa-icon icon="id-card"></fa-icon>
-              </div>
-              <span>Section Générale</span>
+              <div class="panel-icon general"><fa-icon icon="id-card"></fa-icon></div>
+              <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.general' | translate }}</span>
             </div>
             <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
           </button>
@@ -89,9 +92,9 @@
             <div class="form-grid">
               <!-- Matricule -->
               <div class="field-group">
-                <label class="field-label" for="field_matricule" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule">
-                  Matricule
-                </label>
+                <label class="field-label" for="field_matricule" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.matricule"
+                  >Matricule</label
+                >
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="hashtag"></fa-icon></span>
                   <input
@@ -99,16 +102,16 @@
                     id="field_matricule"
                     type="text"
                     formControlName="matricule"
-                    placeholder="Ex: Empl-0001"
+                    placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderMatricule' | translate }}"
                   />
                 </div>
               </div>
 
               <!-- Nom et Prénom -->
               <div class="field-group required">
-                <label class="field-label" for="field_nomPrenom" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom">
-                  Nom et Prénom
-                </label>
+                <label class="field-label" for="field_nomPrenom" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.nomPrenom"
+                  >Nom et Prénom</label
+                >
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="user"></fa-icon></span>
                   <input
@@ -116,7 +119,7 @@
                     id="field_nomPrenom"
                     type="text"
                     formControlName="nomPrenom"
-                    placeholder="Prénom NOM"
+                    placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderNomPrenom' | translate }}"
                   />
                 </div>
                 <div
@@ -130,7 +133,7 @@
 
               <!-- Email -->
               <div class="field-group">
-                <label class="field-label" for="field_email" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email"> Email </label>
+                <label class="field-label" for="field_email" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.email">Email</label>
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="envelope"></fa-icon></span>
                   <input
@@ -138,7 +141,7 @@
                     id="field_email"
                     type="email"
                     formControlName="email"
-                    placeholder="nom@exemple.com"
+                    placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderEmail' | translate }}"
                   />
                 </div>
                 <div
@@ -146,15 +149,17 @@
                   *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)"
                 >
                   <fa-icon icon="exclamation-circle"></fa-icon>
-                  <small *ngIf="editForm.get('email')?.errors?.email">Adresse e-mail invalide.</small>
+                  <small *ngIf="editForm.get('email')?.errors?.email">{{
+                    'orgacaregatewayApp.orgaCarePersonne.home.invalidEmail' | translate
+                  }}</small>
                 </div>
               </div>
 
               <!-- Num Téléphone -->
               <div class="field-group">
-                <label class="field-label" for="field_numTelephone" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone">
-                  Numéro de téléphone
-                </label>
+                <label class="field-label" for="field_numTelephone" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.numTelephone"
+                  >Numéro de téléphone</label
+                >
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="phone"></fa-icon></span>
                   <input
@@ -162,18 +167,18 @@
                     id="field_numTelephone"
                     type="text"
                     formControlName="numTelephone"
-                    placeholder="+216 XX XXX XXX"
+                    placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderTelephone' | translate }}"
                   />
                 </div>
               </div>
 
               <!-- Genre -->
               <div class="field-group">
-                <label class="field-label" for="field_genre" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre"> Genre </label>
+                <label class="field-label" for="field_genre" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.genre">Genre</label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="venus-mars"></fa-icon></span>
                   <select class="field-input field-select with-prefix" id="field_genre" formControlName="genre">
-                    <option value="">— Sélectionner —</option>
+                    <option value="">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
                     <option value="Masculin">{{ 'orgacaregatewayApp.orgaCarePersonne.masculin' | translate }}</option>
                     <option value="Feminin">{{ 'orgacaregatewayApp.orgaCarePersonne.féminin' | translate }}</option>
                   </select>
@@ -182,16 +187,22 @@
 
               <!-- CIN -->
               <div class="field-group">
-                <label class="field-label" for="field_cin" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin"> CIN </label>
+                <label class="field-label" for="field_cin" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.cin">CIN</label>
                 <div class="input-wrapper">
                   <span class="input-prefix"><fa-icon icon="id-badge"></fa-icon></span>
-                  <input class="field-input with-prefix" id="field_cin" type="text" formControlName="cin" placeholder="XXXXXXXX" />
+                  <input
+                    class="field-input with-prefix"
+                    id="field_cin"
+                    type="text"
+                    formControlName="cin"
+                    placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.home.placeholderCin' | translate }}"
+                  />
                 </div>
               </div>
 
               <!-- Grade -->
               <div class="field-group">
-                <label class="field-label" for="field_grade" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade"> Grade </label>
+                <label class="field-label" for="field_grade" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.grade">Grade</label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="layer-group"></fa-icon></span>
                   <select
@@ -200,7 +211,7 @@
                     formControlName="grade"
                     [compareWith]="compareGrade"
                   >
-                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
                     <option [ngValue]="gradeOption" *ngFor="let gradeOption of gradesSharedCollection; trackBy: trackGradeById">
                       {{ gradeOption.label }}
                     </option>
@@ -210,9 +221,7 @@
 
               <!-- Fonction -->
               <div class="field-group">
-                <label class="field-label" for="field_fonction" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction">
-                  Fonction
-                </label>
+                <label class="field-label" for="field_fonction" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.fonction">Fonction</label>
                 <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="briefcase"></fa-icon></span>
                   <select
@@ -221,7 +230,7 @@
                     formControlName="fonction"
                     [compareWith]="compareFonction"
                   >
-                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
                     <option [ngValue]="fonctionOption" *ngFor="let fonctionOption of fonctionsSharedCollection; trackBy: trackFonctionById">
                       {{ fonctionOption.label }}
                     </option>
@@ -235,26 +244,23 @@
 
       <!-- ─── Panels supplémentaires : mode ÉDITION uniquement ─── -->
       <ng-container *ngIf="editForm.get('id')!.value != null">
-        <!-- ─── Panel 1 : Affectation en cours ─── -->
+        <!-- ─── Panel 1 : Affectation ─── -->
         <ngb-panel id="panel-1">
           <ng-template ngbPanelHeader let-opened="opened">
             <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
               <div class="panel-header-content">
-                <div class="panel-icon affectation">
-                  <fa-icon icon="sitemap"></fa-icon>
-                </div>
-                <span>Affectation en cours</span>
+                <div class="panel-icon affectation"><fa-icon icon="sitemap"></fa-icon></div>
+                <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.affectation' | translate }}</span>
               </div>
               <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
             </button>
           </ng-template>
           <ng-template ngbPanelContent>
             <div class="panel-body">
-              <!-- Barre d'action -->
               <div class="affectation-toolbar">
                 <span class="affectation-count">
                   <fa-icon icon="sitemap"></fa-icon>
-                  {{ affectationsPersonne.length }} affectation(s) active(s)
+                  {{ affectationsPersonne.length }} {{ 'orgacaregatewayApp.orgaCarePersonne.panel.activeAffectations' | translate }}
                 </span>
                 <button
                   type="button"
@@ -262,23 +268,20 @@
                   (click)="openAffecterDepartementModal(affecterDepartementModal)"
                 >
                   <fa-icon icon="plus"></fa-icon>
-                  <span>Affecter</span>
+                  <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.assign' | translate }}</span>
                 </button>
               </div>
 
-              <!-- Loading -->
               <div *ngIf="isLoadingAffectations" class="text-center py-3">
                 <span class="spinner-border spinner-border-sm me-2"></span>
-                Chargement...
+                {{ 'orgacaregatewayApp.orgaCarePersonne.panel.loading' | translate }}
               </div>
 
-              <!-- Liste vide -->
               <div *ngIf="!isLoadingAffectations && affectationsPersonne.length === 0" class="panel-empty">
                 <fa-icon icon="sitemap" class="panel-empty__icon"></fa-icon>
-                <p class="panel-empty__text">Aucune affectation active</p>
+                <p class="panel-empty__text">{{ 'orgacaregatewayApp.orgaCarePersonne.panel.noAffectation' | translate }}</p>
               </div>
 
-              <!-- Liste des affectations -->
               <div class="affectation-list" *ngIf="!isLoadingAffectations && affectationsPersonne.length > 0">
                 <div class="affectation-item" *ngFor="let aff of affectationsPersonne">
                   <div
@@ -293,7 +296,6 @@
                     {{ aff.type }}
                   </div>
                   <div class="aff-info">
-                    <!-- Breadcrumb hiérarchie : racine → département direct -->
                     <div class="aff-breadcrumb" *ngIf="aff.totalHierarchy && aff.totalHierarchy.length > 0; else deptFallback">
                       <ng-container *ngFor="let level of aff.totalHierarchy.slice().reverse(); let i = index; let last = last">
                         <span class="aff-breadcrumb__node" [class.aff-breadcrumb__node--leaf]="last">
@@ -302,13 +304,17 @@
                         <span class="aff-breadcrumb__sep" *ngIf="!last">›</span>
                       </ng-container>
                     </div>
-                    <!-- Fallback si totalHierarchy absent ou vide -->
                     <ng-template #deptFallback>
-                      <span class="aff-dept">Département #{{ aff.departementId }}</span>
+                      <span class="aff-dept"
+                        >{{ 'orgacaregatewayApp.orgaCarePersonne.panel.deptFallback' | translate }} #{{ aff.departementId }}</span
+                      >
                     </ng-template>
                     <span class="aff-dates" *ngIf="aff.dateAction">
-                      Depuis le {{ aff.dateAction.toDate() | date: 'dd/MM/yyyy' }}
-                      <span *ngIf="aff.dateFin"> — Fin : {{ aff.dateFin.toDate() | date: 'dd/MM/yyyy' }}</span>
+                      {{ 'orgacaregatewayApp.orgaCarePersonne.panel.since' | translate }} {{ aff.dateAction.toDate() | date: 'dd/MM/yyyy' }}
+                      <span *ngIf="aff.dateFin">
+                        — {{ 'orgacaregatewayApp.orgaCarePersonne.panel.end' | translate }} :
+                        {{ aff.dateFin.toDate() | date: 'dd/MM/yyyy' }}</span
+                      >
                     </span>
                   </div>
                 </div>
@@ -322,41 +328,35 @@
           <ng-template ngbPanelHeader let-opened="opened">
             <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
               <div class="panel-header-content">
-                <div class="panel-icon contrat">
-                  <fa-icon icon="file-contract"></fa-icon>
-                </div>
-                <span>Contrat</span>
+                <div class="panel-icon contrat"><fa-icon icon="file-contract"></fa-icon></div>
+                <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.contrat' | translate }}</span>
               </div>
               <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
             </button>
           </ng-template>
           <ng-template ngbPanelContent>
             <div class="panel-body">
-              <!-- Barre d'action -->
               <div class="affectation-toolbar">
                 <span class="affectation-count">
                   <fa-icon icon="file-contract"></fa-icon>
-                  {{ contratsPersonne.length }} contrat(s)
+                  {{ contratsPersonne.length }} {{ 'orgacaregatewayApp.orgaCarePersonne.panel.contracts' | translate }}
                 </span>
                 <button type="button" class="btn-action btn-action--contrat" (click)="openAjouterContratModal(ajouterContratModal)">
                   <fa-icon icon="plus"></fa-icon>
-                  <span>Ajouter un contrat</span>
+                  <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.addContrat' | translate }}</span>
                 </button>
               </div>
 
-              <!-- Loading -->
               <div *ngIf="isLoadingContrats" class="text-center py-3">
                 <span class="spinner-border spinner-border-sm me-2"></span>
-                Chargement...
+                {{ 'orgacaregatewayApp.orgaCarePersonne.panel.loading' | translate }}
               </div>
 
-              <!-- Liste vide -->
               <div *ngIf="!isLoadingContrats && contratsPersonne.length === 0" class="panel-empty">
                 <fa-icon icon="file-contract" class="panel-empty__icon"></fa-icon>
-                <p class="panel-empty__text">Aucun contrat enregistré</p>
+                <p class="panel-empty__text">{{ 'orgacaregatewayApp.orgaCarePersonne.panel.noContrat' | translate }}</p>
               </div>
 
-              <!-- Liste des contrats -->
               <div class="contrat-list" *ngIf="!isLoadingContrats && contratsPersonne.length > 0">
                 <div class="contrat-item" *ngFor="let c of contratsPersonne">
                   <div
@@ -373,8 +373,11 @@
                     <span class="contrat-type">{{ c.nomTypeContrat ?? 'Type #' + c.typeContratId }}</span>
                     <span class="contrat-societe" *ngIf="c.raisonSocialeSociete">{{ c.raisonSocialeSociete }}</span>
                     <span class="contrat-dates">
-                      Du {{ c.dateDebut?.toDate() | date: 'dd/MM/yyyy' }}
-                      <span *ngIf="c.dateFin"> — au {{ c.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span>
+                      {{ 'orgacaregatewayApp.orgaCarePersonne.panel.from' | translate }} {{ c.dateDebut?.toDate() | date: 'dd/MM/yyyy' }}
+                      <span *ngIf="c.dateFin">
+                        — {{ 'orgacaregatewayApp.orgaCarePersonne.panel.to' | translate }}
+                        {{ c.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span
+                      >
                     </span>
                   </div>
                 </div>
@@ -388,49 +391,46 @@
           <ng-template ngbPanelHeader let-opened="opened">
             <button ngbPanelToggle class="accordion-btn" [class.opened]="opened">
               <div class="panel-header-content">
-                <div class="panel-icon absence">
-                  <fa-icon icon="calendar-times"></fa-icon>
-                </div>
-                <span>Absence</span>
+                <div class="panel-icon absence"><fa-icon icon="calendar-times"></fa-icon></div>
+                <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.absence' | translate }}</span>
               </div>
               <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
             </button>
           </ng-template>
           <ng-template ngbPanelContent>
             <div class="panel-body">
-              <!-- Barre d'action -->
               <div class="affectation-toolbar">
                 <span class="affectation-count">
                   <fa-icon icon="calendar-times"></fa-icon>
-                  {{ absencesPersonne.length }} absence(s)
+                  {{ absencesPersonne.length }} {{ 'orgacaregatewayApp.orgaCarePersonne.panel.absences' | translate }}
                 </span>
                 <button type="button" class="btn-action btn-action--absence" (click)="openAjouterAbsenceModal(ajouterAbsenceModal)">
                   <fa-icon icon="plus"></fa-icon>
-                  <span>Ajouter une absence</span>
+                  <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.addAbsence' | translate }}</span>
                 </button>
               </div>
 
-              <!-- Loading -->
               <div *ngIf="isLoadingAbsences" class="text-center py-3">
                 <span class="spinner-border spinner-border-sm me-2"></span>
-                Chargement...
+                {{ 'orgacaregatewayApp.orgaCarePersonne.panel.loading' | translate }}
               </div>
 
-              <!-- Liste vide -->
               <div *ngIf="!isLoadingAbsences && absencesPersonne.length === 0" class="panel-empty">
                 <fa-icon icon="calendar-times" class="panel-empty__icon"></fa-icon>
-                <p class="panel-empty__text">Aucune absence enregistrée</p>
+                <p class="panel-empty__text">{{ 'orgacaregatewayApp.orgaCarePersonne.panel.noAbsence' | translate }}</p>
               </div>
 
-              <!-- Liste des absences -->
               <div class="absence-list" *ngIf="!isLoadingAbsences && absencesPersonne.length > 0">
                 <div class="absence-item" *ngFor="let abs of absencesPersonne">
                   <div class="absence-badge absence-badge--actif">{{ abs.etat }}</div>
                   <div class="absence-info">
-                    <span class="absence-motif">{{ abs.motif ?? 'Sans motif' }}</span>
+                    <span class="absence-motif">{{ abs.motif ?? ('orgacaregatewayApp.orgaCarePersonne.panel.noMotif' | translate) }}</span>
                     <span class="absence-dates">
-                      Du {{ abs.dateDebut?.toDate() | date: 'dd/MM/yyyy' }}
-                      <span *ngIf="abs.dateFin"> — au {{ abs.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span>
+                      {{ 'orgacaregatewayApp.orgaCarePersonne.panel.from' | translate }} {{ abs.dateDebut?.toDate() | date: 'dd/MM/yyyy' }}
+                      <span *ngIf="abs.dateFin">
+                        — {{ 'orgacaregatewayApp.orgaCarePersonne.panel.to' | translate }}
+                        {{ abs.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span
+                      >
                     </span>
                   </div>
                 </div>
@@ -439,21 +439,19 @@
           </ng-template>
         </ngb-panel>
       </ng-container>
-      <!-- ─── Fin panels édition ─── -->
     </ngb-accordion>
   </form>
+
   <!-- ══════════════ MODAL AFFECTATION USER ══════════════ -->
   <ng-template #assignUserModal let-modal>
     <div class="modal-header">
       <div class="modal-title-block">
         <span class="modal-icon-primary"><fa-icon icon="users"></fa-icon></span>
-        <h5 class="modal-title">Affecter un compte utilisateur</h5>
+        <h5 class="modal-title">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.title' | translate }}</h5>
       </div>
       <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
     </div>
-
     <div class="modal-body">
-      <!-- Barre de recherche -->
       <div class="user-search-bar mb-3">
         <fa-icon icon="search" class="search-icon-modal"></fa-icon>
         <input
@@ -461,23 +459,20 @@
           type="text"
           [(ngModel)]="userSearchKeyword"
           (ngModelChange)="applyUserFilter()"
-          placeholder="Rechercher par login, email, nom..."
+          placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.searchPlaceholder' | translate }}"
         />
       </div>
 
-      <!-- Loading -->
       <div *ngIf="isLoadingUsers" class="text-center py-3">
         <span class="spinner-border spinner-border-sm me-2"></span>
-        Chargement des utilisateurs...
+        {{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.loading' | translate }}
       </div>
 
-      <!-- Liste des users -->
       <div *ngIf="!isLoadingUsers">
         <div *ngIf="filteredUsers.length === 0" class="text-center text-muted py-3">
           <fa-icon icon="user-slash"></fa-icon>
-          <p class="mt-2">Aucun utilisateur disponible</p>
+          <p class="mt-2">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.noUser' | translate }}</p>
         </div>
-
         <div class="user-list">
           <div
             *ngFor="let user of filteredUsers"
@@ -485,9 +480,7 @@
             [class.selected]="selectedUser?.id === user.id"
             (click)="selectUser(user)"
           >
-            <div class="user-avatar">
-              {{ (user.firstName ?? user.login ?? '?').charAt(0).toUpperCase() }}
-            </div>
+            <div class="user-avatar">{{ (user.firstName ?? user.login ?? '?').charAt(0).toUpperCase() }}</div>
             <div class="user-info">
               <div class="user-login">{{ user.login }}</div>
               <div class="user-details">
@@ -500,8 +493,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Pagination -->
         <div class="d-flex justify-content-center mt-3" *ngIf="userTotalItems > userItemsPerPage">
           <ngb-pagination
             [collectionSize]="userTotalItems"
@@ -510,24 +501,26 @@
             [maxSize]="5"
             [rotate]="true"
             (pageChange)="applyUserFilter()"
-          >
-          </ngb-pagination>
+          ></ngb-pagination>
         </div>
       </div>
 
-      <!-- User sélectionné -->
       <div *ngIf="selectedUser" class="selected-user-preview mt-3">
         <fa-icon icon="user-check"></fa-icon>
-        Sélectionné : <strong>{{ selectedUser.login }}</strong> ({{ selectedUser.firstName }} {{ selectedUser.lastName }})
+        {{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.selected' | translate }} : <strong>{{ selectedUser.login }}</strong> ({{
+          selectedUser.firstName
+        }}
+        {{ selectedUser.lastName }})
       </div>
     </div>
-
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">
+        {{ 'entity.action.cancel' | translate }}
+      </button>
       <button type="button" class="btn btn-primary" [disabled]="!selectedUser || isAssigning" (click)="confirmAssignUser()">
         <span *ngIf="isAssigning" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isAssigning" icon="link" class="me-1"></fa-icon>
-        Affecter
+        {{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.confirm' | translate }}
       </button>
     </div>
   </ng-template>
@@ -537,27 +530,24 @@
     <div class="modal-header">
       <div class="modal-title-block">
         <span class="modal-icon-primary"><fa-icon icon="sitemap"></fa-icon></span>
-        <h5 class="modal-title">Affecter à un département</h5>
+        <h5 class="modal-title">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.title' | translate }}</h5>
       </div>
       <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
     </div>
-
     <div class="modal-body">
-      <!-- Nom personne -->
       <div class="affectation-modal-personne mb-3">
-        <span class="label-personne">Nom :</span>
+        <span class="label-personne">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.name' | translate }} :</span>
         <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
       </div>
 
-      <!-- Rôle tabs -->
       <div class="mb-3">
-        <label class="field-label">Rôle</label>
+        <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.role' | translate }}</label>
         <div class="role-tabs">
           <button type="button" class="role-tab" [class.active]="affectationRoleActif === 'CHEF'" (click)="setAffectationRole('CHEF')">
-            Chef de
+            {{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.roleChef' | translate }}
           </button>
           <button type="button" class="role-tab" [class.active]="affectationRoleActif === 'MEMBRE'" (click)="setAffectationRole('MEMBRE')">
-            Membre de
+            {{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.roleMembre' | translate }}
           </button>
           <button
             type="button"
@@ -565,7 +555,7 @@
             [class.active]="affectationRoleActif === 'ASSISTANT'"
             (click)="setAffectationRole('ASSISTANT')"
           >
-            Assistant de
+            {{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.roleAssistant' | translate }}
           </button>
           <button
             type="button"
@@ -573,54 +563,47 @@
             [class.active]="affectationRoleActif === 'INTERIM'"
             (click)="setAffectationRole('INTERIM')"
           >
-            Intérim de
+            {{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.roleInterim' | translate }}
           </button>
         </div>
       </div>
 
-      <!-- Dates -->
       <div class="form-grid-2 mb-3">
         <div class="field-group">
-          <label class="field-label">Date Action</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dateAction' | translate }}</label>
           <input class="field-input" type="date" [(ngModel)]="affectationDateAction" />
         </div>
         <div class="field-group">
-          <label class="field-label">Date Fin</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dateFin' | translate }}</label>
           <input class="field-input" type="date" [(ngModel)]="affectationDateFin" />
         </div>
       </div>
 
-      <!-- Société + Organigramme -->
       <div class="form-grid-2 mb-3">
         <div class="field-group">
-          <label class="field-label">Société</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.societe' | translate }}</label>
           <select class="field-input field-select" [(ngModel)]="selectedSocieteId" (ngModelChange)="onSocieteChange($event)">
-            <option [ngValue]="null">— Sélectionner —</option>
-            <option *ngFor="let s of societesCollection" [ngValue]="s.id">
-              {{ s.raisonSociale }}
-            </option>
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let s of societesCollection" [ngValue]="s.id">{{ s.raisonSociale }}</option>
           </select>
         </div>
         <div class="field-group">
-          <label class="field-label">Organigramme</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.organigramme' | translate }}</label>
           <select
             class="field-input field-select"
             [(ngModel)]="selectedOrganigrammeId"
             (ngModelChange)="onOrganigrammeChange($event)"
             [disabled]="!selectedSocieteId"
           >
-            <option [ngValue]="null">— Sélectionner —</option>
-            <option *ngFor="let o of organigrammesCollection" [ngValue]="o.id">
-              {{ o.nom ?? o.code }}
-            </option>
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let o of organigrammesCollection" [ngValue]="o.id">{{ o.nom ?? o.code }}</option>
           </select>
         </div>
       </div>
 
-      <!-- Département — arbre -->
       <div class="field-group mb-3" *ngIf="selectedSocieteId && selectedOrganigrammeId">
         <label class="field-label">
-          Département <span style="color: red">*</span>
+          {{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dept' | translate }} <span style="color: red">*</span>
           <span class="dept-selected-badge" *ngIf="selectedDeptLabel">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <polyline points="20 6 9 17 4 12" />
@@ -629,18 +612,12 @@
             <button type="button" class="dept-clear-btn" (click)="selectedDepartementId = null; selectedDeptLabel = ''">×</button>
           </span>
         </label>
-
-        <!-- Arbre vide -->
         <div class="dept-tree-empty" *ngIf="departementTree.length === 0">
-          <span>Aucun département trouvé</span>
+          <span>{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.noDept' | translate }}</span>
         </div>
-
-        <!-- Arbre -->
         <div class="dept-tree-box" *ngIf="departementTree.length > 0">
-          <ng-container *ngTemplateOutlet="deptTreeNode; context: { nodes: departementTree, depth: 0 }"> </ng-container>
+          <ng-container *ngTemplateOutlet="deptTreeNode; context: { nodes: departementTree, depth: 0 }"></ng-container>
         </div>
-
-        <!-- Template récursif -->
         <ng-template #deptTreeNode let-nodes="nodes" let-depth="depth">
           <div *ngFor="let node of nodes" class="dept-tree-node-wrap">
             <div
@@ -649,7 +626,6 @@
               [style.padding-left.px]="12 + depth * 20"
               (click)="selectDeptFromTree(node)"
             >
-              <!-- Toggle enfants -->
               <button *ngIf="node.children?.length > 0" type="button" class="dept-tree-toggle" (click)="toggleDeptNode(node.id, $event)">
                 <svg
                   width="11"
@@ -664,44 +640,37 @@
                   <polyline points="9 6 15 12 9 18" />
                 </svg>
               </button>
-              <!-- Point feuille -->
               <span class="dept-tree-leaf" *ngIf="!node.children?.length">
-                <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor">
-                  <circle cx="12" cy="12" r="6" />
-                </svg>
+                <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6" /></svg>
               </span>
-              <!-- Infos -->
               <span class="dept-tree-code" *ngIf="node.code">{{ node.code }}</span>
               <span class="dept-tree-nom">{{ node.nom ?? '—' }}</span>
-              <!-- Check -->
               <span class="dept-tree-check" *ngIf="selectedDepartementId === node.id">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </span>
             </div>
-            <!-- Récursion -->
             <div *ngIf="node.children?.length > 0 && isDeptNodeExpanded(node.id)">
-              <ng-container [ngTemplateOutlet]="deptTreeNode" [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }">
-              </ng-container>
+              <ng-container
+                [ngTemplateOutlet]="deptTreeNode"
+                [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }"
+              ></ng-container>
             </div>
           </div>
         </ng-template>
       </div>
 
-      <!-- Erreur / Succès -->
       <div *ngIf="affectationSaveError" class="sync-banner sync-banner--error">
-        <fa-icon icon="exclamation-circle"></fa-icon>
-        <span>{{ affectationSaveError }}</span>
+        <fa-icon icon="exclamation-circle"></fa-icon><span>{{ affectationSaveError }}</span>
       </div>
       <div *ngIf="affectationSaveSuccess" class="sync-banner sync-banner--success">
         <fa-icon icon="check-circle"></fa-icon>
-        <span>Affectation enregistrée avec succès !</span>
+        <span>{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.success' | translate }}</span>
       </div>
     </div>
-
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">{{ 'entity.action.cancel' | translate }}</button>
       <button
         type="button"
         class="btn btn-primary"
@@ -710,7 +679,7 @@
       >
         <span *ngIf="isAffectationSaving" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isAffectationSaving" icon="sitemap" class="me-1"></fa-icon>
-        Affecter
+        {{ 'orgacaregatewayApp.orgaCarePersonne.panel.assign' | translate }}
       </button>
     </div>
   </ng-template>
@@ -720,112 +689,98 @@
     <div class="modal-header">
       <div class="modal-title-block">
         <span class="modal-icon-primary"><fa-icon icon="file-contract"></fa-icon></span>
-        <h5 class="modal-title">Ajouter un contrat</h5>
+        <h5 class="modal-title">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.contrat.title' | translate }}</h5>
       </div>
       <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
     </div>
-
     <div class="modal-body">
-      <!-- Nom personne -->
       <div class="affectation-modal-personne mb-3">
-        <span class="label-personne">Personne :</span>
+        <span class="label-personne">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.contrat.person' | translate }} :</span>
         <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
       </div>
-
-      <!-- Dates -->
       <div class="form-grid-2 mb-3">
         <div class="field-group">
-          <label class="field-label">Date Début <span style="color: red">*</span></label>
+          <label class="field-label"
+            >{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dateAction' | translate }} <span style="color: red">*</span></label
+          >
           <input class="field-input" type="date" [(ngModel)]="newContratDateDebut" />
         </div>
         <div class="field-group">
-          <label class="field-label">Date Fin</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dateFin' | translate }}</label>
           <input class="field-input" type="date" [(ngModel)]="newContratDateFin" />
         </div>
       </div>
-
-      <!-- Type de contrat + Société -->
       <div class="form-grid-2 mb-3">
         <div class="field-group">
-          <label class="field-label">Type de Contrat</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.contrat.type' | translate }}</label>
           <select class="field-input field-select" [(ngModel)]="newContratTypeContratId">
-            <option [ngValue]="null">— Sélectionner —</option>
-            <option *ngFor="let tc of typesContratCollection" [ngValue]="tc.id">
-              {{ tc.nom }}
-            </option>
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let tc of typesContratCollection" [ngValue]="tc.id">{{ tc.nom }}</option>
           </select>
         </div>
         <div class="field-group">
-          <label class="field-label">Société</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.societe' | translate }}</label>
           <select class="field-input field-select" [(ngModel)]="newContratSocieteId">
-            <option [ngValue]="null">— Sélectionner —</option>
-            <option *ngFor="let s of societesContratCollection" [ngValue]="s.id">
-              {{ s.raisonSociale }}
-            </option>
+            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
+            <option *ngFor="let s of societesContratCollection" [ngValue]="s.id">{{ s.raisonSociale }}</option>
           </select>
         </div>
       </div>
-
-      <!-- Erreur / Succès -->
       <div *ngIf="contratSaveError" class="sync-banner sync-banner--error">
-        <fa-icon icon="exclamation-circle"></fa-icon>
-        <span>{{ contratSaveError }}</span>
+        <fa-icon icon="exclamation-circle"></fa-icon><span>{{ contratSaveError }}</span>
       </div>
       <div *ngIf="contratSaveSuccess" class="sync-banner sync-banner--success">
         <fa-icon icon="check-circle"></fa-icon>
-        <span>Contrat enregistré avec succès !</span>
+        <span>{{ 'orgacaregatewayApp.orgaCarePersonne.modal.contrat.success' | translate }}</span>
       </div>
     </div>
-
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">{{ 'entity.action.cancel' | translate }}</button>
       <button type="button" class="btn btn-primary" [disabled]="!newContratDateDebut || isContratSaving" (click)="confirmAjouterContrat()">
         <span *ngIf="isContratSaving" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isContratSaving" icon="save" class="me-1"></fa-icon>
-        Enregistrer
+        {{ 'entity.action.save' | translate }}
       </button>
     </div>
   </ng-template>
+
   <!-- ══════════════ MODAL AJOUT ABSENCE ══════════════ -->
   <ng-template #ajouterAbsenceModal let-modal>
     <div class="modal-header">
       <div class="modal-title-block">
         <span class="modal-icon-primary"><fa-icon icon="calendar-times"></fa-icon></span>
-        <h5 class="modal-title">Ajouter une absence</h5>
+        <h5 class="modal-title">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.title' | translate }}</h5>
       </div>
       <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
     </div>
-
     <div class="modal-body">
-      <!-- Nom personne -->
       <div class="affectation-modal-personne mb-3">
-        <span class="label-personne">Personne :</span>
+        <span class="label-personne">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.contrat.person' | translate }} :</span>
         <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
       </div>
-
-      <!-- Dates -->
       <div class="form-grid-2 mb-3">
         <div class="field-group">
-          <label class="field-label">Date Début <span style="color: red">*</span></label>
+          <label class="field-label"
+            >{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dateAction' | translate }} <span style="color: red">*</span></label
+          >
           <input class="field-input" type="date" [(ngModel)]="newAbsenceDateDebut" />
         </div>
         <div class="field-group">
-          <label class="field-label">Date Fin</label>
+          <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.affectDept.dateFin' | translate }}</label>
           <input class="field-input" type="date" [(ngModel)]="newAbsenceDateFin" />
         </div>
       </div>
-
-      <!-- Motif -->
       <div class="field-group mb-3">
-        <label class="field-label">Motif</label>
-        <input class="field-input" type="text" [(ngModel)]="newAbsenceMotif" placeholder="Motif de l'absence..." />
+        <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.motif' | translate }}</label>
+        <input
+          class="field-input"
+          type="text"
+          [(ngModel)]="newAbsenceMotif"
+          placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.motifPlaceholder' | translate }}"
+        />
       </div>
-
-      <!-- Personne Remplaçant -->
       <div class="field-group mb-3">
-        <label class="field-label">Personne Remplaçant</label>
-
-        <!-- Barre de recherche -->
+        <label class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.remplacant' | translate }}</label>
         <div class="remplacant-search-bar mb-2">
           <fa-icon icon="search" class="remplacant-search-icon"></fa-icon>
           <input
@@ -833,23 +788,19 @@
             type="text"
             [(ngModel)]="remplacantSearchKeyword"
             (ngModelChange)="filterRemplacant()"
-            placeholder="Rechercher par nom ou matricule..."
+            placeholder="{{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.remplacantSearch' | translate }}"
           />
         </div>
-
-        <!-- Sélection actuelle -->
         <div *ngIf="newAbsencePersonneRemplacantId" class="remplacant-selected-preview mb-2">
           <fa-icon icon="user-check"></fa-icon>
-          Remplaçant sélectionné :
+          {{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.selectedRemplacant' | translate }} :
           <strong>{{ getRemplacantNom() }}</strong>
           <button type="button" class="remplacant-clear-btn" (click)="newAbsencePersonneRemplacantId = null">×</button>
         </div>
-
-        <!-- Liste -->
         <div class="remplacant-list">
           <div *ngIf="personnesRemplacantFiltered.length === 0" class="remplacant-empty">
             <fa-icon icon="user-slash"></fa-icon>
-            <span>Aucun résultat trouvé</span>
+            <span>{{ 'orgacaregatewayApp.orgaCarePersonne.modal.assignUser.noUser' | translate }}</span>
           </div>
           <div
             *ngFor="let p of personnesRemplacantFiltered"
@@ -857,9 +808,7 @@
             [class.selected]="newAbsencePersonneRemplacantId === p.id"
             (click)="newAbsencePersonneRemplacantId = newAbsencePersonneRemplacantId === p.id ? null : p.id ?? null"
           >
-            <div class="remplacant-avatar">
-              {{ (p.nomPrenom ?? '?').charAt(0).toUpperCase() }}
-            </div>
+            <div class="remplacant-avatar">{{ (p.nomPrenom ?? '?').charAt(0).toUpperCase() }}</div>
             <div class="remplacant-info">
               <div class="remplacant-nom">{{ p.nomPrenom }}</div>
               <div class="remplacant-matricule" *ngIf="p.matricule">{{ p.matricule }}</div>
@@ -870,24 +819,20 @@
           </div>
         </div>
       </div>
-
-      <!-- Erreur / Succès -->
       <div *ngIf="absenceSaveError" class="sync-banner sync-banner--error">
-        <fa-icon icon="exclamation-circle"></fa-icon>
-        <span>{{ absenceSaveError }}</span>
+        <fa-icon icon="exclamation-circle"></fa-icon><span>{{ absenceSaveError }}</span>
       </div>
       <div *ngIf="absenceSaveSuccess" class="sync-banner sync-banner--success">
         <fa-icon icon="check-circle"></fa-icon>
-        <span>Absence enregistrée avec succès !</span>
+        <span>{{ 'orgacaregatewayApp.orgaCarePersonne.modal.absence.success' | translate }}</span>
       </div>
     </div>
-
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">{{ 'entity.action.cancel' | translate }}</button>
       <button type="button" class="btn btn-primary" [disabled]="!newAbsenceDateDebut || isAbsenceSaving" (click)="confirmAjouterAbsence()">
         <span *ngIf="isAbsenceSaving" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isAbsenceSaving" icon="save" class="me-1"></fa-icon>
-        Enregistrer
+        {{ 'entity.action.save' | translate }}
       </button>
     </div>
   </ng-template>

@@ -113,7 +113,8 @@
       "edit": "تعديل",
       "open": "فتح",
       "save": "حفظ",
-      "view": "عرض"
+      "view": "عرض",
+      "actions": "الإجراءات"
     },
     "detail": {
       "field": "حقل",
@@ -152,5 +153,37 @@
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
     }
   },
-  "footer": "هنا يضع الفووتر"
+  "footer": "هنا يضع الفووتر",
+  "sidebar": {
+    "sections": {
+      "principal": "الرئيسية",
+      "organisation": "المنظمة",
+      "rh": "الموارد البشرية",
+      "referentiels": "المراجع",
+      "administration": "الإدارة",
+      "langue": "اللغة"
+    },
+    "nav": {
+      "dashboard": "لوحة القيادة",
+      "societes": "الشركات",
+      "sites": "المواقع",
+      "departements": "الأقسام",
+      "organigramme": "الهيكل التنظيمي",
+      "employes": "الموظفون",
+      "contrats": "العقود",
+      "absences": "الغيابات",
+      "grades": "الرتب",
+      "fonctions": "الوظائف",
+      "typesContrat": "أنواع العقود",
+      "formesJuridiques": "الأشكال القانونية",
+      "metriques": "المقاييس",
+      "sante": "صحة النظام",
+      "logs": "السجلات"
+    },
+    "user": {
+      "admin": "مدير",
+      "user": "مستخدم"
+    },
+    "logout": "تسجيل الخروج"
+  }
 }
