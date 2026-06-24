@@ -59,12 +59,10 @@ module.exports = async (config, options, targetOptions) => {
       new BrowserSyncPlugin(
         {
           host: 'localhost',
-          port: 9000,
+          port: 9009,
           https: tls,
-          open: false,
-          notify: false,
           proxy: {
-            target: `http${tls ? 's' : ''}://localhost:${targetOptions.target === 'serve' ? '4200' : '8080'}`,
+            target: `http${tls ? 's' : ''}://localhost:${targetOptions.target === 'serve' ? '4201' : '8080'}`,
             ws: true,
             proxyOptions: {
               changeOrigin: true,
