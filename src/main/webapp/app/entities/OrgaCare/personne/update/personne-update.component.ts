@@ -243,12 +243,24 @@ export class PersonneUpdateComponent implements OnInit {
         this.cdr.markForCheck();
         // Recharger la liste des users après sync
         this.loadAvailableUsers();
+
+        // Disparition automatique après 5 secondes
+        setTimeout(() => {
+          this.syncResult = null;
+          this.cdr.markForCheck();
+        }, 5000);
       },
       error: err => {
         this.isSyncing = false;
         this.syncError = 'Erreur lors de la synchronisation. Vérifiez la connexion Keycloak.';
         this.cdr.markForCheck();
         console.error(err);
+
+        // Disparition automatique après 5 secondes
+        setTimeout(() => {
+          this.syncError = null;
+          this.cdr.markForCheck();
+        }, 5000);
       },
     });
   }
