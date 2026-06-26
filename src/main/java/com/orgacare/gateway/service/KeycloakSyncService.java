@@ -125,10 +125,18 @@ public class KeycloakSyncService {
             return Mono.empty();
         }
 
+        String login = kcUser.username != null ? kcUser.username.toLowerCase() : kcUser.id;
+
         return userRepository
             .findById(kcUser.id)
+            .switchIfEmpty(Mono.defer(() -> userRepository.findOneByLogin(login)))
             .flatMap(existing -> updateIfChanged(existing, kcUser, updated))
             .switchIfEmpty(Mono.defer(() -> persistNewUser(kcUser, created)))
+            .onErrorResume(e -> {
+                log.warn("⚠️ Échec sync user '{}': {}", kcUser.username, e.getMessage());
+                skipped.incrementAndGet();
+                return Mono.empty();
+            })
             .then();
     }
 
