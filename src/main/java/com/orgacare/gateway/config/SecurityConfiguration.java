@@ -200,7 +200,7 @@ public class SecurityConfiguration {
         OidcClientInitiatedServerLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedServerLogoutSuccessHandler(
             this.clientRegistrationRepository
         );
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:4200");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}/");
         return oidcLogoutSuccessHandler;
     }
 }
