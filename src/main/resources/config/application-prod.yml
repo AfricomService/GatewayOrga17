@@ -16,10 +16,11 @@
 logging:
   level:
     ROOT: INFO
-    org.springframework.security: DEBUG
-    org.springframework.web.reactive.function.client: DEBUG
-    reactor.netty: DEBUG
-    org.springframework.security.oauth2.client: TRACE
+    tech.jhipster: INFO
+    com.orgacare.gateway: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2.client.oidc.web.server.logout: INFO
+    org.springframework.web.server.adapter: INFO
 
 eureka:
   instance:
