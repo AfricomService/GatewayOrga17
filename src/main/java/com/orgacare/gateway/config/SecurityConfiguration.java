@@ -200,7 +200,7 @@ public class SecurityConfiguration {
         OidcClientInitiatedServerLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedServerLogoutSuccessHandler(
             this.clientRegistrationRepository
         );
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseScheme}://{baseHost}{basePort}/orga/");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://172.30.1.113/orga/");
         return oidcLogoutSuccessHandler;
     }
 }

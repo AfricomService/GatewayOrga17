@@ -17,7 +17,10 @@ logging:
   level:
     ROOT: INFO
     tech.jhipster: INFO
-    com.orgacare.gateway: INFO
+    com.orgacare.gateway: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2.client.oidc.web.server.logout: DEBUG
+    org.springframework.web.server.adapter: DEBUG
 
 eureka:
   instance:
