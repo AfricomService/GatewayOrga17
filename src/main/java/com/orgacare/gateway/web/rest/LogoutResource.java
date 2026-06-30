@@ -57,10 +57,12 @@ public class LogoutResource {
     }
 
     /**
-     * Builds the post-logout redirect URI from the actual server request,
-     * including the reverse-proxy context path (e.g. "/orga"), instead of
-     * relying on the browser's "Origin" header which never carries a path.
+     * Builds the post-logout redirect URI pointing back to the SPA behind
+     * the nginx reverse-proxy prefix "/orga/". The context path is hardcoded
+     * because nginx does not forward a usable context path to Spring here.
      */
+    private static final String APP_CONTEXT_PATH = "/orga/";
+
     private String buildPostLogoutRedirectUri(ServerHttpRequest request) {
         String scheme = request.getURI().getScheme();
         String host = request.getURI().getHost();
@@ -71,12 +73,7 @@ public class LogoutResource {
         if (port != -1 && !((scheme.equals("http") && port == 80) || (scheme.equals("https") && port == 443))) {
             uri.append(":").append(port);
         }
-
-        String contextPath = request.getPath().contextPath().value();
-        if (contextPath != null && !contextPath.isEmpty()) {
-            uri.append(contextPath);
-        }
-        uri.append("/");
+        uri.append(APP_CONTEXT_PATH);
 
         return uri.toString();
     }
