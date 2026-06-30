@@ -83,8 +83,6 @@ spring:
     locator:
       discovery:
         enabled: true
-  webflux:
-    base-path: /orga
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
