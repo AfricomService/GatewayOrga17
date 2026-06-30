@@ -18,7 +18,7 @@ logging:
     ROOT: INFO
     tech.jhipster: INFO
     com.orgacare.gateway: INFO
-    org.springframework.security: INFO
+    org.springframework.security: DEBUG
     org.springframework.security.oauth2.client.oidc.web.server.logout: INFO
     org.springframework.web.server.adapter: INFO
 
