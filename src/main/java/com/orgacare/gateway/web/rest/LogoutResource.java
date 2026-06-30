@@ -24,14 +24,6 @@ public class LogoutResource {
         this.registration = registrations.findByRegistrationId("oidc");
     }
 
-    /**
-     * {@code POST  /api/logout} : logout the current user.
-     *
-     * @param idToken the ID token.
-     * @param request a {@link ServerHttpRequest} request.
-     * @param session the current {@link WebSession}.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a body with a global logout URL.
-     */
     @PostMapping("/api/logout")
     public Mono<Map<String, String>> logout(
         @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken,
@@ -50,7 +42,8 @@ public class LogoutResource {
             logoutUrl.append(clientRegistration.getProviderDetails().getConfigurationMetadata().get("end_session_endpoint").toString());
         }
 
-        String originUrl = request.getHeaders().getOrigin();
+        String originUrl = buildPostLogoutRedirectUri(request);
+
         if (logoutUrl.indexOf("/protocol") > -1) {
             logoutUrl.append("?post_logout_redirect_uri=").append(originUrl).append("&id_token_hint=").append(idToken.getTokenValue());
         } else if (logoutUrl.indexOf("auth0.com") > -1) {
@@ -61,5 +54,30 @@ public class LogoutResource {
             logoutUrl.append("?id_token_hint=").append(idToken.getTokenValue()).append("&post_logout_redirect_uri=").append(originUrl);
         }
         return Map.of("logoutUrl", logoutUrl.toString());
+    }
+
+    /**
+     * Builds the post-logout redirect URI from the actual server request,
+     * including the reverse-proxy context path (e.g. "/orga"), instead of
+     * relying on the browser's "Origin" header which never carries a path.
+     */
+    private String buildPostLogoutRedirectUri(ServerHttpRequest request) {
+        String scheme = request.getURI().getScheme();
+        String host = request.getURI().getHost();
+        int port = request.getURI().getPort();
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(scheme).append("://").append(host);
+        if (port != -1 && !((scheme.equals("http") && port == 80) || (scheme.equals("https") && port == 443))) {
+            uri.append(":").append(port);
+        }
+
+        String contextPath = request.getPath().contextPath().value();
+        if (contextPath != null && !contextPath.isEmpty()) {
+            uri.append(contextPath);
+        }
+        uri.append("/");
+
+        return uri.toString();
     }
 }
