@@ -17,10 +17,10 @@ logging:
   level:
     ROOT: INFO
     tech.jhipster: INFO
-    com.orgacare.gateway: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.security.oauth2.client.oidc.web.server.logout: DEBUG
-    org.springframework.web.server.adapter: DEBUG
+    com.orgacare.gateway: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2.client.oidc.web.server.logout: INFO
+    org.springframework.web.server.adapter: INFO
 
 eureka:
   instance:
@@ -83,6 +83,8 @@ spring:
     locator:
       discovery:
         enabled: true
+  webflux:
+    base-path: /orga
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
