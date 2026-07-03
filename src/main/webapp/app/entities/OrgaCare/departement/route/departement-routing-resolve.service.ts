@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Observable, of, EMPTY } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, catchError } from 'rxjs/operators';
 
 import { IDepartement, Departement } from '../departement.model';
 import { DepartementService } from '../service/departement.service';
@@ -19,9 +19,15 @@ export class DepartementRoutingResolveService implements Resolve<IDepartement> {
           if (departement.body) {
             return of(departement.body);
           } else {
+            console.warn('Département introuvable (body null) pour id=', id);
             this.router.navigate(['404']);
             return EMPTY;
           }
+        }),
+        catchError(err => {
+          console.error('Erreur lors du chargement du département id=', id, err);
+          this.router.navigate(['404']);
+          return EMPTY;
         })
       );
     }

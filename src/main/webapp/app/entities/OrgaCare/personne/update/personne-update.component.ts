@@ -381,9 +381,17 @@ export class PersonneUpdateComponent implements OnInit {
   // ── Navigation vers le département affecté ───────────
   goToDepartement(aff: IAffectation): void {
     const departementId = aff.departementId;
-    if (departementId) {
-      this.router.navigate(['/orga/departement', departementId, 'edit']);
+    console.log('departementId cliqué =', departementId, typeof departementId);
+
+    if (!departementId) {
+      console.warn('departementId manquant', aff);
+      return;
     }
+
+    this.router
+      .navigate(['/orga/departement', departementId, 'edit'])
+      .then(success => console.log('Navigation success ?', success))
+      .catch(err => console.error('Erreur navigation :', err));
   }
 
   // ── Ouverture modal affecter département ─────────────
