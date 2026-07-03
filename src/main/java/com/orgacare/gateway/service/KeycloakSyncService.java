@@ -7,9 +7,9 @@ import com.orgacare.gateway.domain.Authority;
 import com.orgacare.gateway.domain.User;
 import com.orgacare.gateway.repository.UserRepository;
 import com.orgacare.gateway.service.dto.KeycloakSyncResultDTO;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -63,6 +63,12 @@ public class KeycloakSyncService {
         public Boolean enabled;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static class KcRole {
+
+        public String name;
+    }
+
     // ── Point d'entrée ───────────────────────────────────────────────────────
 
     public Mono<KeycloakSyncResultDTO> syncNow() {
@@ -71,8 +77,7 @@ public class KeycloakSyncService {
         AtomicInteger skipped = new AtomicInteger(0);
 
         return getAdminToken()
-            .flatMapMany(token -> fetchAllKeycloakUsers(token))
-            .flatMap(kcUser -> syncUser(kcUser, created, updated, skipped))
+            .flatMapMany(token -> fetchAllKeycloakUsers(token).flatMap(kcUser -> syncUser(token, kcUser, created, updated, skipped)))
             .then(Mono.fromCallable(() -> new KeycloakSyncResultDTO(created.get(), updated.get(), skipped.get())))
             .doOnSuccess(r ->
                 log.info("✅ Sync terminée — créés: {}, mis à jour: {}, ignorés: {}", r.getCreated(), r.getUpdated(), r.getSkipped())
@@ -119,7 +124,62 @@ public class KeycloakSyncService {
             .doOnComplete(() -> log.info("📋 Users Keycloak récupérés depuis realm '{}'", cfg.getTargetRealm()));
     }
 
-    private Mono<Void> syncUser(KcUser kcUser, AtomicInteger created, AtomicInteger updated, AtomicInteger skipped) {
+    /**
+     * Récupère les rôles realm assignés à un utilisateur Keycloak donné,
+     * et les mappe en authorities locales préfixées "ROLE_".
+     * En cas d'échec ou d'absence de rôle, retombe sur ROLE_USER.
+     */
+    private Mono<Set<Authority>> fetchUserAuthorities(String token, String kcUserId) {
+        ApplicationProperties.KeycloakAdmin.Admin cfg = applicationProperties.getKeycloakAdmin().getAdmin();
+
+        String rolesUrl = cfg.getServerUrl() + "/admin/realms/" + cfg.getTargetRealm() + "/users/" + kcUserId + "/role-mappings/realm";
+
+        return webClient
+            .get()
+            .uri(rolesUrl)
+            .header("Authorization", "Bearer " + token)
+            .retrieve()
+            .bodyToFlux(KcRole.class)
+            .map(r -> r.name)
+            .filter(name -> name != null && !name.isBlank())
+            // Keycloak renvoie aussi des rôles techniques par défaut (offline_access, uma_authorization, etc.)
+            // qu'on ne veut pas importer comme authorities applicatives.
+            .filter(name -> !isDefaultKeycloakRole(name))
+            .map(name -> name.startsWith("ROLE_") ? name : "ROLE_" + name.toUpperCase())
+            .collect(Collectors.toSet())
+            .map(names -> {
+                Set<Authority> authorities = names
+                    .stream()
+                    .map(n -> {
+                        Authority a = new Authority();
+                        a.setName(n);
+                        return a;
+                    })
+                    .collect(Collectors.toSet());
+                if (authorities.isEmpty()) {
+                    Authority roleUser = new Authority();
+                    roleUser.setName("ROLE_USER");
+                    authorities.add(roleUser);
+                }
+                return authorities;
+            })
+            .doOnError(e -> log.warn("⚠️ Échec récupération rôles pour user Keycloak '{}': {}", kcUserId, e.getMessage()))
+            .onErrorResume(e -> {
+                Authority roleUser = new Authority();
+                roleUser.setName("ROLE_USER");
+                return Mono.just(Set.of(roleUser));
+            });
+    }
+
+    private boolean isDefaultKeycloakRole(String roleName) {
+        return (
+            "offline_access".equalsIgnoreCase(roleName) ||
+            "uma_authorization".equalsIgnoreCase(roleName) ||
+            roleName.toLowerCase().startsWith("default-roles-")
+        );
+    }
+
+    private Mono<Void> syncUser(String token, KcUser kcUser, AtomicInteger created, AtomicInteger updated, AtomicInteger skipped) {
         if ("admin".equalsIgnoreCase(kcUser.username)) {
             skipped.incrementAndGet();
             return Mono.empty();
@@ -127,11 +187,14 @@ public class KeycloakSyncService {
 
         String login = kcUser.username != null ? kcUser.username.toLowerCase() : kcUser.id;
 
-        return userRepository
-            .findById(kcUser.id)
-            .switchIfEmpty(Mono.defer(() -> userRepository.findOneByLogin(login)))
-            .flatMap(existing -> updateIfChanged(existing, kcUser, updated))
-            .switchIfEmpty(Mono.defer(() -> persistNewUser(kcUser, created)))
+        return fetchUserAuthorities(token, kcUser.id)
+            .flatMap(authorities ->
+                userRepository
+                    .findById(kcUser.id)
+                    .switchIfEmpty(Mono.defer(() -> userRepository.findOneByLogin(login)))
+                    .flatMap(existing -> updateIfChanged(existing, kcUser, authorities, updated))
+                    .switchIfEmpty(Mono.defer(() -> persistNewUser(kcUser, authorities, created)))
+            )
             .onErrorResume(e -> {
                 log.warn("⚠️ Échec sync user '{}': {}", kcUser.username, e.getMessage());
                 skipped.incrementAndGet();
@@ -140,19 +203,23 @@ public class KeycloakSyncService {
             .then();
     }
 
-    private Mono<User> persistNewUser(KcUser kcUser, AtomicInteger created) {
+    private Mono<User> persistNewUser(KcUser kcUser, Set<Authority> authorities, AtomicInteger created) {
         log.info("➕ Persistance nouveau user: {}", kcUser.username);
-        User user = buildUser(kcUser);
+        User user = buildUser(kcUser, authorities);
         return userService
             .saveUser(user, true)
             .doOnSuccess(u -> {
                 created.incrementAndGet();
-                log.info("✅ User '{}' créé dans jhi_user", u.getLogin());
+                log.info(
+                    "✅ User '{}' créé dans jhi_user avec rôles {}",
+                    u.getLogin(),
+                    authorities.stream().map(Authority::getName).collect(Collectors.toList())
+                );
             })
             .doOnError(e -> log.warn("⚠️ Échec persist '{}': {}", kcUser.username, e.getMessage()));
     }
 
-    private Mono<User> updateIfChanged(User existing, KcUser kcUser, AtomicInteger updated) {
+    private Mono<User> updateIfChanged(User existing, KcUser kcUser, Set<Authority> authorities, AtomicInteger updated) {
         boolean changed = false;
 
         if (kcUser.firstName != null && !kcUser.firstName.equals(existing.getFirstName())) {
@@ -173,14 +240,35 @@ public class KeycloakSyncService {
             changed = true;
         }
 
-        if (changed) {
+        Set<String> existingAuthorityNames = existing.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+        Set<String> newAuthorityNames = authorities.stream().map(Authority::getName).collect(Collectors.toSet());
+        boolean authoritiesChanged = !existingAuthorityNames.equals(newAuthorityNames);
+
+        final boolean baseInfoChanged = changed;
+
+        Mono<User> saveMono;
+        if (baseInfoChanged) {
             log.debug("🔁 Mise à jour user '{}'", existing.getLogin());
-            return userService.saveUser(existing).doOnSuccess(u -> updated.incrementAndGet());
+            saveMono = userService.saveUser(existing).doOnSuccess(u -> updated.incrementAndGet());
+        } else {
+            saveMono = Mono.just(existing);
         }
-        return Mono.just(existing);
+
+        if (authoritiesChanged) {
+            log.info("🔁 Rôles modifiés pour '{}': {} → {}", existing.getLogin(), existingAuthorityNames, newAuthorityNames);
+            return saveMono
+                .flatMap(u -> userService.syncUserAuthorities(u.getId(), authorities).thenReturn(u))
+                .doOnSuccess(u -> {
+                    if (!baseInfoChanged) {
+                        updated.incrementAndGet();
+                    }
+                });
+        }
+
+        return saveMono;
     }
 
-    private User buildUser(KcUser kcUser) {
+    private User buildUser(KcUser kcUser, Set<Authority> authorities) {
         User user = new User();
         user.setId(kcUser.id);
         user.setLogin(kcUser.username != null ? kcUser.username.toLowerCase() : kcUser.id);
@@ -189,10 +277,7 @@ public class KeycloakSyncService {
         user.setEmail(kcUser.email != null ? kcUser.email.toLowerCase() : kcUser.username + "@placeholder.local");
         user.setActivated(Boolean.TRUE.equals(kcUser.enabled));
         user.setLangKey("fr");
-
-        Authority roleUser = new Authority();
-        roleUser.setName("ROLE_USER");
-        user.setAuthorities(Set.of(roleUser));
+        user.setAuthorities(authorities);
 
         return user;
     }

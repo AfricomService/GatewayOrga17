@@ -163,37 +163,38 @@ public class UserService {
             .flatMap(authorityRepository::save)
             .then(userRepository.findOneByLogin(user.getLogin()))
             .switchIfEmpty(saveUser(user, true))
-            .flatMap(existingUser -> {
-                // if IdP sends last updated information, use it to determine if an update should happen
-                if (details.get("updated_at") != null) {
-                    Instant dbModifiedDate = existingUser.getLastModifiedDate();
-                    Instant idpModifiedDate = (Instant) details.get("updated_at");
-                    if (idpModifiedDate.isAfter(dbModifiedDate)) {
-                        log.debug("Updating user '{}' in local database", user.getLogin());
-                        return updateUser(
-                            user.getFirstName(),
-                            user.getLastName(),
-                            user.getEmail(),
-                            user.getLangKey(),
-                            user.getImageUrl(),
-                            user.isActivated()
-                        );
-                    }
-                    // no last updated info, blindly update
-                } else {
-                    log.debug("Updating user '{}' in local database", user.getLogin());
-                    return updateUser(
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getEmail(),
-                        user.getLangKey(),
-                        user.getImageUrl(),
-                        user.isActivated()
-                    );
-                }
-                return Mono.empty();
-            })
+            .flatMap(existingUser ->
+                updateUser(
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getLangKey(),
+                    user.getImageUrl(),
+                    user.isActivated()
+                )
+                    .then(syncUserAuthorities(existingUser.getId(), user.getAuthorities()))
+            )
             .thenReturn(user);
+    }
+
+    /**
+     * Resynchronise les authorities d'un user existant avec celles fournies par l'IdP à chaque login.
+     * Remplace intégralement les rôles en base par ceux de la session courante.
+     */
+    @Transactional
+    public Mono<Void> syncUserAuthorities(String userId, Set<Authority> idpAuthorities) {
+        return userRepository
+            .deleteUserAuthorities(userId)
+            .thenMany(Flux.fromIterable(idpAuthorities))
+            .flatMap(authority -> userRepository.saveUserAuthority(userId, authority.getName()))
+            .then()
+            .doOnSuccess(v ->
+                log.debug(
+                    "Authorities resynchronisées pour user '{}': {}",
+                    userId,
+                    idpAuthorities.stream().map(Authority::getName).collect(Collectors.toList())
+                )
+            );
     }
 
     /**
