@@ -387,7 +387,8 @@ export class PersonneUpdateComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/departement', departementId, 'edit']).catch(err => console.error('Erreur navigation :', err));
+    // this.router.navigate(['/departement', departementId, 'edit']).catch(err => console.error('Erreur navigation :', err));
+    window.open(`/orga/departement/${departementId}/edit`, '_blank');
   }
 
   // ── Ouverture modal affecter département ─────────────
