@@ -105,6 +105,7 @@ public class SecurityConfiguration {
             .pathMatchers("/*.*").permitAll()
             .pathMatchers("/api/authenticate").permitAll()
             .pathMatchers("/api/auth-info").permitAll()
+            .pathMatchers("/api/admin/keycloak/sync").authenticated()
             .pathMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .pathMatchers("/api/**").authenticated()
             .pathMatchers("/services/*/v3/api-docs").hasAuthority(AuthoritiesConstants.ADMIN)
