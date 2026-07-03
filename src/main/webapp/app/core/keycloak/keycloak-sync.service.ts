@@ -16,6 +16,6 @@ export class KeycloakSyncService {
   constructor(private http: HttpClient) {}
 
   syncNow(): Observable<KeycloakSyncResult> {
-    return this.http.post<KeycloakSyncResult>('/api/admin/keycloak/sync', {});
+    return this.http.post<KeycloakSyncResult>('/orga/api/admin/keycloak/sync', {});
   }
 }
