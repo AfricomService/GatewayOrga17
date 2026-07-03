@@ -283,7 +283,7 @@
               </div>
 
               <div class="affectation-list" *ngIf="!isLoadingAffectations && affectationsPersonne.length > 0">
-                <div class="affectation-item" *ngFor="let aff of affectationsPersonne">
+                <div class="affectation-item" *ngFor="let aff of affectationsPersonne" (click)="goToDepartement(aff)">
                   <div
                     class="aff-badge"
                     [ngClass]="{

@@ -751,6 +751,14 @@ $transition: all 0.2s ease;
   border: 1.5px solid #ede9fe;
   border-radius: 8px;
   background: #faf9ff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: #7c3aed;
+    background: #f3f0ff;
+    transform: translateX(2px);
+  }
 
   .aff-info {
     display: flex;

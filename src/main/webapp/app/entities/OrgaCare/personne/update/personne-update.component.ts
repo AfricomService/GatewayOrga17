@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
@@ -176,7 +176,8 @@ export class PersonneUpdateComponent implements OnInit {
     protected departementService: DepartementService,
     protected contratService: ContratService,
     protected typeContratService: TypeContratService,
-    protected absenceService: AbsenceService
+    protected absenceService: AbsenceService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -375,6 +376,14 @@ export class PersonneUpdateComponent implements OnInit {
         this.cdr.markForCheck();
       }
     );
+  }
+
+  // ── Navigation vers le département affecté ───────────
+  goToDepartement(aff: IAffectation): void {
+    const departementId = aff.departementId;
+    if (departementId) {
+      this.router.navigate(['/orga/departement', departementId, 'edit']);
+    }
   }
 
   // ── Ouverture modal affecter département ─────────────
