@@ -51,7 +51,10 @@
         "since": "Since",
         "end": "End",
         "from": "From",
-        "to": "to"
+        "to": "to",
+        "deleteAffectation": "Delete this assignment",
+        "deleteAffectationConfirm": "Are you sure you want to delete this assignment?",
+        "deleteAffectationError": "Error while deleting the assignment."
       },
       "modal": {
         "assignUser": {

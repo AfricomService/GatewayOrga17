@@ -51,7 +51,10 @@
         "since": "Depuis le",
         "end": "Fin",
         "from": "Du",
-        "to": "au"
+        "to": "au",
+        "deleteAffectation": "Supprimer cette affectation",
+        "deleteAffectationConfirm": "Voulez-vous vraiment supprimer cette affectation ?",
+        "deleteAffectationError": "Erreur lors de la suppression de l'affectation."
       },
       "modal": {
         "assignUser": {

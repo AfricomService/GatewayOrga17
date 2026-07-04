@@ -51,7 +51,10 @@
         "since": "منذ",
         "end": "النهاية",
         "from": "من",
-        "to": "إلى"
+        "to": "إلى",
+        "deleteAffectation": "حذف هذا التعيين",
+        "deleteAffectationConfirm": "هل أنت متأكد من رغبتك في حذف هذا التعيين؟",
+        "deleteAffectationError": "حدث خطأ أثناء حذف التعيين."
       },
       "modal": {
         "assignUser": {
