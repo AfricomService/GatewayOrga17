@@ -391,6 +391,30 @@ export class PersonneUpdateComponent implements OnInit {
     window.open(`/orga/departement/${departementId}/edit`, '_blank');
   }
 
+  // ── Suppression d'une affectation ─────────────────────
+  deleteAffectation(aff: IAffectation): void {
+    if (!aff.id) {
+      return;
+    }
+
+    const confirmed = window.confirm('Voulez-vous vraiment supprimer cette affectation ?');
+    if (!confirmed) {
+      return;
+    }
+
+    this.affectationService.delete(aff.id).subscribe({
+      next: () => {
+        const personneId = this.editForm.get('id')!.value as number;
+        this.loadAffectationsPersonne(personneId);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        console.error("Erreur lors de la suppression de l'affectation");
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
   // ── Ouverture modal affecter département ─────────────
   openAffecterDepartementModal(content: unknown): void {
     this.affectationRoleActif = TypeAffectation.CHEF;

@@ -283,9 +283,10 @@
               </div>
 
               <div class="affectation-list" *ngIf="!isLoadingAffectations && affectationsPersonne.length > 0">
-                <div class="affectation-item" *ngFor="let aff of affectationsPersonne" (click)="goToDepartement(aff)">
+                <div class="affectation-item" *ngFor="let aff of affectationsPersonne">
                   <div
                     class="aff-badge"
+                    (click)="goToDepartement(aff)"
                     [ngClass]="{
                       'aff-badge--chef': aff.type === 'CHEF',
                       'aff-badge--membre': aff.type === 'MEMBRE',
@@ -295,7 +296,7 @@
                   >
                     {{ aff.type }}
                   </div>
-                  <div class="aff-info">
+                  <div class="aff-info" (click)="goToDepartement(aff)">
                     <div class="aff-breadcrumb" *ngIf="aff.totalHierarchy && aff.totalHierarchy.length > 0; else deptFallback">
                       <ng-container *ngFor="let level of aff.totalHierarchy.slice().reverse(); let i = index; let last = last">
                         <span class="aff-breadcrumb__node" [class.aff-breadcrumb__node--leaf]="last">
@@ -317,6 +318,16 @@
                       >
                     </span>
                   </div>
+
+                  <!-- NOUVEAU : bouton suppression (icône seule) -->
+                  <button
+                    type="button"
+                    class="btn-delete-affectation"
+                    (click)="deleteAffectation(aff)"
+                    title="{{ 'orgacaregatewayApp.orgaCarePersonne.panel.deleteAffectation' | translate }}"
+                  >
+                    <fa-icon icon="trash-alt"></fa-icon>
+                  </button>
                 </div>
               </div>
             </div>

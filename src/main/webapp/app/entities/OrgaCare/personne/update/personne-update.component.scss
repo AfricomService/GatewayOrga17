@@ -801,6 +801,37 @@ $transition: all 0.2s ease;
   }
 }
 
+// ── Bouton suppression affectation (icône seule) ──────
+.btn-delete-affectation {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  margin-left: auto;
+  border: 1.5px solid #fecaca;
+  border-radius: 50%;
+  background: #fff;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  fa-icon {
+    font-size: 0.85rem;
+  }
+
+  &:hover {
+    background: #fef2f2;
+    border-color: #dc2626;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 // ── Breadcrumb hiérarchie département ────────────────
 .aff-breadcrumb {
   display: flex;
