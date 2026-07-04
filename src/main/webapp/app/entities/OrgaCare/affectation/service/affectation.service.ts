@@ -19,6 +19,13 @@ export interface IAffecterPersonneRequest {
   dateFin?: string | null;
 }
 
+export interface IPersonneAffectationDTO {
+  personneId: number;
+  matricule: string;
+  nomPrenom: string;
+  typeAffectation: TypeAffectation;
+}
+
 export type EntityResponseType = HttpResponse<IAffectation>;
 export type EntityArrayResponseType = HttpResponse<IAffectation[]>;
 
@@ -105,6 +112,11 @@ export class AffectationService {
     return this.http
       .get<IAffectation[]>(`${this.resourceUrl}/by-personne/${personneId}/active`)
       .pipe(map((affectations: IAffectation[]) => this.convertDateArrayFromList(affectations)));
+  }
+
+  // GET /affectations/personnes-by-departement/{departementId}
+  findPersonnesByDepartementId(departementId: number): Observable<IPersonneAffectationDTO[]> {
+    return this.http.get<IPersonneAffectationDTO[]>(`${this.resourceUrl}/personnes-by-departement/${departementId}`);
   }
 
   addAffectationToCollectionIfMissing(

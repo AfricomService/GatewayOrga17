@@ -12,6 +12,7 @@ import { OrganigrammeService } from 'app/entities/OrgaCare/organigramme/service/
 import { IPersonne } from 'app/entities/OrgaCare/personne/personne.model';
 import { PersonneService } from 'app/entities/OrgaCare/personne/service/personne.service';
 import { Etat } from 'app/entities/enumerations/etat.model';
+import { AffectationService, IPersonneAffectationDTO } from 'app/entities/OrgaCare/affectation/service/affectation.service';
 
 @Component({
   selector: 'jhi-departement-update',
@@ -32,11 +33,11 @@ export class DepartementUpdateComponent implements OnInit {
   // Accordion
   activePanels: string[] = ['panel-0'];
 
-  // Affectations par type (pour le panel Membres)
-  chefs: IPersonne[] = [];
-  assistants: IPersonne[] = [];
-  membres: IPersonne[] = [];
-  interims: IPersonne[] = [];
+  // Affectations par type (pour le panel Membres) — alimentées via AffectationService
+  chefs: IPersonneAffectationDTO[] = [];
+  assistants: IPersonneAffectationDTO[] = [];
+  membres: IPersonneAffectationDTO[] = [];
+  interims: IPersonneAffectationDTO[] = [];
 
   // Société affichée (lue depuis l'organigramme sélectionné)
   societeRaisonSociale: string | null = null;
@@ -58,6 +59,7 @@ export class DepartementUpdateComponent implements OnInit {
     protected departementService: DepartementService,
     protected organigrammeService: OrganigrammeService,
     protected personneService: PersonneService,
+    protected affectationService: AffectationService,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
   ) {}
@@ -67,6 +69,11 @@ export class DepartementUpdateComponent implements OnInit {
       this.updateForm(departement);
       this.loadRelationshipsOptions();
       this.editForm.get('departementParent')!.disable();
+
+      // NOUVEAU : chargement des membres réels via l'API, uniquement en mode édition
+      if (departement.id) {
+        this.loadPersonnesByDepartement(departement.id);
+      }
 
       if (this.generateCodeAutomatically && departement.id === undefined) {
         this.departementService.generateNextCode('DEPT-').subscribe(nextCode => {
@@ -129,8 +136,28 @@ export class DepartementUpdateComponent implements OnInit {
     // Exemple : this.router.navigate(['/affectation/new'], { queryParams: { type, departementId: this.editForm.get('id')!.value } });
   }
 
-  getPersonnesLabel(personnes: IPersonne[]): string {
-    return personnes.map(p => p.nomPrenom ?? p.id).join(', ');
+  // ── Chargement des membres réels via AffectationService ───────────────────
+
+  protected loadPersonnesByDepartement(departementId: number): void {
+    this.affectationService.findPersonnesByDepartementId(departementId).subscribe({
+      next: (personnes: IPersonneAffectationDTO[]) => {
+        this.chefs = personnes.filter(p => p.typeAffectation === 'CHEF');
+        this.assistants = personnes.filter(p => p.typeAffectation === 'ASSISTANT');
+        this.membres = personnes.filter(p => p.typeAffectation === 'MEMBRE');
+        this.interims = personnes.filter(p => p.typeAffectation === 'INTERIM');
+      },
+      error: () => {
+        // Optionnel : afficher une alerte d'erreur
+        this.chefs = [];
+        this.assistants = [];
+        this.membres = [];
+        this.interims = [];
+      },
+    });
+  }
+
+  getPersonnesLabel(personnes: IPersonneAffectationDTO[]): string {
+    return personnes.map(p => p.nomPrenom ?? p.matricule ?? p.personneId).join(', ');
   }
 
   // ── Save helpers ─────────────────────────────────────────────────────────
@@ -167,8 +194,6 @@ export class DepartementUpdateComponent implements OnInit {
       departementParent: departement.departementParent ?? null,
       personnes: departement.personnes,
     });
-
-    this.membres = departement.personnes ?? [];
 
     this.organigrammesSharedCollection = this.organigrammeService.addOrganigrammeToCollectionIfMissing(
       this.organigrammesSharedCollection,
