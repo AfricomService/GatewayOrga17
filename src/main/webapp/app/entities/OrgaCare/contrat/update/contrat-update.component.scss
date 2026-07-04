@@ -1,0 +1,469 @@
+// ═══════════════════════════════════════════════════
+//  contrat-update.component.scss
+//  Design cohérent avec personne-update / departement-update
+// ═══════════════════════════════════════════════════
+
+// ── Tokens ──────────────────────────────────────────
+$primary: #1a3a5c;
+$primary-light: #2563a8;
+$accent: #0d9488;
+$accent-light: #ccfbf1;
+$danger: #e53e3e;
+$success: #16a34a;
+$warning: #d97706;
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$border: #cbd5e1;
+$bg-page: #f1f5f9;
+$bg-card: #ffffff;
+$bg-input: #f8fafc;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 16px rgba(26, 58, 92, 0.1);
+$transition: all 0.2s ease;
+
+// ── Page wrapper ─────────────────────────────────────
+.contrat-page {
+  background: $bg-page;
+  min-height: 100vh;
+  padding: 1.75rem 2rem 3rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+// ── Page header ──────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: 1.25rem 1.75rem;
+  box-shadow: $shadow-md;
+  border-left: 4px solid $accent;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    background: linear-gradient(135deg, $primary, $accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.2rem;
+    box-shadow: $shadow-sm;
+    flex-shrink: 0;
+  }
+
+  .page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: $primary;
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .page-subtitle {
+    font-size: 0.82rem;
+    color: $text-muted;
+    margin: 0.15rem 0 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}
+
+// ── Boutons d'action ─────────────────────────────────
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: $transition;
+  white-space: nowrap;
+
+  fa-icon {
+    font-size: 0.85rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary-action {
+  background: linear-gradient(135deg, $primary, $primary-light);
+  color: #fff;
+  border-color: $primary;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(26, 58, 92, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-secondary-action {
+  background: #fff;
+  color: $primary;
+  border-color: $border;
+
+  &:hover:not(:disabled) {
+    background: $bg-page;
+    border-color: $primary;
+    transform: translateY(-1px);
+  }
+}
+
+// ── Cartes ────────────────────────────────────────────
+.contrat-card {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.card-header-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $primary;
+  border-bottom: 2px solid $bg-page;
+}
+
+.card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+
+  &.personne {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: $primary-light;
+  }
+
+  &.details {
+    background: linear-gradient(135deg, $accent-light, #99f6e4);
+    color: darken($accent, 10%);
+  }
+}
+
+.card-body-block {
+  padding: 1.75rem;
+}
+
+// ── Form grid ─────────────────────────────────────────
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem 1.5rem;
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Field group / input ────────────────────────────────
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $text-muted;
+}
+
+.field-input {
+  width: 100%;
+  height: 40px;
+  padding: 0.45rem 0.85rem;
+  background: $bg-input;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  font-size: 0.9rem;
+  color: $text-dark;
+  transition: $transition;
+  appearance: none;
+
+  &.with-prefix {
+    padding-left: 2.4rem;
+  }
+
+  &::placeholder {
+    color: lighten($text-muted, 15%);
+    font-size: 0.85rem;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $accent;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba($accent, 0.15);
+  }
+}
+
+.field-select {
+  cursor: pointer;
+  background-image: none;
+
+  option {
+    color: $text-dark;
+    background: #fff;
+  }
+}
+
+// ── Status tabs ────────────────────────────────────────
+.status-group {
+  margin-top: 1.5rem;
+}
+
+.status-tabs {
+  display: flex;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 420px;
+
+  .status-tab {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-right: 1px solid $border;
+    background: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &.active {
+      background: $success;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    &:hover:not(.active) {
+      background: $bg-page;
+    }
+  }
+}
+
+// ── Recherche personne ─────────────────────────────────
+.personne-search-bar {
+  position: relative;
+  margin-bottom: 1rem;
+
+  .personne-search-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.personne-selected-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: $accent-light;
+  border: 1px solid darken($accent-light, 10%);
+  border-radius: $radius-sm;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+
+  .personne-selected-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $primary, $accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .personne-selected-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .personne-selected-label {
+      font-size: 0.72rem;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    strong {
+      color: $text-dark;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.personne-clear-btn {
+  border: none;
+  background: transparent;
+  color: darken($accent, 15%);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.35rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.personne-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  padding: 0.4rem;
+  background: $bg-input;
+}
+
+.personne-list-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  color: $text-muted;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.personne-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: #fff;
+
+  &:hover {
+    border-color: $accent;
+    background: $accent-light;
+  }
+
+  &.selected {
+    border-color: $accent;
+    background: $accent-light;
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+  }
+}
+
+.personne-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary, $primary-light);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.personne-info {
+  flex: 1;
+
+  .personne-nom {
+    font-weight: 600;
+    color: $text-dark;
+    font-size: 0.875rem;
+  }
+
+  .personne-matricule {
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+}
+
+.personne-check {
+  color: $accent;
+  font-size: 1.1rem;
+}
+
+// ── Spinner ────────────────────────────────────────────
+.spinner-border-sm {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-width: 0.15em;
+}
+
+// ── Responsive ─────────────────────────────────────────
+@media (max-width: 768px) {
+  .contrat-page {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .card-body-block {
+    padding: 1.25rem 1rem;
+  }
+}

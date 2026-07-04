@@ -1,123 +1,181 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-contrat-heading"
-        data-cy="ContratCreateUpdateHeading"
-        jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.createOrEditLabel"
-      >
-        Create or edit a Contrat
-      </h2>
-
+<div class="contrat-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="file-contract"></fa-icon>
+      </div>
       <div>
-        <jhi-alert-error></jhi-alert-error>
+        <h2 class="page-title" jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.createOrEditLabel">Créer / Modifier un Contrat</h2>
+        <p class="page-subtitle">Renseignez les informations du contrat</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button type="button" class="btn-action btn-primary-action" [disabled]="editForm.invalid || isSaving" (click)="save()">
+        <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+        <span jhiTranslate="entity.action.save">Enregistrer</span>
+      </button>
+    </div>
+  </div>
 
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+  <jhi-alert-error></jhi-alert-error>
+
+  <form [formGroup]="editForm" (ngSubmit)="save()">
+    <!-- ══════════ Carte : Personne ══════════ -->
+    <div class="contrat-card">
+      <div class="card-header-block">
+        <div class="card-icon personne"><fa-icon icon="user"></fa-icon></div>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span>
+      </div>
+      <div class="card-body-block">
+        <div *ngIf="editForm.get('personne')!.value" class="personne-selected-preview">
+          <div class="personne-selected-avatar">{{ (getSelectedPersonneLabel() || '?').charAt(0).toUpperCase() }}</div>
+          <div class="personne-selected-info">
+            <span class="personne-selected-label">Personne sélectionnée</span>
+            <strong>{{ getSelectedPersonneLabel() }}</strong>
+          </div>
+          <button type="button" class="personne-clear-btn" (click)="clearSelectedPersonne()">
+            <fa-icon icon="times"></fa-icon>
+          </button>
         </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut" for="field_dateDebut"
-            >Date Debut</label
+        <div class="personne-search-bar">
+          <fa-icon icon="search" class="personne-search-icon"></fa-icon>
+          <input
+            class="field-input with-prefix"
+            type="text"
+            [(ngModel)]="personneSearchKeyword"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="filterPersonnes()"
+            placeholder="Rechercher une personne par nom et prénom..."
+          />
+        </div>
+
+        <div class="personne-list">
+          <div *ngIf="personnesFiltered.length === 0" class="personne-list-empty">
+            <fa-icon icon="user-slash"></fa-icon>
+            <span>Aucune personne trouvée</span>
+          </div>
+          <div
+            *ngFor="let p of personnesFiltered; trackBy: trackPersonneById"
+            class="personne-item"
+            [class.selected]="isPersonneSelected(p)"
+            (click)="selectPersonne(p)"
           >
-          <div class="d-flex">
+            <div class="personne-avatar">{{ (p.nomPrenom ?? '?').charAt(0).toUpperCase() }}</div>
+            <div class="personne-info">
+              <div class="personne-nom">{{ p.nomPrenom }}</div>
+              <div class="personne-matricule" *ngIf="p.matricule">{{ p.matricule }}</div>
+            </div>
+            <div class="personne-check" *ngIf="isPersonneSelected(p)">
+              <fa-icon icon="check-circle"></fa-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Carte : Détails du contrat ══════════ -->
+    <div class="contrat-card">
+      <div class="card-header-block">
+        <div class="card-icon details"><fa-icon icon="file-alt"></fa-icon></div>
+        <span>Détails du contrat</span>
+      </div>
+      <div class="card-body-block">
+        <div class="form-grid">
+          <!-- Date Début -->
+          <div class="field-group">
+            <label class="field-label" for="field_dateDebut" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut">Date Début</label>
             <input
               id="field_dateDebut"
-              data-cy="dateDebut"
+              class="field-input"
               type="datetime-local"
-              class="form-control"
-              name="dateDebut"
               formControlName="dateDebut"
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin" for="field_dateFin">Date Fin</label>
-          <div class="d-flex">
-            <input
-              id="field_dateFin"
-              data-cy="dateFin"
-              type="datetime-local"
-              class="form-control"
-              name="dateFin"
-              formControlName="dateFin"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
+          <!-- Date Fin -->
+          <div class="field-group">
+            <label class="field-label" for="field_dateFin" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</label>
+            <input id="field_dateFin" class="field-input" type="datetime-local" formControlName="dateFin" placeholder="YYYY-MM-DD HH:mm" />
+          </div>
+
+          <!-- Type (texte libre) -->
+          <div class="field-group">
+            <label class="field-label" for="field_type" jhiTranslate="orgacaregatewayApp.orgaCareContrat.type">Type</label>
+            <input id="field_type" class="field-input" type="text" formControlName="type" placeholder="Ex: CDI, CDD..." />
+          </div>
+
+          <!-- Type Contrat (référence) -->
+          <div class="field-group">
+            <label class="field-label" for="field_typeContrat" jhiTranslate="orgacaregatewayApp.orgaCareContrat.typeContrat"
+              >Type Contrat</label
+            >
+            <select class="field-input field-select" id="field_typeContrat" formControlName="typeContrat">
+              <option [ngValue]="null">— Sélectionner —</option>
+              <option
+                [ngValue]="
+                  typeContratOption.id === editForm.get('typeContrat')!.value?.id ? editForm.get('typeContrat')!.value : typeContratOption
+                "
+                *ngFor="let typeContratOption of typeContratsSharedCollection; trackBy: trackTypeContratById"
+              >
+                {{ typeContratOption.nom ?? typeContratOption.id }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Société -->
+          <div class="field-group">
+            <label class="field-label" for="field_societe" jhiTranslate="orgacaregatewayApp.orgaCareContrat.societe">Société</label>
+            <select class="field-input field-select" id="field_societe" formControlName="societe">
+              <option [ngValue]="null">— Sélectionner —</option>
+              <option
+                [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
+                *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
+              >
+                {{ societeOption.raisonSociale ?? societeOption.id }}
+              </option>
+            </select>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.type" for="field_type">Type</label>
-          <input type="text" class="form-control" name="type" id="field_type" data-cy="type" formControlName="type" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.status" for="field_status">Status</label>
-          <input type="text" class="form-control" name="status" id="field_status" data-cy="status" formControlName="status" />
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.societe" for="field_societe">Societe</label>
-          <select class="form-control" id="field_societe" data-cy="societe" name="societe" formControlName="societe">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="societeOption.id === editForm.get('societe')!.value?.id ? editForm.get('societe')!.value : societeOption"
-              *ngFor="let societeOption of societesSharedCollection; trackBy: trackSocieteById"
+        <!-- Status (tabs) -->
+        <div class="field-group status-group">
+          <label class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.status">Status</label>
+          <div class="status-tabs">
+            <button
+              type="button"
+              class="status-tab"
+              [class.active]="editForm.get('status')!.value === 'ACTIF'"
+              (click)="setStatus('ACTIF')"
             >
-              {{ societeOption.id }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.typeContrat" for="field_typeContrat"
-            >Type Contrat</label
-          >
-          <select class="form-control" id="field_typeContrat" data-cy="typeContrat" name="typeContrat" formControlName="typeContrat">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="
-                typeContratOption.id === editForm.get('typeContrat')!.value?.id ? editForm.get('typeContrat')!.value : typeContratOption
-              "
-              *ngFor="let typeContratOption of typeContratsSharedCollection; trackBy: trackTypeContratById"
+              Actif
+            </button>
+            <button
+              type="button"
+              class="status-tab"
+              [class.active]="editForm.get('status')!.value === 'EXPIRE'"
+              (click)="setStatus('EXPIRE')"
             >
-              {{ typeContratOption.id }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne" for="field_personne">Personne</label>
-          <select class="form-control" id="field_personne" data-cy="personne" name="personne" formControlName="personne">
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="personneOption.id === editForm.get('personne')!.value?.id ? editForm.get('personne')!.value : personneOption"
-              *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById"
+              Expiré
+            </button>
+            <button
+              type="button"
+              class="status-tab"
+              [class.active]="editForm.get('status')!.value === 'PASSIF'"
+              (click)="setStatus('PASSIF')"
             >
-              {{ personneOption.id }}
-            </option>
-          </select>
+              Passif
+            </button>
+          </div>
         </div>
       </div>
-
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>

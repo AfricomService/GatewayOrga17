@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -20,20 +20,28 @@ import { PersonneService } from 'app/entities/OrgaCare/personne/service/personne
 @Component({
   selector: 'jhi-contrat-update',
   templateUrl: './contrat-update.component.html',
+  styleUrls: ['./contrat-update.component.scss'],
 })
 export class ContratUpdateComponent implements OnInit {
   isSaving = false;
 
+  // Statuts disponibles (tabs, à la manière du rôle d'affectation)
+  statusOptions = ['ACTIF', 'EXPIRE', 'PASSIF'];
+
   societesSharedCollection: ISociete[] = [];
   typeContratsSharedCollection: ITypeContrat[] = [];
+
+  // ── Recherche de personne ─────────────────────────────
   personnesSharedCollection: IPersonne[] = [];
+  personnesFiltered: IPersonne[] = [];
+  personneSearchKeyword = '';
 
   editForm = this.fb.group({
     id: [],
     dateDebut: [],
     dateFin: [],
     type: [],
-    status: [],
+    status: ['ACTIF'],
     societe: [],
     typeContrat: [],
     personne: [],
@@ -45,7 +53,8 @@ export class ContratUpdateComponent implements OnInit {
     protected typeContratService: TypeContratService,
     protected personneService: PersonneService,
     protected activatedRoute: ActivatedRoute,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +66,6 @@ export class ContratUpdateComponent implements OnInit {
       }
 
       this.updateForm(contrat);
-
       this.loadRelationshipsOptions();
     });
   }
@@ -88,6 +96,40 @@ export class ContratUpdateComponent implements OnInit {
     return item.id!;
   }
 
+  // ── Sélection du statut ───────────────────────────────
+  setStatus(status: string): void {
+    this.editForm.patchValue({ status });
+  }
+
+  // ── Recherche / sélection de la personne ──────────────
+  filterPersonnes(): void {
+    const kw = this.personneSearchKeyword.toLowerCase().trim();
+    this.personnesFiltered = kw
+      ? this.personnesSharedCollection.filter(
+          p => (p.nomPrenom ?? '').toLowerCase().includes(kw) || (p.matricule ?? '').toLowerCase().includes(kw)
+        )
+      : [...this.personnesSharedCollection];
+  }
+
+  selectPersonne(p: IPersonne): void {
+    const current = this.editForm.get('personne')!.value as IPersonne | null;
+    this.editForm.patchValue({ personne: current?.id === p.id ? null : p });
+  }
+
+  isPersonneSelected(p: IPersonne): boolean {
+    const current = this.editForm.get('personne')!.value as IPersonne | null;
+    return current?.id === p.id;
+  }
+
+  getSelectedPersonneLabel(): string {
+    const p = this.editForm.get('personne')!.value as IPersonne | null;
+    return p ? p.nomPrenom ?? '#' + p.id : '';
+  }
+
+  clearSelectedPersonne(): void {
+    this.editForm.patchValue({ personne: null });
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IContrat>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       () => this.onSaveSuccess(),
@@ -113,7 +155,7 @@ export class ContratUpdateComponent implements OnInit {
       dateDebut: contrat.dateDebut ? contrat.dateDebut.format(DATE_TIME_FORMAT) : null,
       dateFin: contrat.dateFin ? contrat.dateFin.format(DATE_TIME_FORMAT) : null,
       type: contrat.type,
-      status: contrat.status,
+      status: contrat.status ?? 'ACTIF',
       societe: contrat.societe,
       typeContrat: contrat.typeContrat,
       personne: contrat.personne,
@@ -128,6 +170,7 @@ export class ContratUpdateComponent implements OnInit {
       this.personnesSharedCollection,
       contrat.personne
     );
+    this.personnesFiltered = [...this.personnesSharedCollection];
   }
 
   protected loadRelationshipsOptions(): void {
@@ -157,7 +200,11 @@ export class ContratUpdateComponent implements OnInit {
           this.personneService.addPersonneToCollectionIfMissing(personnes, this.editForm.get('personne')!.value)
         )
       )
-      .subscribe((personnes: IPersonne[]) => (this.personnesSharedCollection = personnes));
+      .subscribe((personnes: IPersonne[]) => {
+        this.personnesSharedCollection = personnes;
+        this.filterPersonnes();
+        this.cdr.markForCheck();
+      });
   }
 
   protected createFromForm(): IContrat {
