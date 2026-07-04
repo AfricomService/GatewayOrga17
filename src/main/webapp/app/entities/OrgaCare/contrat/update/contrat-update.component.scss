@@ -152,6 +152,27 @@ $transition: all 0.2s ease;
   font-weight: 600;
   color: $primary;
   border-bottom: 2px solid $bg-page;
+
+  &.accordion-toggle {
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: $bg-page;
+    }
+  }
+}
+
+.accordion-chevron {
+  margin-left: auto;
+  color: $text-muted;
+  font-size: 0.85rem;
+  transition: transform 0.25s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
 }
 
 .card-icon {

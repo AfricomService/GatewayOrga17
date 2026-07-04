@@ -1,46 +1,49 @@
-<div>
-  <h2 id="page-heading" data-cy="ContratHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.title">Contrats</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
+<div class="contrat-list-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header" id="page-heading" data-cy="ContratHeading">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="file-contract"></fa-icon>
+      </div>
+      <div>
+        <h2 class="page-title" jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.title">Contrats</h2>
+        <p class="page-subtitle">Gérez les contrats enregistrés</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-icon-action" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.refreshListLabel">Refresh List</span>
       </button>
-
       <button
+        type="button"
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-contrat"
+        class="btn-action btn-icon-action btn-primary-action create-contrat"
         [routerLink]="['/contrat/new']"
+        title="Créer un nouveau contrat"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.createLabel"> Create a new Contrat </span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
-
   <jhi-alert></jhi-alert>
 
   <div class="alert alert-warning" id="no-result" *ngIf="contrats?.length === 0">
     <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.notFound">No contrats found</span>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="contrats && contrats.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
+  <!-- ══════════════ TABLEAU ══════════════ -->
+  <div class="contrat-table-card" id="entities" *ngIf="contrats && contrats.length > 0">
+    <table class="contrat-table" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
           <th scope="col" jhiSortBy="dateDebut">
             <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut">Date Debut</span> <fa-icon icon="sort"></fa-icon>
           </th>
           <th scope="col" jhiSortBy="dateFin">
             <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="type">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.type">Type</span> <fa-icon icon="sort"></fa-icon>
           </th>
           <th scope="col" jhiSortBy="status">
             <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.status">Status</span> <fa-icon icon="sort"></fa-icon>
@@ -54,67 +57,66 @@
           <th scope="col" jhiSortBy="personne.id">
             <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span> <fa-icon icon="sort"></fa-icon>
           </th>
-          <th scope="col"></th>
+          <th scope="col" class="actions-col"></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let contrat of contrats; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/contrat', contrat.id, 'view']">{{ contrat.id }}</a>
-          </td>
+        <tr
+          *ngFor="let contrat of contrats; trackBy: trackId"
+          data-cy="entityTable"
+          class="contrat-row"
+          (dblclick)="navigateToEdit(contrat)"
+          title="Double-cliquez pour modifier"
+        >
           <td>{{ contrat.dateDebut | formatMediumDatetime }}</td>
           <td>{{ contrat.dateFin | formatMediumDatetime }}</td>
-          <td>{{ contrat.type }}</td>
-          <td>{{ contrat.status }}</td>
           <td>
-            <div *ngIf="contrat.societe">
-              <a [routerLink]="['/societe', contrat.societe?.id, 'view']">{{ contrat.societe?.id }}</a>
-            </div>
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-actif': contrat.status === 'ACTIF',
+                'status-expire': contrat.status === 'EXPIRE',
+                'status-passif': contrat.status === 'PASSIF'
+              }"
+            >
+              {{ contrat.status }}
+            </span>
           </td>
           <td>
-            <div *ngIf="contrat.typeContrat">
-              <a [routerLink]="['/type-contrat', contrat.typeContrat?.id, 'view']">{{ contrat.typeContrat?.id }}</a>
-            </div>
+            <a *ngIf="contrat.societe" [routerLink]="['/societe', contrat.societe?.id, 'view']" class="ref-link">{{
+              contrat.societe?.raisonSociale ?? contrat.societe?.id
+            }}</a>
+            <span *ngIf="!contrat.societe" class="empty-cell">—</span>
           </td>
           <td>
-            <div *ngIf="contrat.personne">
-              <a [routerLink]="['/personne', contrat.personne?.id, 'view']">{{ contrat.personne?.id }}</a>
-            </div>
+            <a *ngIf="contrat.typeContrat" [routerLink]="['/type-contrat', contrat.typeContrat?.id, 'view']" class="ref-link">{{
+              contrat.typeContrat?.nom ?? contrat.typeContrat?.id
+            }}</a>
+            <span *ngIf="!contrat.typeContrat" class="empty-cell">—</span>
           </td>
-          <td class="text-right">
-            <div class="btn-group">
-              <button
-                type="submit"
-                [routerLink]="['/contrat', contrat.id, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
-              >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-              </button>
-
-              <button
-                type="submit"
-                [routerLink]="['/contrat', contrat.id, 'edit']"
-                class="btn btn-primary btn-sm"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
-
-              <button type="submit" (click)="delete(contrat)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
+          <td>
+            <a *ngIf="contrat.personne" [routerLink]="['/personne', contrat.personne?.id, 'view']" class="ref-link">{{
+              contrat.personne?.nomPrenom ?? contrat.personne?.id
+            }}</a>
+            <span *ngIf="!contrat.personne" class="empty-cell">—</span>
+          </td>
+          <td class="actions-col">
+            <button
+              type="button"
+              (click)="delete(contrat); $event.stopPropagation()"
+              class="btn-row-action btn-delete-action"
+              data-cy="entityDeleteButton"
+              title="Supprimer"
+            >
+              <fa-icon icon="trash-alt"></fa-icon>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div *ngIf="contrats && contrats.length > 0">
+  <div *ngIf="contrats && contrats.length > 0" class="pagination-wrapper">
     <div class="row justify-content-center">
       <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     </div>

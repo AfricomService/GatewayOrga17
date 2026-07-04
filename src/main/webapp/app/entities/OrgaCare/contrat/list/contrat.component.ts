@@ -13,6 +13,7 @@ import { ContratDeleteDialogComponent } from '../delete/contrat-delete-dialog.co
 @Component({
   selector: 'jhi-contrat',
   templateUrl: './contrat.component.html',
+  styleUrls: ['./contrat.component.scss'],
 })
 export class ContratComponent implements OnInit {
   contrats?: IContrat[];
@@ -59,6 +60,10 @@ export class ContratComponent implements OnInit {
 
   trackId(index: number, item: IContrat): number {
     return item.id!;
+  }
+
+  navigateToEdit(contrat: IContrat): void {
+    this.router.navigate(['/contrat', contrat.id, 'edit']);
   }
 
   delete(contrat: IContrat): void {

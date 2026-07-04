@@ -26,13 +26,14 @@
   <jhi-alert-error></jhi-alert-error>
 
   <form [formGroup]="editForm" (ngSubmit)="save()">
-    <!-- ══════════ Carte : Personne ══════════ -->
+    <!-- ══════════ Carte : Personne (accordéon) ══════════ -->
     <div class="contrat-card">
-      <div class="card-header-block">
+      <div class="card-header-block accordion-toggle" (click)="togglePersonneSection()">
         <div class="card-icon personne"><fa-icon icon="user"></fa-icon></div>
         <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span>
+        <fa-icon class="accordion-chevron" [class.rotated]="isPersonneSectionOpen" icon="chevron-down"></fa-icon>
       </div>
-      <div class="card-body-block">
+      <div class="card-body-block" *ngIf="isPersonneSectionOpen">
         <div *ngIf="editForm.get('personne')!.value" class="personne-selected-preview">
           <div class="personne-selected-avatar">{{ (getSelectedPersonneLabel() || '?').charAt(0).toUpperCase() }}</div>
           <div class="personne-selected-info">
@@ -83,13 +84,14 @@
       </div>
     </div>
 
-    <!-- ══════════ Carte : Détails du contrat ══════════ -->
+    <!-- ══════════ Carte : Détails du contrat (accordéon) ══════════ -->
     <div class="contrat-card">
-      <div class="card-header-block">
+      <div class="card-header-block accordion-toggle" (click)="toggleDetailsSection()">
         <div class="card-icon details"><fa-icon icon="file-alt"></fa-icon></div>
         <span>Détails du contrat</span>
+        <fa-icon class="accordion-chevron" [class.rotated]="isDetailsSectionOpen" icon="chevron-down"></fa-icon>
       </div>
-      <div class="card-body-block">
+      <div class="card-body-block" *ngIf="isDetailsSectionOpen">
         <div class="form-grid">
           <!-- Date Début -->
           <div class="field-group">

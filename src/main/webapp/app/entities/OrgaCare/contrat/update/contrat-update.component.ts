@@ -28,6 +28,10 @@ export class ContratUpdateComponent implements OnInit {
   // Statuts disponibles (tabs, à la manière du rôle d'affectation)
   statusOptions = ['ACTIF', 'EXPIRE', 'PASSIF'];
 
+  // ── État des accordéons ────────────────────────────────
+  isPersonneSectionOpen = true;
+  isDetailsSectionOpen = true;
+
   societesSharedCollection: ISociete[] = [];
   typeContratsSharedCollection: ITypeContrat[] = [];
 
@@ -104,6 +108,15 @@ export class ContratUpdateComponent implements OnInit {
   // ── Sélection du statut ───────────────────────────────
   setStatus(status: string): void {
     this.editForm.patchValue({ status });
+  }
+
+  // ── Accordéons ─────────────────────────────────────────
+  togglePersonneSection(): void {
+    this.isPersonneSectionOpen = !this.isPersonneSectionOpen;
+  }
+
+  toggleDetailsSection(): void {
+    this.isDetailsSectionOpen = !this.isDetailsSectionOpen;
   }
 
   // ── Recherche / sélection de la personne (backend) ────
