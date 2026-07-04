@@ -51,12 +51,12 @@
             type="text"
             [(ngModel)]="personneSearchKeyword"
             [ngModelOptions]="{ standalone: true }"
-            (ngModelChange)="filterPersonnes()"
-            placeholder="Rechercher une personne par nom et prénom..."
+            (ngModelChange)="onPersonneSearchChange()"
+            placeholder="Rechercher une personne par nom, prénom ou matricule..."
           />
         </div>
 
-        <div class="personne-list">
+        <div class="personne-list" (scroll)="onPersonneListScroll($event)">
           <div *ngIf="personnesFiltered.length === 0" class="personne-list-empty">
             <fa-icon icon="user-slash"></fa-icon>
             <span>Aucune personne trouvée</span>
@@ -75,6 +75,9 @@
             <div class="personne-check" *ngIf="isPersonneSelected(p)">
               <fa-icon icon="check-circle"></fa-icon>
             </div>
+          </div>
+          <div *ngIf="personneLoadingMore" class="personne-list-loading">
+            <span class="spinner-border spinner-border-sm"></span>
           </div>
         </div>
       </div>
@@ -104,12 +107,6 @@
           <div class="field-group">
             <label class="field-label" for="field_dateFin" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</label>
             <input id="field_dateFin" class="field-input" type="datetime-local" formControlName="dateFin" placeholder="YYYY-MM-DD HH:mm" />
-          </div>
-
-          <!-- Type (texte libre) -->
-          <div class="field-group">
-            <label class="field-label" for="field_type" jhiTranslate="orgacaregatewayApp.orgaCareContrat.type">Type</label>
-            <input id="field_type" class="field-input" type="text" formControlName="type" placeholder="Ex: CDI, CDD..." />
           </div>
 
           <!-- Type Contrat (référence) -->

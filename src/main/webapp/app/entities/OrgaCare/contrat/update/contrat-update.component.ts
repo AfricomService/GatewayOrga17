@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 
 import * as dayjs from 'dayjs';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
@@ -31,16 +31,19 @@ export class ContratUpdateComponent implements OnInit {
   societesSharedCollection: ISociete[] = [];
   typeContratsSharedCollection: ITypeContrat[] = [];
 
-  // ── Recherche de personne ─────────────────────────────
-  personnesSharedCollection: IPersonne[] = [];
+  // ── Recherche de personne (API backend paginée) ───────
   personnesFiltered: IPersonne[] = [];
   personneSearchKeyword = '';
+  personneSearchSubject = new Subject<string>();
+  personnePage = 0;
+  personnePageSize = 20;
+  personneHasMore = true;
+  personneLoadingMore = false;
 
   editForm = this.fb.group({
     id: [],
     dateDebut: [],
     dateFin: [],
-    type: [],
     status: ['ACTIF'],
     societe: [],
     typeContrat: [],
@@ -58,6 +61,8 @@ export class ContratUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.initPersonneSearch();
+
     this.activatedRoute.data.subscribe(({ contrat }) => {
       if (contrat.id === undefined) {
         const today = dayjs().startOf('day');
@@ -101,14 +106,66 @@ export class ContratUpdateComponent implements OnInit {
     this.editForm.patchValue({ status });
   }
 
-  // ── Recherche / sélection de la personne ──────────────
-  filterPersonnes(): void {
-    const kw = this.personneSearchKeyword.toLowerCase().trim();
-    this.personnesFiltered = kw
-      ? this.personnesSharedCollection.filter(
-          p => (p.nomPrenom ?? '').toLowerCase().includes(kw) || (p.matricule ?? '').toLowerCase().includes(kw)
-        )
-      : [...this.personnesSharedCollection];
+  // ── Recherche / sélection de la personne (backend) ────
+  protected initPersonneSearch(): void {
+    this.personneSearchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(keyword => {
+          this.personnePage = 0;
+          this.personneHasMore = true;
+          return this.fetchPersonnesPage(keyword, 0);
+        })
+      )
+      .subscribe(personnes => {
+        this.personnesFiltered = personnes;
+        this.ensureSelectedPersonneVisible();
+        this.cdr.markForCheck();
+      });
+  }
+
+  onPersonneSearchChange(): void {
+    this.personneSearchSubject.next(this.personneSearchKeyword);
+  }
+
+  loadMorePersonnes(): void {
+    if (this.personneLoadingMore || !this.personneHasMore) {
+      return;
+    }
+    this.personneLoadingMore = true;
+    const nextPage = this.personnePage + 1;
+    this.fetchPersonnesPage(this.personneSearchKeyword, nextPage)
+      .pipe(finalize(() => (this.personneLoadingMore = false)))
+      .subscribe(personnes => {
+        if (personnes.length > 0) {
+          this.personnePage = nextPage;
+          this.personnesFiltered = [...this.personnesFiltered, ...personnes];
+        } else {
+          this.personneHasMore = false;
+        }
+      });
+  }
+
+  onPersonneListScroll(event: Event): void {
+    const el = event.target as HTMLElement;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) {
+      this.loadMorePersonnes();
+    }
+  }
+
+  protected fetchPersonnesPage(keyword: string, page: number): Observable<IPersonne[]> {
+    const trimmed = keyword.trim();
+    const req = { page, size: this.personnePageSize, sort: ['nomPrenom,asc'] };
+    const result$ = trimmed ? this.personneService.search(trimmed, req) : this.personneService.query(req);
+    return result$.pipe(map(res => res.body ?? []));
+  }
+
+  protected ensureSelectedPersonneVisible(): void {
+    const current = this.editForm.get('personne')!.value as IPersonne | null;
+    if (current && !this.personnesFiltered.some(p => p.id === current.id)) {
+      this.personnesFiltered = [current, ...this.personnesFiltered];
+    }
   }
 
   selectPersonne(p: IPersonne): void {
@@ -154,7 +211,6 @@ export class ContratUpdateComponent implements OnInit {
       id: contrat.id,
       dateDebut: contrat.dateDebut ? contrat.dateDebut.format(DATE_TIME_FORMAT) : null,
       dateFin: contrat.dateFin ? contrat.dateFin.format(DATE_TIME_FORMAT) : null,
-      type: contrat.type,
       status: contrat.status ?? 'ACTIF',
       societe: contrat.societe,
       typeContrat: contrat.typeContrat,
@@ -166,11 +222,11 @@ export class ContratUpdateComponent implements OnInit {
       this.typeContratsSharedCollection,
       contrat.typeContrat
     );
-    this.personnesSharedCollection = this.personneService.addPersonneToCollectionIfMissing(
-      this.personnesSharedCollection,
-      contrat.personne
-    );
-    this.personnesFiltered = [...this.personnesSharedCollection];
+    // La liste est désormais chargée via l'API paginée/recherche (loadRelationshipsOptions).
+    // On affiche juste la personne déjà sélectionnée en attendant le chargement initial.
+    if (contrat.personne) {
+      this.personnesFiltered = [contrat.personne];
+    }
   }
 
   protected loadRelationshipsOptions(): void {
@@ -192,19 +248,14 @@ export class ContratUpdateComponent implements OnInit {
       )
       .subscribe((typeContrats: ITypeContrat[]) => (this.typeContratsSharedCollection = typeContrats));
 
-    this.personneService
-      .query()
-      .pipe(map((res: HttpResponse<IPersonne[]>) => res.body ?? []))
-      .pipe(
-        map((personnes: IPersonne[]) =>
-          this.personneService.addPersonneToCollectionIfMissing(personnes, this.editForm.get('personne')!.value)
-        )
-      )
-      .subscribe((personnes: IPersonne[]) => {
-        this.personnesSharedCollection = personnes;
-        this.filterPersonnes();
-        this.cdr.markForCheck();
-      });
+    // Chargement initial paginé (page 0) via l'API backend
+    this.fetchPersonnesPage('', 0).subscribe((personnes: IPersonne[]) => {
+      this.personnePage = 0;
+      this.personneHasMore = personnes.length === this.personnePageSize;
+      this.personnesFiltered = personnes;
+      this.ensureSelectedPersonneVisible();
+      this.cdr.markForCheck();
+    });
   }
 
   protected createFromForm(): IContrat {
@@ -213,7 +264,6 @@ export class ContratUpdateComponent implements OnInit {
       id: this.editForm.get(['id'])!.value,
       dateDebut: this.editForm.get(['dateDebut'])!.value ? dayjs(this.editForm.get(['dateDebut'])!.value, DATE_TIME_FORMAT) : undefined,
       dateFin: this.editForm.get(['dateFin'])!.value ? dayjs(this.editForm.get(['dateFin'])!.value, DATE_TIME_FORMAT) : undefined,
-      type: this.editForm.get(['type'])!.value,
       status: this.editForm.get(['status'])!.value,
       societe: this.editForm.get(['societe'])!.value,
       typeContrat: this.editForm.get(['typeContrat'])!.value,
