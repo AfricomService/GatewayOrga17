@@ -161,9 +161,11 @@ public class KeycloakSyncService {
 
         String login = kcUser.username != null ? kcUser.username.toLowerCase() : kcUser.id;
 
+        // IMPORTANT : on doit charger l'utilisateur AVEC ses authorities (findOneWithAuthoritiesByLogin),
+        // sinon la comparaison des rôles dans updateIfChanged() part toujours d'un Set vide
+        // et déclenche une "fausse" mise à jour à chaque sync, même sans changement réel.
         return userRepository
-            .findById(kcUser.id)
-            .switchIfEmpty(Mono.defer(() -> userRepository.findOneByLogin(login)))
+            .findOneWithAuthoritiesByLogin(login)
             .flatMap(existing -> updateIfChanged(existing, kcUser, updated))
             .switchIfEmpty(Mono.defer(() -> persistNewUser(kcUser, created)))
             .onErrorResume(e -> {
