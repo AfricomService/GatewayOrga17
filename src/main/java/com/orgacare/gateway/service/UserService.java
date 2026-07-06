@@ -103,12 +103,19 @@ public class UserService {
                 } else {
                     persistedUser = userRepository.save(user);
                 }
-                return persistedUser.flatMap(savedUser ->
-                    Flux
-                        .fromIterable(user.getAuthorities())
+                return persistedUser.flatMap(savedUser -> {
+                    // Important : on ne touche aux authorities QUE si la collection fournie n'est pas vide.
+                    // Sinon, des appels comme updateUser() (qui ne chargent pas les authorities existantes)
+                    // videraient silencieusement les rôles de l'utilisateur en base.
+                    if (user.getAuthorities() == null || user.getAuthorities().isEmpty()) {
+                        return Mono.just(savedUser);
+                    }
+                    return userRepository
+                        .deleteUserAuthorities(savedUser.getId())
+                        .thenMany(Flux.fromIterable(user.getAuthorities()))
                         .flatMap(authority -> userRepository.saveUserAuthority(savedUser.getId(), authority.getName()))
-                        .then(Mono.just(savedUser))
-                );
+                        .then(Mono.just(savedUser));
+                });
             });
     }
 

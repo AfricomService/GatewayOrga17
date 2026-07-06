@@ -10,6 +10,7 @@ import com.orgacare.gateway.service.dto.KeycloakSyncResultDTO;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -61,6 +62,14 @@ public class KeycloakSyncService {
         public String lastName;
         public String email;
         public Boolean enabled;
+        public List<String> roles = List.of(); // rempli manuellement après fetch des role-mappings
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static class KcRoleMapping {
+
+        public String id;
+        public String name;
     }
 
     // ── Point d'entrée ───────────────────────────────────────────────────────
@@ -116,7 +125,32 @@ public class KeycloakSyncService {
             .header("Authorization", "Bearer " + token)
             .retrieve()
             .bodyToFlux(KcUser.class)
-            .doOnComplete(() -> log.info("📋 Users Keycloak récupérés depuis realm '{}'", cfg.getTargetRealm()));
+            .doOnComplete(() -> log.info("📋 Users Keycloak récupérés depuis realm '{}'", cfg.getTargetRealm()))
+            // Pour chaque user, on va chercher ses realm roles et on les injecte dans l'objet
+            .flatMap(kcUser ->
+                fetchUserRealmRoles(token, kcUser.id)
+                    .map(roles -> {
+                        kcUser.roles = roles;
+                        return kcUser;
+                    })
+            );
+    }
+
+    private Mono<List<String>> fetchUserRealmRoles(String token, String userId) {
+        ApplicationProperties.KeycloakAdmin.Admin cfg = applicationProperties.getKeycloakAdmin().getAdmin();
+
+        String rolesUrl = cfg.getServerUrl() + "/admin/realms/" + cfg.getTargetRealm() + "/users/" + userId + "/role-mappings/realm";
+
+        return webClient
+            .get()
+            .uri(rolesUrl)
+            .header("Authorization", "Bearer " + token)
+            .retrieve()
+            .bodyToFlux(KcRoleMapping.class)
+            .map(r -> r.name)
+            .collectList()
+            .doOnError(e -> log.warn("⚠️ Échec fetch roles pour user '{}': {}", userId, e.getMessage()))
+            .onErrorReturn(List.of()); // si erreur (403, réseau...), on ne bloque pas la sync globale
     }
 
     private Mono<Void> syncUser(KcUser kcUser, AtomicInteger created, AtomicInteger updated, AtomicInteger skipped) {
@@ -173,6 +207,16 @@ public class KeycloakSyncService {
             changed = true;
         }
 
+        Set<Authority> newAuthorities = mapKeycloakRolesToAuthorities(kcUser.roles);
+        Set<String> newRoleNames = newAuthorities.stream().map(Authority::getName).collect(Collectors.toSet());
+        Set<String> existingRoleNames = existing.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+
+        if (!newRoleNames.equals(existingRoleNames)) {
+            log.info("🔐 Rôles modifiés pour '{}' : {} → {}", existing.getLogin(), existingRoleNames, newRoleNames);
+            existing.setAuthorities(newAuthorities);
+            changed = true;
+        }
+
         if (changed) {
             log.debug("🔁 Mise à jour user '{}'", existing.getLogin());
             return userService.saveUser(existing).doOnSuccess(u -> updated.incrementAndGet());
@@ -189,11 +233,37 @@ public class KeycloakSyncService {
         user.setEmail(kcUser.email != null ? kcUser.email.toLowerCase() : kcUser.username + "@placeholder.local");
         user.setActivated(Boolean.TRUE.equals(kcUser.enabled));
         user.setLangKey("fr");
-
-        Authority roleUser = new Authority();
-        roleUser.setName("ROLE_USER");
-        user.setAuthorities(Set.of(roleUser));
+        user.setAuthorities(mapKeycloakRolesToAuthorities(kcUser.roles));
 
         return user;
+    }
+
+    /**
+     * Convertit les noms de rôles Keycloak en Authority, en garantissant le préfixe ROLE_
+     * et en garantissant qu'il y a toujours au minimum ROLE_USER.
+     */
+    private Set<Authority> mapKeycloakRolesToAuthorities(List<String> kcRoles) {
+        Set<Authority> authorities = kcRoles
+            .stream()
+            .filter(role -> role != null && !role.isBlank())
+            // on ignore les rôles techniques par défaut de Keycloak
+            .filter(role -> !role.equalsIgnoreCase("default-roles-" + applicationProperties.getKeycloakAdmin().getAdmin().getTargetRealm()))
+            .filter(role -> !role.equalsIgnoreCase("offline_access"))
+            .filter(role -> !role.equalsIgnoreCase("uma_authorization"))
+            .map(role -> role.toUpperCase().startsWith("ROLE_") ? role.toUpperCase() : "ROLE_" + role.toUpperCase())
+            .map(roleName -> {
+                Authority authority = new Authority();
+                authority.setName(roleName);
+                return authority;
+            })
+            .collect(Collectors.toSet());
+
+        if (authorities.isEmpty()) {
+            Authority roleUser = new Authority();
+            roleUser.setName("ROLE_USER");
+            authorities.add(roleUser);
+        }
+
+        return authorities;
     }
 }
