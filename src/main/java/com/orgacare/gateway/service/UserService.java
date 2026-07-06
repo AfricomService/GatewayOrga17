@@ -110,13 +110,41 @@ public class UserService {
                     if (user.getAuthorities() == null || user.getAuthorities().isEmpty()) {
                         return Mono.just(savedUser);
                     }
-                    return userRepository
-                        .deleteUserAuthorities(savedUser.getId())
+                    return ensureAuthoritiesExist(user.getAuthorities())
+                        .then(userRepository.deleteUserAuthorities(savedUser.getId()))
                         .thenMany(Flux.fromIterable(user.getAuthorities()))
                         .flatMap(authority -> userRepository.saveUserAuthority(savedUser.getId(), authority.getName()))
                         .then(Mono.just(savedUser));
                 });
             });
+    }
+
+    /**
+     * Garantit que chaque Authority fournie existe bien dans jhi_authority (table de référence, contrainte FK)
+     * avant qu'on tente de l'associer à un user dans jhi_user_authority.
+     * Nécessaire car des rôles Keycloak dynamiques (ex: ROLE_MANAGER) peuvent ne pas avoir encore
+     * été créés manuellement dans jhi_authority.
+     */
+    private Mono<Void> ensureAuthoritiesExist(Set<Authority> authorities) {
+        Set<String> requiredNames = authorities.stream().map(Authority::getName).collect(Collectors.toSet());
+
+        return getAuthorities()
+            .collectList()
+            .flatMapMany(existingNames -> {
+                List<Authority> missing = requiredNames
+                    .stream()
+                    .filter(name -> !existingNames.contains(name))
+                    .map(name -> {
+                        Authority a = new Authority();
+                        a.setName(name);
+                        return a;
+                    })
+                    .collect(Collectors.toList());
+                return Flux.fromIterable(missing);
+            })
+            .doOnNext(authority -> log.info("➕ Nouveau rôle '{}' créé dans jhi_authority", authority.getName()))
+            .flatMap(authorityRepository::save)
+            .then();
     }
 
     @Transactional(readOnly = true)
