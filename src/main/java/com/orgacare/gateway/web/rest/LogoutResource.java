@@ -7,8 +7,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
@@ -31,6 +33,16 @@ public class LogoutResource {
         WebSession session
     ) {
         return session.invalidate().then(this.registration.map(oidc -> prepareLogoutUri(request, oidc, idToken)));
+    }
+
+    /**
+     * Endpoint appelé par Keycloak via une iframe cachée lors d'un
+     * Front-Channel Logout déclenché depuis une autre application (ex: Portail).
+     * Invalide la session locale de cette app pour forcer une ré-authentification.
+     */
+    @GetMapping("/api/logout/frontchannel")
+    public Mono<ResponseEntity<Void>> frontChannelLogout(ServerWebExchange exchange) {
+        return exchange.getSession().flatMap(WebSession::invalidate).thenReturn(ResponseEntity.noContent().build());
     }
 
     private Map<String, String> prepareLogoutUri(ServerHttpRequest request, ClientRegistration clientRegistration, OidcIdToken idToken) {
