@@ -22,6 +22,7 @@ logging:
     org.springframework.security.oauth2.client.oidc.web.server.logout: INFO
     org.springframework.web.server.adapter: INFO
     org.hibernate.SQL: DEBUG
+    io.r2dbc.postgresql.QUERY: DEBUG
 
 eureka:
   instance:
