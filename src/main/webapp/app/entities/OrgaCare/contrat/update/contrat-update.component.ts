@@ -120,24 +120,6 @@ export class ContratUpdateComponent implements OnInit {
   }
 
   // ── Recherche / sélection de la personne (backend) ────
-  protected initPersonneSearch(): void {
-    this.personneSearchSubject
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(keyword => {
-          this.personnePage = 0;
-          this.personneHasMore = true;
-          return this.fetchPersonnesPage(keyword, 0);
-        })
-      )
-      .subscribe(personnes => {
-        this.personnesFiltered = personnes;
-        this.ensureSelectedPersonneVisible();
-        this.cdr.markForCheck();
-      });
-  }
-
   onPersonneSearchChange(): void {
     this.personneSearchSubject.next(this.personneSearchKeyword);
   }
@@ -167,20 +149,6 @@ export class ContratUpdateComponent implements OnInit {
     }
   }
 
-  protected fetchPersonnesPage(keyword: string, page: number): Observable<IPersonne[]> {
-    const trimmed = keyword.trim();
-    const req = { page, size: this.personnePageSize, sort: ['nomPrenom,asc'] };
-    const result$ = trimmed ? this.personneService.search(trimmed, req) : this.personneService.query(req);
-    return result$.pipe(map(res => res.body ?? []));
-  }
-
-  protected ensureSelectedPersonneVisible(): void {
-    const current = this.editForm.get('personne')!.value as IPersonne | null;
-    if (current && !this.personnesFiltered.some(p => p.id === current.id)) {
-      this.personnesFiltered = [current, ...this.personnesFiltered];
-    }
-  }
-
   selectPersonne(p: IPersonne): void {
     const current = this.editForm.get('personne')!.value as IPersonne | null;
     this.editForm.patchValue({ personne: current?.id === p.id ? null : p });
@@ -193,11 +161,43 @@ export class ContratUpdateComponent implements OnInit {
 
   getSelectedPersonneLabel(): string {
     const p = this.editForm.get('personne')!.value as IPersonne | null;
-    return p ? p.nomPrenom ?? '#' + p.id : '';
+    return p ? p.nomPrenom ?? `#${p.id ?? ''}` : '';
   }
 
   clearSelectedPersonne(): void {
     this.editForm.patchValue({ personne: null });
+  }
+
+  protected initPersonneSearch(): void {
+    this.personneSearchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(keyword => {
+          this.personnePage = 0;
+          this.personneHasMore = true;
+          return this.fetchPersonnesPage(keyword, 0);
+        })
+      )
+      .subscribe(personnes => {
+        this.personnesFiltered = personnes;
+        this.ensureSelectedPersonneVisible();
+        this.cdr.markForCheck();
+      });
+  }
+
+  protected fetchPersonnesPage(keyword: string, page: number): Observable<IPersonne[]> {
+    const trimmed = keyword.trim();
+    const req = { page, size: this.personnePageSize, sort: ['nomPrenom,asc'] };
+    const result$ = trimmed ? this.personneService.search(trimmed, req) : this.personneService.query(req);
+    return result$.pipe(map(res => res.body ?? []));
+  }
+
+  protected ensureSelectedPersonneVisible(): void {
+    const current = this.editForm.get('personne')!.value as IPersonne | null;
+    if (current && !this.personnesFiltered.some(p => p.id === current.id)) {
+      this.personnesFiltered = [current, ...this.personnesFiltered];
+    }
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IContrat>>): void {
