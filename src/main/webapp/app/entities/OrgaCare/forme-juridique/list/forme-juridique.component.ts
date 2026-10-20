@@ -9,10 +9,12 @@ import { IFormeJuridique } from '../forme-juridique.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { FormeJuridiqueService } from '../service/forme-juridique.service';
 import { FormeJuridiqueDeleteDialogComponent } from '../delete/forme-juridique-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-forme-juridique',
   templateUrl: './forme-juridique.component.html',
+  styleUrls: ['./forme-juridique.component.scss'],
 })
 export class FormeJuridiqueComponent implements OnInit {
   formeJuridiques?: IFormeJuridique[];
@@ -23,12 +25,14 @@ export class FormeJuridiqueComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected formeJuridiqueService: FormeJuridiqueService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -54,6 +58,7 @@ export class FormeJuridiqueComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -61,10 +66,14 @@ export class FormeJuridiqueComponent implements OnInit {
     return item.id!;
   }
 
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
+  openFormeJuridique(formeJuridique: IFormeJuridique): void {
+    this.router.navigate(['/forme-juridique', formeJuridique.id, this.canEdit ? 'edit' : 'view']);
+  }
+
   delete(formeJuridique: IFormeJuridique): void {
     const modalRef = this.modalService.open(FormeJuridiqueDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.formeJuridique = formeJuridique;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();

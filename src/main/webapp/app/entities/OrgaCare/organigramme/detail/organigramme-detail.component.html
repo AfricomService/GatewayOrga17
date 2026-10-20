@@ -1,60 +1,198 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="organigramme">
-      <h2 data-cy="organigrammeDetailsHeading">
-        <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.detail.title">Organigramme</span>
-      </h2>
-
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ organigramme.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">Code</span></dt>
-        <dd>
-          <span>{{ organigramme.code }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">Nom</span></dt>
-        <dd>
-          <span>{{ organigramme.nom }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateCreation">Date Creation</span></dt>
-        <dd>
-          <span>{{ organigramme.dateCreation | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateAction">Date Action</span></dt>
-        <dd>
-          <span>{{ organigramme.dateAction | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.dateExpiration">Date Expiration</span></dt>
-        <dd>
-          <span>{{ organigramme.dateExpiration | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.etat">Etat</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + organigramme.etat }}">{{ organigramme.etat }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">Societe</span></dt>
-        <dd>
-          <div *ngIf="organigramme.societe">
-            <a [routerLink]="['/societe', organigramme.societe?.id, 'view']">{{ organigramme.societe?.id }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+<div class="organigramme-detail-container">
+  <!-- ── Header Banner ─────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="6" height="6" rx="1" />
+          <rect x="15" y="3" width="6" height="6" rx="1" />
+          <rect x="9" y="15" width="6" height="6" rx="1" />
+          <line x1="6" y1="9" x2="6" y2="12" />
+          <line x1="18" y1="9" x2="18" y2="12" />
+          <line x1="6" y1="12" x2="18" y2="12" />
+          <line x1="12" y1="12" x2="12" y2="15" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 data-cy="organigrammeDetailsHeading" jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.detail.title">Organigramme</h1>
+        <p>Consultation de l'organigramme</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
       </button>
-
-      <button type="button" [routerLink]="['/organigramme', organigramme.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <button *ngIf="canEdit" type="button" class="btn-header-primary" (click)="goToEdit()">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
       </button>
     </div>
   </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <ng-container *ngIf="organigramme">
+    <!-- ── Section Générale ───────────────────────────── -->
+    <div class="accordion-card" [class.open]="sectionGenerale">
+      <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="3" width="6" height="6" rx="1" />
+              <rect x="9" y="15" width="6" height="6" rx="1" />
+              <line x1="6" y1="9" x2="6" y2="12" />
+              <line x1="18" y1="9" x2="18" y2="12" />
+              <line x1="6" y1="12" x2="18" y2="12" />
+              <line x1="12" y1="12" x2="12" y2="15" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Générale</span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionGenerale">
+        <div class="form-grid-3">
+          <!-- Code -->
+          <div class="field-group">
+            <label jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.code">CODE</label>
+            <div class="field-value">
+              <span *ngIf="organigramme.code">{{ organigramme.code }}</span>
+              <span class="text-muted" *ngIf="!organigramme.code">—</span>
+            </div>
+          </div>
+
+          <!-- Nom -->
+          <div class="field-group">
+            <label jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.nom">NOM</label>
+            <div class="field-value">
+              <span *ngIf="organigramme.nom">{{ organigramme.nom }}</span>
+              <span class="text-muted" *ngIf="!organigramme.nom">—</span>
+            </div>
+          </div>
+
+          <!-- Société -->
+          <div class="field-group">
+            <label jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">SOCIÉTÉ</label>
+            <div class="field-value">
+              <span *ngIf="societeLabel">{{ societeLabel }}</span>
+              <span class="text-muted" *ngIf="!societeLabel">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section Départements ──────────────────────────── -->
+    <div class="accordion-card" [class.open]="sectionDepartements">
+      <div class="accordion-header" (click)="sectionDepartements = !sectionDepartements">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-purple">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="3" width="6" height="6" rx="1" />
+              <rect x="9" y="15" width="6" height="6" rx="1" />
+              <line x1="6" y1="9" x2="6" y2="12" />
+              <line x1="18" y1="9" x2="18" y2="12" />
+              <line x1="6" y1="12" x2="18" y2="12" />
+              <line x1="12" y1="12" x2="12" y2="15" />
+            </svg>
+          </div>
+          <span class="accordion-title">Départements</span>
+          <span class="dept-count-badge" *ngIf="departementsCount > 0">{{ departementsCount }}</span>
+        </div>
+        <div class="accordion-chevron" [class.rotated]="sectionDepartements">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="accordion-body" *ngIf="sectionDepartements">
+        <!-- Aucun département -->
+        <div class="dept-empty" *ngIf="departementTree.length === 0">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+            <rect x="3" y="3" width="6" height="6" rx="1" />
+            <rect x="15" y="3" width="6" height="6" rx="1" />
+            <rect x="9" y="15" width="6" height="6" rx="1" />
+            <line x1="6" y1="9" x2="6" y2="12" />
+            <line x1="18" y1="9" x2="18" y2="12" />
+            <line x1="6" y1="12" x2="18" y2="12" />
+            <line x1="12" y1="12" x2="12" y2="15" />
+          </svg>
+          <p>Aucun département pour cet organigramme</p>
+        </div>
+
+        <!-- Arbre en lecture seule -->
+        <div class="dept-tree-container" *ngIf="departementTree.length > 0">
+          <ng-container *ngTemplateOutlet="deptAccordionNode; context: { nodes: departementTree, depth: 0 }"> </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Template arbre (lecture seule) ────────────────── -->
+    <ng-template #deptAccordionNode let-nodes="nodes" let-depth="depth">
+      <div *ngFor="let node of nodes" class="dept-acc-node-wrapper">
+        <div class="dept-acc-row" [style.padding-left.px]="16 + depth * 24">
+          <!-- Bouton expand/collapse -->
+          <button *ngIf="node.children?.length > 0" type="button" class="dept-acc-toggle" (click)="toggleNode(node.id, $event)">
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              [style.transform]="isExpanded(node.id) ? 'rotate(90deg)' : 'rotate(0deg)'"
+              style="transition: transform 0.18s ease; display: block"
+            >
+              <polyline points="9 6 15 12 9 18" />
+            </svg>
+          </button>
+
+          <!-- Point feuille -->
+          <span class="dept-acc-leaf" *ngIf="!node.children?.length">
+            <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="6" />
+            </svg>
+          </span>
+
+          <!-- Infos -->
+          <div class="dept-acc-info">
+            <span class="dept-code">{{ node.code ?? '—' }}</span>
+            <span class="dept-nom">{{ node.nom ?? '—' }}</span>
+            <span class="dept-children-badge" *ngIf="node.children?.length > 0">
+              {{ node.children.length }}
+              {{ node.children.length === 1 ? 'sous-dept' : 'sous-depts' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Enfants récursifs -->
+        <div class="dept-acc-children" *ngIf="node.children?.length > 0 && isExpanded(node.id)">
+          <ng-container [ngTemplateOutlet]="deptAccordionNode" [ngTemplateOutletContext]="{ nodes: node.children, depth: depth + 1 }">
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- ── Footer ────────────────────────────────────── -->
+    <div class="form-footer">
+      <button type="button" class="btn-cancel" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button *ngIf="canEdit" type="button" class="btn-save" (click)="goToEdit()">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </ng-container>
 </div>

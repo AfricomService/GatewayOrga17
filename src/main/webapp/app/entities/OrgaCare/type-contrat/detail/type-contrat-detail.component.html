@@ -1,46 +1,83 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="typeContrat">
-      <h2 data-cy="typeContratDetailsHeading">
-        <span jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.detail.title">Type Contrat</span>
-      </h2>
-
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ typeContrat.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.nom">Nom</span></dt>
-        <dd>
-          <span>{{ typeContrat.nom }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.abreviation">Abreviation</span></dt>
-        <dd>
-          <span>{{ typeContrat.abreviation }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.dateCreation">Date Creation</span></dt>
-        <dd>
-          <span>{{ typeContrat.dateCreation | formatMediumDate }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.status">Status</span></dt>
-        <dd>
-          <span>{{ typeContrat.status }}</span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+<div class="tc-update-container" *ngIf="typeContrat">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="file-alt"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1 data-cy="typeContratDetailsHeading">{{ typeContrat.nom || '—' }}</h1>
+        <p>Détails du type de contrat</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
       </button>
-
-      <button type="button" [routerLink]="['/type-contrat', typeContrat.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <button *ngIf="canEdit" type="button" class="btn-header-primary" [routerLink]="['/type-contrat', typeContrat.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
       </button>
     </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Section Générale -->
+  <div class="accordion-card" [class.open]="sectionGenerale">
+    <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Générale</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionGenerale">
+      <div class="form-grid-3">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.nom">NOM</span>
+          <div class="readonly-value">{{ typeContrat.nom || '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.abreviation">ABRÉVIATION</span>
+          <div class="readonly-value">
+            <span class="badge-code" *ngIf="typeContrat.abreviation">{{ typeContrat.abreviation }}</span>
+            <span *ngIf="!typeContrat.abreviation">—</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.dateCreation">DATE CRÉATION</span>
+          <div class="readonly-value">{{ typeContrat.dateCreation ? (typeContrat.dateCreation | formatMediumDate) : '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareTypeContrat.status">STATUT</span>
+          <div class="readonly-value">{{ typeContrat.status || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="form-footer">
+    <button type="button" class="btn-cancel" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      <span jhiTranslate="entity.action.back">Retour</span>
+    </button>
   </div>
 </div>

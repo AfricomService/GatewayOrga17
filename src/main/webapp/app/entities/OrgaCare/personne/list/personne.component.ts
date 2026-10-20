@@ -12,6 +12,7 @@ import { PersonneService } from '../service/personne.service';
 import { PersonneDeleteDialogComponent } from '../delete/personne-delete-dialog.component';
 import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/type-contrat.service';
 import { FrontendConfigService } from '../service/frontend-config.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-personne',
@@ -41,6 +42,7 @@ export class PersonneComponent implements OnInit {
   selectedFile: File | null = null;
 
   keycloakAdminUrl?: string;
+  canEdit = false;
 
   constructor(
     protected personneService: PersonneService,
@@ -49,13 +51,17 @@ export class PersonneComponent implements OnInit {
     protected modalService: NgbModal,
     protected typeContratService: TypeContratService,
     protected frontendConfigService: FrontendConfigService,
+    protected accountService: AccountService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
     this.loadTypesContrat();
-    this.loadKeycloakConfig();
+    if (this.canEdit) {
+      this.loadKeycloakConfig();
+    }
   }
 
   loadTypesContrat(): void {
@@ -87,9 +93,9 @@ export class PersonneComponent implements OnInit {
     return personne.userId != null && personne.userId !== '';
   }
 
-  // Double-click → navigate to edit page
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
   editPersonne(personne: IPersonne): void {
-    this.router.navigate(['/personne', personne.id, 'edit']);
+    this.router.navigate(['/personne', personne.id, this.canEdit ? 'edit' : 'view']);
   }
 
   delete(personne: IPersonne): void {

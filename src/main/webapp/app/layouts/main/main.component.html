@@ -36,62 +36,75 @@
 
     <!-- Navigation -->
     <nav class="oc-sidebar__nav">
-      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.principal' | translate }}</p>
-      <a class="oc-sidebar__item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        <i class="ti ti-home"></i>
-        <span>{{ 'sidebar.nav.dashboard' | translate }}</span>
-      </a>
+      <!-- ══════ PRINCIPAL : ADMIN, RH, USER ══════ -->
+      <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_RH', 'ROLE_USER']">
+        <p class="oc-sidebar__section-label">{{ 'sidebar.sections.principal' | translate }}</p>
+        <a class="oc-sidebar__item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="ti ti-home"></i>
+          <span>{{ 'sidebar.nav.dashboard' | translate }}</span>
+        </a>
+      </ng-container>
 
-      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.organisation' | translate }}</p>
-      <a class="oc-sidebar__item" routerLink="/societe" routerLinkActive="active">
-        <i class="ti ti-building"></i>
-        <span>{{ 'sidebar.nav.societes' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/site" routerLinkActive="active">
-        <i class="ti ti-map-pin"></i>
-        <span>{{ 'sidebar.nav.sites' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/departement" routerLinkActive="active">
-        <i class="ti ti-briefcase"></i>
-        <span>{{ 'sidebar.nav.departements' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/organigramme" routerLinkActive="active">
-        <i class="ti ti-sitemap"></i>
-        <span>{{ 'sidebar.nav.organigramme' | translate }}</span>
-      </a>
+      <!-- ══════ ORGANISATION : ADMIN, RH, USER ══════ -->
+      <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_RH', 'ROLE_USER']">
+        <p class="oc-sidebar__section-label">{{ 'sidebar.sections.organisation' | translate }}</p>
+        <a class="oc-sidebar__item" routerLink="/societe" routerLinkActive="active">
+          <i class="ti ti-building"></i>
+          <span>{{ 'sidebar.nav.societes' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/site" routerLinkActive="active">
+          <i class="ti ti-map-pin"></i>
+          <span>{{ 'sidebar.nav.sites' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/departement" routerLinkActive="active">
+          <i class="ti ti-briefcase"></i>
+          <span>{{ 'sidebar.nav.departements' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/organigramme" routerLinkActive="active">
+          <i class="ti ti-sitemap"></i>
+          <span>{{ 'sidebar.nav.organigramme' | translate }}</span>
+        </a>
+      </ng-container>
 
-      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.rh' | translate }}</p>
-      <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active">
-        <i class="ti ti-users"></i>
-        <span>{{ 'sidebar.nav.employes' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active">
-        <i class="ti ti-file-text"></i>
-        <span>{{ 'sidebar.nav.contrats' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/absence" routerLinkActive="active">
-        <i class="ti ti-calendar-off"></i>
-        <span>{{ 'sidebar.nav.absences' | translate }}</span>
-      </a>
+      <!-- ══════ RH : ADMIN, RH, USER ══════ -->
+      <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_RH', 'ROLE_USER']">
+        <p class="oc-sidebar__section-label">{{ 'sidebar.sections.rh' | translate }}</p>
+        <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active">
+          <i class="ti ti-users"></i>
+          <span>{{ 'sidebar.nav.employes' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active">
+          <i class="ti ti-file-text"></i>
+          <span>{{ 'sidebar.nav.contrats' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/absence" routerLinkActive="active">
+          <i class="ti ti-calendar-off"></i>
+          <span>{{ 'sidebar.nav.absences' | translate }}</span>
+        </a>
+      </ng-container>
 
-      <p class="oc-sidebar__section-label">{{ 'sidebar.sections.referentiels' | translate }}</p>
-      <a class="oc-sidebar__item" routerLink="/grade" routerLinkActive="active">
-        <i class="ti ti-award"></i>
-        <span>{{ 'sidebar.nav.grades' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/fonction" routerLinkActive="active">
-        <i class="ti ti-tool"></i>
-        <span>{{ 'sidebar.nav.fonctions' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/type-contrat" routerLinkActive="active">
-        <i class="ti ti-clipboard-list"></i>
-        <span>{{ 'sidebar.nav.typesContrat' | translate }}</span>
-      </a>
-      <a class="oc-sidebar__item" routerLink="/forme-juridique" routerLinkActive="active">
-        <i class="ti ti-scale"></i>
-        <span>{{ 'sidebar.nav.formesJuridiques' | translate }}</span>
-      </a>
+      <!-- ══════ RÉFÉRENTIELS : ADMIN, RH ══════ -->
+      <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_RH']">
+        <p class="oc-sidebar__section-label">{{ 'sidebar.sections.referentiels' | translate }}</p>
+        <a class="oc-sidebar__item" routerLink="/grade" routerLinkActive="active">
+          <i class="ti ti-award"></i>
+          <span>{{ 'sidebar.nav.grades' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/fonction" routerLinkActive="active">
+          <i class="ti ti-tool"></i>
+          <span>{{ 'sidebar.nav.fonctions' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/type-contrat" routerLinkActive="active">
+          <i class="ti ti-clipboard-list"></i>
+          <span>{{ 'sidebar.nav.typesContrat' | translate }}</span>
+        </a>
+        <a class="oc-sidebar__item" routerLink="/forme-juridique" routerLinkActive="active">
+          <i class="ti ti-scale"></i>
+          <span>{{ 'sidebar.nav.formesJuridiques' | translate }}</span>
+        </a>
+      </ng-container>
 
+      <!-- ══════ ADMINISTRATION : ADMIN uniquement ══════ -->
       <ng-container *jhiHasAnyAuthority="'ROLE_ADMIN'">
         <p class="oc-sidebar__section-label">{{ 'sidebar.sections.administration' | translate }}</p>
         <a class="oc-sidebar__item" routerLink="admin/metrics" routerLinkActive="active">

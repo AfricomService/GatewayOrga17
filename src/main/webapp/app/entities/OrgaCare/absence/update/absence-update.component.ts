@@ -17,10 +17,15 @@ import { Etat } from 'app/entities/enumerations/etat.model';
 @Component({
   selector: 'jhi-absence-update',
   templateUrl: './absence-update.component.html',
+  styleUrls: ['./absence-update.component.scss'],
 })
 export class AbsenceUpdateComponent implements OnInit {
   isSaving = false;
   etatValues = Object.keys(Etat);
+
+  // Accordion — Section Générale ouverte par défaut
+  sectionGenerale = true;
+  sectionPersonnes = false;
 
   personnesSharedCollection: IPersonne[] = [];
 
@@ -73,6 +78,10 @@ export class AbsenceUpdateComponent implements OnInit {
 
   trackPersonneById(index: number, item: IPersonne): number {
     return item.id!;
+  }
+
+  comparePersonne(p1: IPersonne | null, p2: IPersonne | null): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IAbsence>>): void {

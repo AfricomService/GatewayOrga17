@@ -14,9 +14,13 @@ import { FormeJuridiqueService } from '../service/forme-juridique.service';
 @Component({
   selector: 'jhi-forme-juridique-update',
   templateUrl: './forme-juridique-update.component.html',
+  styleUrls: ['./forme-juridique-update.component.scss'],
 })
 export class FormeJuridiqueUpdateComponent implements OnInit {
   isSaving = false;
+
+  // Section Générale ouverte par défaut
+  sectionGenerale = true;
 
   editForm = this.fb.group({
     id: [],

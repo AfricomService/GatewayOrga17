@@ -9,6 +9,7 @@ import { IOrganigramme } from '../organigramme.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { OrganigrammeService } from '../service/organigramme.service';
 import { OrganigrammeDeleteDialogComponent } from '../delete/organigramme-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-organigramme',
@@ -24,12 +25,14 @@ export class OrganigrammeComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected organigrammeService: OrganigrammeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -55,6 +58,7 @@ export class OrganigrammeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -62,13 +66,13 @@ export class OrganigrammeComponent implements OnInit {
     return item.id!;
   }
 
-  // Double-click → navigate to edit
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
   navigateToEdit(organigramme: IOrganigramme): void {
-    this.router.navigate(['/organigramme', organigramme.id, 'edit']);
+    this.router.navigate(['/organigramme', organigramme.id, this.canEdit ? 'edit' : 'view']);
   }
 
   delete(organigramme: IOrganigramme, event: Event): void {
-    event.stopPropagation(); // prevent row dblclick
+    event.stopPropagation(); // prevent row click
     const modalRef = this.modalService.open(OrganigrammeDeleteDialogComponent, {
       size: 'lg',
       backdrop: 'static',

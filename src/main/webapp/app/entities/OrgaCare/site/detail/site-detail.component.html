@@ -1,82 +1,167 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="site">
-      <h2 data-cy="siteDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareSite.detail.title">Site</span></h2>
-
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ site.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.code">Code</span></dt>
-        <dd>
-          <span>{{ site.code }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.nom">Nom</span></dt>
-        <dd>
-          <span>{{ site.nom }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.etat">Etat</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + site.etat }}">{{ site.etat }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse">Adresse</span></dt>
-        <dd>
-          <span>{{ site.adresse }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.codePostale">Code Postale</span></dt>
-        <dd>
-          <span>{{ site.codePostale }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.ville">Ville</span></dt>
-        <dd>
-          <span>{{ site.ville }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.tel">Tel</span></dt>
-        <dd>
-          <span>{{ site.tel }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.fax">Fax</span></dt>
-        <dd>
-          <span>{{ site.fax }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.email">Email</span></dt>
-        <dd>
-          <span>{{ site.email }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCreation">Date Creation</span></dt>
-        <dd>
-          <span>{{ site.dateCreation | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateActivation">Date Activation</span></dt>
-        <dd>
-          <span>{{ site.dateActivation | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.dateCloture">Date Cloture</span></dt>
-        <dd>
-          <span>{{ site.dateCloture | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSite.societe">Societe</span></dt>
-        <dd>
-          <div *ngIf="site.societe">
-            <a [routerLink]="['/societe', site.societe?.id, 'view']">{{ site.societe?.id }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+<div class="site-update-container" *ngIf="site">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <span class="material-icon">&#x1F3E2;</span>
+      </div>
+      <div class="header-text">
+        <h1 data-cy="siteDetailsHeading">{{ site.nom || '—' }}</h1>
+        <p>Détails du site</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
       </button>
-
-      <button type="button" [routerLink]="['/site', site.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <button *ngIf="canEdit" type="button" class="btn-header-primary" [routerLink]="['/site', site.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
       </button>
     </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Section Générale -->
+  <div class="accordion-card" [class.open]="sectionGenerale">
+    <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Générale</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionGenerale">
+      <div class="form-grid-3">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.code">CODE</span>
+          <div class="readonly-value">
+            <span class="badge-code" *ngIf="site.code">{{ site.code }}</span>
+            <span *ngIf="!site.code">—</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.nom">NOM</span>
+          <div class="readonly-value">{{ site.nom || '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.etat">ETAT</span>
+          <div class="readonly-value">
+            <span *ngIf="site.etat">{{ 'orgacaregatewayApp.Etat.' + site.etat | translate }}</span>
+            <span *ngIf="!site.etat">—</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.societe">SOCIETE</span>
+          <div class="readonly-value">{{ site.societe?.raisonSociale || site.societe?.id || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Adresse -->
+  <div class="accordion-card" [class.open]="sectionAdresse">
+    <div class="accordion-header" (click)="sectionAdresse = !sectionAdresse">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Adresse</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionAdresse">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionAdresse">
+      <div class="form-grid-1">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.adresse">ADRESSE</span>
+          <div class="readonly-value">{{ site.adresse || '—' }}</div>
+        </div>
+      </div>
+
+      <div class="form-grid-3 mt-16">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.codePostale">CODE POSTALE</span>
+          <div class="readonly-value">{{ site.codePostale || '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.ville">VILLE</span>
+          <div class="readonly-value">{{ site.ville || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Communication -->
+  <div class="accordion-card" [class.open]="sectionCommunication">
+    <div class="accordion-header" (click)="sectionCommunication = !sectionCommunication">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-orange">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.6 4.87 2 2 0 0 1 3.59 2.69h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l1.54-1.54a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+            />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Communication</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionCommunication">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionCommunication">
+      <div class="form-grid-3">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.tel">TÉLÉPHONE</span>
+          <div class="readonly-value">{{ site.tel || '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.fax">FAX</span>
+          <div class="readonly-value">{{ site.fax || '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareSite.email">EMAIL</span>
+          <div class="readonly-value">{{ site.email || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="form-footer">
+    <button type="button" class="btn-cancel" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      <span jhiTranslate="entity.action.back">Retour</span>
+    </button>
   </div>
 </div>

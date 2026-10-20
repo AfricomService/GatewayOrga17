@@ -11,9 +11,13 @@ import { TypeContratService } from '../service/type-contrat.service';
 @Component({
   selector: 'jhi-type-contrat-update',
   templateUrl: './type-contrat-update.component.html',
+  styleUrls: ['./type-contrat-update.component.scss'],
 })
 export class TypeContratUpdateComponent implements OnInit {
   isSaving = false;
+
+  // Section Générale ouverte par défaut
+  sectionGenerale = true;
 
   editForm = this.fb.group({
     id: [],

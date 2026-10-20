@@ -9,10 +9,12 @@ import { IFonction } from '../fonction.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { FonctionService } from '../service/fonction.service';
 import { FonctionDeleteDialogComponent } from '../delete/fonction-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-fonction',
   templateUrl: './fonction.component.html',
+  styleUrls: ['./fonction.component.scss'],
 })
 export class FonctionComponent implements OnInit {
   fonctions?: IFonction[];
@@ -23,12 +25,14 @@ export class FonctionComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected fonctionService: FonctionService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -54,6 +58,7 @@ export class FonctionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -61,10 +66,14 @@ export class FonctionComponent implements OnInit {
     return item.id!;
   }
 
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
+  openFonction(fonction: IFonction): void {
+    this.router.navigate(['/fonction', fonction.id, this.canEdit ? 'edit' : 'view']);
+  }
+
   delete(fonction: IFonction): void {
     const modalRef = this.modalService.open(FonctionDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.fonction = fonction;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();

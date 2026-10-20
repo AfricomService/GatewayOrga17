@@ -1,36 +1,73 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="fonction">
-      <h2 data-cy="fonctionDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareFonction.detail.title">Fonction</span></h2>
-
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ fonction.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareFonction.code">Code</span></dt>
-        <dd>
-          <span>{{ fonction.code }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareFonction.label">Label</span></dt>
-        <dd>
-          <span>{{ fonction.label }}</span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+<div class="fonction-update-container" *ngIf="fonction">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="briefcase"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1 data-cy="fonctionDetailsHeading">{{ fonction.label || fonction.code || '—' }}</h1>
+        <p>Détails de la fonction</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
       </button>
-
-      <button type="button" [routerLink]="['/fonction', fonction.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <button *ngIf="canEdit" type="button" class="btn-header-primary" [routerLink]="['/fonction', fonction.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
       </button>
     </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Section Générale -->
+  <div class="accordion-card" [class.open]="sectionGenerale">
+    <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Générale</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionGenerale">
+      <div class="form-grid-3">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFonction.code">CODE</span>
+          <div class="readonly-value">
+            <span class="badge-code" *ngIf="fonction.code">{{ fonction.code }}</span>
+            <span *ngIf="!fonction.code">—</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFonction.label">LIBELLÉ</span>
+          <div class="readonly-value">{{ fonction.label || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="form-footer">
+    <button type="button" class="btn-cancel" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      <span jhiTranslate="entity.action.back">Retour</span>
+    </button>
   </div>
 </div>

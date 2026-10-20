@@ -1,83 +1,107 @@
-<div>
-  <h2 id="page-heading" data-cy="GradeHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.home.title">Grades</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.home.refreshListLabel">Refresh List</span>
-      </button>
-
+<div class="grade-list-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="award"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1 id="page-heading" data-cy="GradeHeading" jhiTranslate="orgacaregatewayApp.orgaCareGrade.home.title">Grades</h1>
+        <p>Gérez et consultez la liste des grades</p>
+      </div>
+    </div>
+    <div class="header-actions">
       <button
+        class="btn-header-secondary"
+        (click)="loadPage()"
+        [disabled]="isLoading"
+        title="{{ 'orgacaregatewayApp.orgaCareGrade.home.refreshListLabel' | translate }}"
+      >
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+      </button>
+      <button
+        *ngIf="canEdit"
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-grade"
+        class="btn-header-primary"
         [routerLink]="['/grade/new']"
+        title="{{ 'orgacaregatewayApp.orgaCareGrade.home.createLabel' | translate }}"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.home.createLabel"> Create a new Grade </span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
-
   <jhi-alert></jhi-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="grades?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.home.notFound">No grades found</span>
+  <!-- Empty State -->
+  <div class="empty-state" id="no-result" *ngIf="!isLoading && grades?.length === 0">
+    <div class="empty-icon">🎖️</div>
+    <h3 jhiTranslate="orgacaregatewayApp.orgaCareGrade.home.notFound">Aucun grade trouvé</h3>
+    <ng-container *ngIf="canEdit">
+      <p>Commencez par créer un nouveau grade</p>
+      <button class="btn-create" [routerLink]="['/grade/new']">
+        <fa-icon icon="plus"></fa-icon>
+        Créer un grade
+      </button>
+    </ng-container>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="grades && grades.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="code">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.code">Code</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="label">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.label">Label</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let grade of grades; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/grade', grade.id, 'view']">{{ grade.id }}</a>
-          </td>
-          <td>{{ grade.code }}</td>
-          <td>{{ grade.label }}</td>
-          <td class="text-right">
-            <div class="btn-group">
-              <button type="submit" [routerLink]="['/grade', grade.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+  <!-- Table Card -->
+  <div class="table-card" id="entities" *ngIf="grades && grades.length > 0">
+    <div class="table-wrapper">
+      <table aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+            <th scope="col" jhiSortBy="label">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.label">Libellé</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="code">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareGrade.code">Code</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" class="th-actions" *ngIf="canEdit">
+              <span>Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let grade of grades; trackBy: trackId" data-cy="entityTable" (click)="openGrade(grade)" class="table-row">
+            <td>
+              <div class="cell-nom">
+                <div class="nom-avatar">{{ (grade.label || grade.code || '?')[0].toUpperCase() }}</div>
+                <span class="nom-text">{{ grade.label || '—' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge-code" *ngIf="grade.code; else noCode">{{ grade.code }}</span>
+              <ng-template #noCode><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td class="td-actions" *ngIf="canEdit">
+              <button
+                type="button"
+                class="btn-delete"
+                data-cy="entityDeleteButton"
+                (click)="delete(grade); $event.stopPropagation()"
+                title="{{ 'entity.action.delete' | translate }}"
+              >
+                <fa-icon icon="trash"></fa-icon>
               </button>
-
-              <button type="submit" [routerLink]="['/grade', grade.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
-
-              <button type="submit" (click)="delete(grade)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="grades && grades.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="row justify-content-center">
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
       <ngb-pagination
         [collectionSize]="totalItems"
         [(page)]="ngbPaginationPage"

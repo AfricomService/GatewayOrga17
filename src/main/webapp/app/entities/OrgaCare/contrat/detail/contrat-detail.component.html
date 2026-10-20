@@ -1,62 +1,130 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="contrat">
-      <h2 data-cy="contratDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.detail.title">Contrat</span></h2>
-
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ contrat.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut">Date Debut</span></dt>
-        <dd>
-          <span>{{ contrat.dateDebut | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</span></dt>
-        <dd>
-          <span>{{ contrat.dateFin | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.type">Type</span></dt>
-        <dd>
-          <span>{{ contrat.type }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.status">Status</span></dt>
-        <dd>
-          <span>{{ contrat.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.societe">Societe</span></dt>
-        <dd>
-          <div *ngIf="contrat.societe">
-            <a [routerLink]="['/societe', contrat.societe?.id, 'view']">{{ contrat.societe?.id }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.typeContrat">Type Contrat</span></dt>
-        <dd>
-          <div *ngIf="contrat.typeContrat">
-            <a [routerLink]="['/type-contrat', contrat.typeContrat?.id, 'view']">{{ contrat.typeContrat?.id }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span></dt>
-        <dd>
-          <div *ngIf="contrat.personne">
-            <a [routerLink]="['/personne', contrat.personne?.id, 'view']">{{ contrat.personne?.id }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+<div class="contrat-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="file-contract"></fa-icon>
+      </div>
+      <div>
+        <h2 class="page-title" data-cy="contratDetailsHeading" jhiTranslate="orgacaregatewayApp.orgaCareContrat.detail.title">Contrat</h2>
+        <p class="page-subtitle">Consultation des informations du contrat</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
       </button>
-
-      <button type="button" [routerLink]="['/contrat', contrat.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <button *ngIf="canEdit" type="button" class="btn-action btn-primary-action" (click)="goToEdit()">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
       </button>
     </div>
   </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <ng-container *ngIf="contrat">
+    <!-- ══════════ Carte : Personne (accordéon) ══════════ -->
+    <div class="contrat-card">
+      <div class="card-header-block accordion-toggle" (click)="togglePersonneSection()">
+        <div class="card-icon personne"><fa-icon icon="user"></fa-icon></div>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span>
+        <fa-icon class="accordion-chevron" [class.rotated]="isPersonneSectionOpen" icon="chevron-down"></fa-icon>
+      </div>
+      <div class="card-body-block" *ngIf="isPersonneSectionOpen">
+        <div *ngIf="contrat.personne" class="personne-selected-preview">
+          <div class="personne-selected-avatar">{{ (personneLabel || '?').charAt(0).toUpperCase() }}</div>
+          <div class="personne-selected-info">
+            <span class="personne-selected-label">Personne concernée</span>
+            <strong>{{ personneLabel }}</strong>
+            <span class="personne-selected-matricule" *ngIf="contrat.personne.matricule">{{ contrat.personne.matricule }}</span>
+          </div>
+          <a [routerLink]="['/personne', contrat.personne.id, 'view']" class="personne-view-link" title="Voir la fiche">
+            <fa-icon icon="eye"></fa-icon>
+          </a>
+        </div>
+
+        <div *ngIf="!contrat.personne" class="personne-list-empty">
+          <fa-icon icon="user-slash"></fa-icon>
+          <span>Aucune personne associée</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Carte : Détails du contrat (accordéon) ══════════ -->
+    <div class="contrat-card">
+      <div class="card-header-block accordion-toggle" (click)="toggleDetailsSection()">
+        <div class="card-icon details"><fa-icon icon="file-alt"></fa-icon></div>
+        <span>Détails du contrat</span>
+        <fa-icon class="accordion-chevron" [class.rotated]="isDetailsSectionOpen" icon="chevron-down"></fa-icon>
+      </div>
+      <div class="card-body-block" *ngIf="isDetailsSectionOpen">
+        <div class="form-grid">
+          <!-- Date Début -->
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateDebut">Date Début</span>
+            <div class="field-value">
+              <fa-icon icon="calendar-alt" class="field-value__icon"></fa-icon>
+              <span *ngIf="contrat.dateDebut">{{ contrat.dateDebut | formatMediumDatetime }}</span>
+              <span class="text-muted" *ngIf="!contrat.dateDebut">—</span>
+            </div>
+          </div>
+
+          <!-- Date Fin -->
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.dateFin">Date Fin</span>
+            <div class="field-value">
+              <fa-icon icon="calendar-alt" class="field-value__icon"></fa-icon>
+              <span *ngIf="contrat.dateFin">{{ contrat.dateFin | formatMediumDatetime }}</span>
+              <span class="text-muted" *ngIf="!contrat.dateFin">—</span>
+            </div>
+          </div>
+
+          <!-- Type Contrat -->
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.typeContrat">Type Contrat</span>
+            <div class="field-value">
+              <fa-icon icon="file-contract" class="field-value__icon"></fa-icon>
+              <span *ngIf="contrat.typeContrat">{{ contrat.typeContrat.nom ?? contrat.typeContrat.id }}</span>
+              <span class="text-muted" *ngIf="!contrat.typeContrat">—</span>
+            </div>
+          </div>
+
+          <!-- Société -->
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.societe">Société</span>
+            <div class="field-value">
+              <fa-icon icon="building" class="field-value__icon"></fa-icon>
+              <span *ngIf="contrat.societe">{{ contrat.societe.raisonSociale ?? contrat.societe.id }}</span>
+              <span class="text-muted" *ngIf="!contrat.societe">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status (lecture seule, mêmes onglets que l'édition) -->
+        <div class="field-group status-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareContrat.status">Status</span>
+          <div class="status-tabs">
+            <span class="status-tab" [class.active]="contrat.status === 'ACTIF'">Actif</span>
+            <span class="status-tab" [class.active]="contrat.status === 'EXPIRE'">Expiré</span>
+            <span class="status-tab" [class.active]="contrat.status === 'PASSIF'">Passif</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Footer ══════════ -->
+    <div class="form-footer">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button *ngIf="canEdit" type="button" class="btn-action btn-primary-action" (click)="goToEdit()">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </ng-container>
 </div>

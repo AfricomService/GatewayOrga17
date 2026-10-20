@@ -18,6 +18,7 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
       </button>
       <button
+        *ngIf="canEdit"
         class="btn-header-primary"
         [routerLink]="['/site/new']"
         title="{{ 'orgacaregatewayApp.orgaCareSite.home.createLabel' | translate }}"
@@ -34,11 +35,13 @@
   <div class="empty-state" *ngIf="!isLoading && sites?.length === 0">
     <div class="empty-icon">🏢</div>
     <h3 jhiTranslate="orgacaregatewayApp.orgaCareSite.home.notFound">Aucun site trouvé</h3>
-    <p>Commencez par créer un nouveau site</p>
-    <button class="btn-create" [routerLink]="['/site/new']">
-      <fa-icon icon="plus"></fa-icon>
-      Créer un site
-    </button>
+    <ng-container *ngIf="canEdit">
+      <p>Commencez par créer un nouveau site</p>
+      <button class="btn-create" [routerLink]="['/site/new']">
+        <fa-icon icon="plus"></fa-icon>
+        Créer un site
+      </button>
+    </ng-container>
   </div>
 
   <!-- Table Card -->
@@ -72,19 +75,13 @@
                 <fa-icon icon="sort" class="sort-icon"></fa-icon>
               </div>
             </th>
-            <th scope="col" class="th-actions">
+            <th scope="col" class="th-actions" *ngIf="canEdit">
               <span>Actions</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let site of sites; trackBy: trackId"
-            data-cy="entityTable"
-            (dblclick)="editSite(site)"
-            class="table-row"
-            [title]="'Double-cliquer pour modifier'"
-          >
+          <tr *ngFor="let site of sites; trackBy: trackId" data-cy="entityTable" (click)="editSite(site)" class="table-row">
             <td>
               <div class="cell-nom">
                 <div class="nom-avatar">{{ (site.nom || '?')[0].toUpperCase() }}</div>
@@ -103,7 +100,7 @@
               <span class="cell-societe" *ngIf="site.societe">{{ site.societe?.raisonSociale || site.societe?.id }}</span>
               <span class="cell-empty" *ngIf="!site.societe">—</span>
             </td>
-            <td class="td-actions">
+            <td class="td-actions" *ngIf="canEdit">
               <button
                 type="button"
                 class="btn-delete"

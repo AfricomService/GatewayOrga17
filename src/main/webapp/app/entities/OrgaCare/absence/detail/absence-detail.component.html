@@ -1,60 +1,126 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="absence">
-      <h2 data-cy="absenceDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.detail.title">Absence</span></h2>
-
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ absence.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateCreation">Date Creation</span></dt>
-        <dd>
-          <span>{{ absence.dateCreation | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.etat">Etat</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + absence.etat }}">{{ absence.etat }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateDebut">Date Debut</span></dt>
-        <dd>
-          <span>{{ absence.dateDebut | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateFin">Date Fin</span></dt>
-        <dd>
-          <span>{{ absence.dateFin | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.motif">Motif</span></dt>
-        <dd>
-          <span>{{ absence.motif }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneAbscent">Personne Abscent</span></dt>
-        <dd>
-          <div *ngIf="absence.personneAbscent">
-            <a [routerLink]="['/personne', absence.personneAbscent?.id, 'view']">{{ absence.personneAbscent?.id }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneRemplacant">Personne Remplacant</span></dt>
-        <dd>
-          <div *ngIf="absence.personneRemplacant">
-            <a [routerLink]="['/personne', absence.personneRemplacant?.id, 'view']">{{ absence.personneRemplacant?.id }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+<div class="absence-update-container" *ngIf="absence">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="calendar-times"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1 data-cy="absenceDetailsHeading">{{ absence.personneAbscent?.nomPrenom || 'Absence' }}</h1>
+        <p>Détails de l'absence</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
       </button>
-
-      <button type="button" [routerLink]="['/absence', absence.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <button *ngIf="canEdit" type="button" class="btn-header-primary" [routerLink]="['/absence', absence.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
       </button>
     </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Section Générale -->
+  <div class="accordion-card" [class.open]="sectionGenerale">
+    <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Générale</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionGenerale">
+      <div class="form-grid-3">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.etat">ETAT</span>
+          <div class="readonly-value">
+            <span *ngIf="absence.etat">{{ 'orgacaregatewayApp.Etat.' + absence.etat | translate }}</span>
+            <span *ngIf="!absence.etat">—</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateCreation">DATE CRÉATION</span>
+          <div class="readonly-value">{{ absence.dateCreation ? (absence.dateCreation | formatMediumDatetime) : '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateDebut">DATE DÉBUT</span>
+          <div class="readonly-value">{{ absence.dateDebut ? (absence.dateDebut | formatMediumDatetime) : '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateFin">DATE FIN</span>
+          <div class="readonly-value">{{ absence.dateFin ? (absence.dateFin | formatMediumDatetime) : '—' }}</div>
+        </div>
+      </div>
+
+      <div class="form-grid-1 mt-16">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.motif">MOTIF</span>
+          <div class="readonly-value">{{ absence.motif || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Personnes -->
+  <div class="accordion-card" [class.open]="sectionPersonnes">
+    <div class="accordion-header" (click)="sectionPersonnes = !sectionPersonnes">
+      <div class="accordion-header-left">
+        <div class="accordion-icon icon-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+        <span class="accordion-title">Section Personnes</span>
+      </div>
+      <div class="accordion-chevron" [class.rotated]="sectionPersonnes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="accordion-body" *ngIf="sectionPersonnes">
+      <div class="form-grid-3">
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneAbscent">PERSONNE ABSENTE</span>
+          <div class="readonly-value">{{ absence.personneAbscent?.nomPrenom || absence.personneAbscent?.id || '—' }}</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneRemplacant">REMPLAÇANT</span>
+          <div class="readonly-value">{{ absence.personneRemplacant?.nomPrenom || absence.personneRemplacant?.id || '—' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="form-footer">
+    <button type="button" class="btn-cancel" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      <span jhiTranslate="entity.action.back">Retour</span>
+    </button>
   </div>
 </div>

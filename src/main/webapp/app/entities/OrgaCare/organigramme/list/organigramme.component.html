@@ -25,7 +25,7 @@
           <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
         </svg>
       </button>
-      <button class="btn-header-create" [routerLink]="['/organigramme/new']">
+      <button *ngIf="canEdit" class="btn-header-create" [routerLink]="['/organigramme/new']" title="Nouvel organigramme">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="12" y1="5" x2="12" y2="19" />
           <line x1="5" y1="12" x2="19" y2="12" />
@@ -51,7 +51,7 @@
       </svg>
     </div>
     <p jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.home.notFound">Aucun organigramme trouvé</p>
-    <button class="btn-empty-create" [routerLink]="['/organigramme/new']">
+    <button *ngIf="canEdit" class="btn-empty-create" [routerLink]="['/organigramme/new']">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <line x1="12" y1="5" x2="12" y2="19" />
         <line x1="5" y1="12" x2="19" y2="12" />
@@ -81,16 +81,11 @@
             <span jhiTranslate="orgacaregatewayApp.orgaCareOrganigramme.societe">SOCIÉTÉ</span>
             <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
-          <th class="col-actions">ACTIONS</th>
+          <th class="col-actions" *ngIf="canEdit">ACTIONS</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          *ngFor="let organigramme of organigrammes; trackBy: trackId"
-          class="orga-row"
-          (dblclick)="navigateToEdit(organigramme)"
-          title="Double-cliquer pour modifier"
-        >
+        <tr *ngFor="let organigramme of organigrammes; trackBy: trackId" class="orga-row" (click)="navigateToEdit(organigramme)">
           <!-- Nom -->
           <td class="col-nom">
             <div class="nom-wrapper">
@@ -126,7 +121,7 @@
           </td>
 
           <!-- Actions -->
-          <td class="col-actions">
+          <td class="col-actions" *ngIf="canEdit">
             <div class="action-group">
               <button type="button" class="btn-action btn-delete" (click)="delete(organigramme, $event)" title="Supprimer">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

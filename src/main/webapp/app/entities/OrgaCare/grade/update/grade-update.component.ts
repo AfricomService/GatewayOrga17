@@ -11,9 +11,13 @@ import { GradeService } from '../service/grade.service';
 @Component({
   selector: 'jhi-grade-update',
   templateUrl: './grade-update.component.html',
+  styleUrls: ['./grade-update.component.scss'],
 })
 export class GradeUpdateComponent implements OnInit {
   isSaving = false;
+
+  // Section Générale ouverte par défaut
+  sectionGenerale = true;
 
   editForm = this.fb.group({
     id: [],

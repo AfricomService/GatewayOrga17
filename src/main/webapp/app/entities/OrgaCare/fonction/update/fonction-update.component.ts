@@ -11,9 +11,13 @@ import { FonctionService } from '../service/fonction.service';
 @Component({
   selector: 'jhi-fonction-update',
   templateUrl: './fonction-update.component.html',
+  styleUrls: ['./fonction-update.component.scss'],
 })
 export class FonctionUpdateComponent implements OnInit {
   isSaving = false;
+
+  // Section Générale ouverte par défaut
+  sectionGenerale = true;
 
   editForm = this.fb.group({
     id: [],

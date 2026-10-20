@@ -1,71 +1,155 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <div *ngIf="departement">
-      <h2 data-cy="departementDetailsHeading">
-        <span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.detail.title">Departement</span>
-      </h2>
+<div class="departement-page" *ngIf="departement">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="sitemap"></fa-icon>
+      </div>
+      <div>
+        <h2 class="page-title" data-cy="departementDetailsHeading">{{ departement.nom || '—' }}</h2>
+        <p class="page-subtitle">Détails du département</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button *ngIf="canEdit" type="button" class="btn-action btn-primary-action" [routerLink]="['/departement', departement.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </div>
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ departement.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.code">Code</span></dt>
-        <dd>
-          <span>{{ departement.code }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.nom">Nom</span></dt>
-        <dd>
-          <span>{{ departement.nom }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.status">Status</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + departement.status }}">{{ departement.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.email">Email</span></dt>
-        <dd>
-          <span>{{ departement.email }}</span>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.organigramme">Organigramme</span></dt>
-        <dd>
-          <div *ngIf="departement.organigramme">
-            <a [routerLink]="['/organigramme', departement.organigramme?.id, 'view']">{{ departement.organigramme?.id }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.site">Site</span></dt>
-        <dd>
-          <div *ngIf="departement.site">
-            <a [routerLink]="['/site', departement.site?.id, 'view']">{{ departement.site?.id }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.departementParent">Departement Parent</span></dt>
-        <dd>
-          <div *ngIf="departement.departementParent">
-            <a [routerLink]="['/departement', departement.departementParent?.id, 'view']">{{ departement.departementParent?.id }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareDepartement.personne">Personne</span></dt>
-        <dd>
-          <span *ngFor="let personne of departement.personnes; let last = last">
-            <a [routerLink]="['/personne', personne?.id, 'view']">{{ personne.id }}</a
-            >{{ last ? '' : ', ' }}
-          </span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+  <div class="departement-accordion">
+    <!-- ══════════ Détails ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionDetails" (click)="sectionDetails = !sectionDetails">
+        <div class="panel-header-content">
+          <div class="panel-icon general"><fa-icon icon="building"></fa-icon></div>
+          <span>Détails</span>
+        </div>
+        <fa-icon [icon]="sectionDetails ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
       </button>
 
-      <button type="button" [routerLink]="['/departement', departement.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      <div class="panel-body" *ngIf="sectionDetails">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Code</span>
+            <div class="readonly-value">
+              <fa-icon icon="hashtag" class="value-icon"></fa-icon>
+              <span>{{ departement.code || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Nom</span>
+            <div class="readonly-value">
+              <fa-icon icon="tag" class="value-icon"></fa-icon>
+              <span>{{ departement.nom || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Email</span>
+            <div class="readonly-value">
+              <fa-icon icon="envelope" class="value-icon"></fa-icon>
+              <span>{{ departement.email || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Statut</span>
+            <div class="readonly-value">
+              <span *ngIf="departement.status">{{ 'orgacaregatewayApp.Etat.' + departement.status | translate }}</span>
+              <span *ngIf="!departement.status">—</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Organigramme</span>
+            <div class="readonly-value">
+              <fa-icon icon="project-diagram" class="value-icon"></fa-icon>
+              <span>{{ organigrammeLabel || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Société</span>
+            <div class="readonly-value">
+              <fa-icon icon="building" class="value-icon"></fa-icon>
+              <span>{{ societeRaisonSociale || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Hiérarchies ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionHierarchie" (click)="sectionHierarchie = !sectionHierarchie">
+        <div class="panel-header-content">
+          <div class="panel-icon hierarchy"><fa-icon icon="sitemap"></fa-icon></div>
+          <span>Hiérarchies</span>
+        </div>
+        <fa-icon [icon]="sectionHierarchie ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
       </button>
+
+      <div class="panel-body" *ngIf="sectionHierarchie">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Département Parent</span>
+            <div class="readonly-value">
+              <fa-icon icon="sitemap" class="value-icon"></fa-icon>
+              <span>{{ parentLabel || '— Aucun (racine) —' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Membres ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionMembres" (click)="sectionMembres = !sectionMembres">
+        <div class="panel-header-content">
+          <div class="panel-icon membres"><fa-icon icon="users"></fa-icon></div>
+          <span>Membres</span>
+        </div>
+        <fa-icon [icon]="sectionMembres ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionMembres">
+        <div class="membres-list">
+          <div class="membre-row">
+            <div class="membre-info">
+              <span class="membre-label">Chef :</span>
+              <span class="membre-value">{{ getPersonnesLabel(chefs) || '—' }}</span>
+            </div>
+          </div>
+          <div class="membre-row">
+            <div class="membre-info">
+              <span class="membre-label">Assistant :</span>
+              <span class="membre-value">{{ getPersonnesLabel(assistants) || '—' }}</span>
+            </div>
+          </div>
+          <div class="membre-row">
+            <div class="membre-info">
+              <span class="membre-label">Membre :</span>
+              <span class="membre-value">{{ getPersonnesLabel(membres) || '—' }}</span>
+            </div>
+          </div>
+          <div class="membre-row">
+            <div class="membre-info">
+              <span class="membre-label">Intérim :</span>
+              <span class="membre-value">{{ getPersonnesLabel(interims) || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
