@@ -126,26 +126,6 @@
                 <span class="text-muted" *ngIf="!fonctionLabel">—</span>
               </div>
             </div>
-
-            <!-- État -->
-            <div class="field-group">
-              <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCarePersonne.etat">État</span>
-              <div class="field-value">
-                <span *ngIf="personne.etat" jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + personne.etat }}">{{ personne.etat }}</span>
-                <span class="text-muted" *ngIf="!personne.etat">—</span>
-              </div>
-            </div>
-
-            <!-- Compte -->
-            <div class="field-group">
-              <span class="field-label">{{ 'orgacaregatewayApp.orgaCarePersonne.home.compte' | translate }}</span>
-              <div class="field-value">
-                <fa-icon *ngIf="hasAccount()" icon="check-circle" class="field-value__icon icon-ok"></fa-icon>
-                <fa-icon *ngIf="!hasAccount()" icon="ban" class="field-value__icon"></fa-icon>
-                <span *ngIf="hasAccount()">{{ personne.userId }}</span>
-                <span class="text-muted" *ngIf="!hasAccount()">—</span>
-              </div>
-            </div>
           </div>
         </div>
       </ng-template>

@@ -66,13 +66,17 @@
         </a>
       </ng-container>
 
-      <!-- ══════ RH : ADMIN, RH, USER ══════ -->
+      <!-- ══════ RH : ADMIN, RH, USER (Employés) ══════ -->
       <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_RH', 'ROLE_USER']">
         <p class="oc-sidebar__section-label">{{ 'sidebar.sections.rh' | translate }}</p>
         <a class="oc-sidebar__item" routerLink="/personne" routerLinkActive="active">
           <i class="ti ti-users"></i>
           <span>{{ 'sidebar.nav.employes' | translate }}</span>
         </a>
+      </ng-container>
+
+      <!-- ══════ RH : ADMIN, RH uniquement (Contrats, Absences) ══════ -->
+      <ng-container *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_RH']">
         <a class="oc-sidebar__item" routerLink="/contrat" routerLinkActive="active">
           <i class="ti ti-file-text"></i>
           <span>{{ 'sidebar.nav.contrats' | translate }}</span>
