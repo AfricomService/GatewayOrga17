@@ -1,0 +1,210 @@
+<div class="formateur-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="ti ti-chalkboard"></i>
+      </div>
+      <div>
+        <h2
+          class="page-title"
+          id="jhi-formateur-heading"
+          data-cy="FormateurCreateUpdateHeading"
+          jhiTranslate="orgacaregatewayApp.orgaCareFormateur.home.createOrEditLabel"
+        >
+          Créer / Modifier un formateur
+        </h2>
+        <p class="page-subtitle">Renseignez les informations du formateur</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        type="button"
+        id="cancel-save"
+        data-cy="entityCreateCancelButton"
+        class="btn-action btn-secondary-action"
+        (click)="previousState()"
+      >
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button
+        type="button"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        class="btn-action btn-primary-action"
+        [disabled]="editForm.invalid || isSaving"
+        (click)="save()"
+      >
+        <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+        <span jhiTranslate="entity.action.save">Enregistrer</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <div class="formateur-accordion">
+      <!-- ══════════ Identité & contact ══════════ -->
+      <div class="accordion-card">
+        <button type="button" class="accordion-btn" [class.opened]="sectionIdentite" (click)="sectionIdentite = !sectionIdentite">
+          <div class="panel-header-content">
+            <div class="panel-icon general"><i class="ti ti-user"></i></div>
+            <span>Identité &amp; contact</span>
+          </div>
+          <fa-icon [icon]="sectionIdentite ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+        </button>
+
+        <div class="panel-body" [hidden]="!sectionIdentite">
+          <div class="form-grid">
+            <!-- Nom & prénom -->
+            <div class="field-group required">
+              <label class="field-label" for="field_nomPrenom" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.nomPrenom"
+                >Nom &amp; prénom</label
+              >
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-user"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_nomPrenom"
+                  data-cy="nomPrenom"
+                  type="text"
+                  name="nomPrenom"
+                  formControlName="nomPrenom"
+                  placeholder="Nom et prénom"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('nomPrenom', 'required')" jhiTranslate="entity.validation.required">
+                Ce champ est obligatoire.
+              </small>
+            </div>
+
+            <!-- CIN -->
+            <div class="field-group">
+              <label class="field-label" for="field_cin" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.cin">CIN</label>
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-id"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_cin"
+                  data-cy="cin"
+                  type="text"
+                  name="cin"
+                  formControlName="cin"
+                  placeholder="Numéro CIN"
+                />
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="field-group">
+              <label class="field-label" for="field_email" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.email">Email</label>
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-mail"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_email"
+                  data-cy="email"
+                  type="email"
+                  name="email"
+                  formControlName="email"
+                  placeholder="formateur@exemple.com"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('email', 'email')">Adresse email invalide.</small>
+            </div>
+
+            <!-- Téléphone -->
+            <div class="field-group">
+              <label class="field-label" for="field_telephone" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.telephone"
+                >Téléphone</label
+              >
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-phone"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_telephone"
+                  data-cy="telephone"
+                  type="text"
+                  name="telephone"
+                  formControlName="telephone"
+                  placeholder="Numéro de téléphone"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ Formation ══════════ -->
+      <div class="accordion-card">
+        <button type="button" class="accordion-btn" [class.opened]="sectionFormation" (click)="sectionFormation = !sectionFormation">
+          <div class="panel-header-content">
+            <div class="panel-icon formation"><i class="ti ti-school"></i></div>
+            <span>Formation</span>
+          </div>
+          <fa-icon [icon]="sectionFormation ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+        </button>
+
+        <div class="panel-body" [hidden]="!sectionFormation">
+          <div class="form-grid">
+            <!-- Thème -->
+            <div class="field-group">
+              <label class="field-label" for="field_themeId">Thème</label>
+              <div class="input-wrapper select-wrapper">
+                <span class="input-prefix"><i class="ti ti-school"></i></span>
+                <select
+                  class="field-input field-select with-prefix"
+                  id="field_themeId"
+                  data-cy="themeId"
+                  name="themeId"
+                  formControlName="themeId"
+                >
+                  <option [ngValue]="null">— Sélectionner —</option>
+                  <option *ngFor="let themeOption of themesCollection; trackBy: trackThemeById" [ngValue]="themeOption.id">
+                    {{ themeOption.theme }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Statut -->
+            <div class="field-group">
+              <label class="field-label" for="field_status" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.status">Statut</label>
+              <div class="input-wrapper select-wrapper">
+                <span class="input-prefix"><i class="ti ti-circle-check"></i></span>
+                <select
+                  class="field-input field-select with-prefix"
+                  id="field_status"
+                  data-cy="status"
+                  name="status"
+                  formControlName="status"
+                >
+                  <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Commentaires -->
+            <div class="field-group full">
+              <label class="field-label" for="field_comments" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.comments"
+                >Commentaires</label
+              >
+              <textarea
+                class="field-input field-textarea"
+                id="field_comments"
+                data-cy="comments"
+                name="comments"
+                formControlName="comments"
+                rows="4"
+                placeholder="Remarques sur ce formateur…"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

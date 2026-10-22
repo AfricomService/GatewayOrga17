@@ -1,0 +1,175 @@
+<div class="formation-list-container">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 10L12 5 2 10l10 5 10-5z" />
+          <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+          <line x1="22" y1="10" x2="22" y2="16" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareFormation.home.title">Formations</h1>
+        <p>Gérez les formations suivies par le personnel</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header-refresh" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
+      </button>
+      <button *ngIf="canEdit" class="btn-header-create" [routerLink]="['/formation/new']" title="Nouvelle formation">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Empty state ─────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="formations?.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M22 10L12 5 2 10l10 5 10-5z" />
+        <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+        <line x1="22" y1="10" x2="22" y2="16" />
+      </svg>
+    </div>
+    <p jhiTranslate="orgacaregatewayApp.orgaCareFormation.home.notFound">Aucune formation trouvée</p>
+    <button *ngIf="canEdit" class="btn-empty-create" [routerLink]="['/formation/new']">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Créer une formation
+    </button>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <div class="table-card" *ngIf="formations && formations.length > 0">
+    <table class="formation-table" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th jhiSortBy="sessionId">
+            <span>SESSION</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="personneId">
+            <span>PERSONNE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="statut">
+            <span>STATUT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="etat">
+            <span>ÉTAT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="note">
+            <span>NOTE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="dateObtentionCertificat">
+            <span>CERTIFICAT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="notificationEnvoyee">
+            <span>NOTIFICATION</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th class="col-actions" *ngIf="canEdit">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let formation of formations; trackBy: trackId" class="formation-row" (click)="navigateToEdit(formation)">
+          <!-- Session -->
+          <td class="col-session">
+            <div class="session-wrapper">
+              <div class="session-avatar">
+                {{ (getSessionLabel(formation.sessionId) ?? '?').charAt(0).toUpperCase() }}
+              </div>
+              <span class="session-text">{{ getSessionLabel(formation.sessionId) ?? '—' }}</span>
+            </div>
+          </td>
+
+          <!-- Personne -->
+          <td class="col-personne">
+            <span class="personne-badge" *ngIf="formation.personneId">#{{ formation.personneId }}</span>
+            <span class="text-muted" *ngIf="!formation.personneId">—</span>
+          </td>
+
+          <!-- Statut -->
+          <td class="col-status">
+            <span class="status-badge {{ getStatusClass(formation.statut) }}" *ngIf="formation.statut">
+              {{ formation.statut }}
+            </span>
+            <span class="text-muted" *ngIf="!formation.statut">—</span>
+          </td>
+
+          <!-- État -->
+          <td class="col-etat">
+            <span class="etat-badge" *ngIf="formation.etat">{{ formation.etat }}</span>
+            <span class="text-muted" *ngIf="!formation.etat">—</span>
+          </td>
+
+          <!-- Note -->
+          <td class="col-note">
+            <span *ngIf="formation.note !== undefined && formation.note !== null">{{ formation.note }}</span>
+            <span class="text-muted" *ngIf="formation.note === undefined || formation.note === null">—</span>
+          </td>
+
+          <!-- Certificat -->
+          <td class="col-date">
+            <div *ngIf="formation.dateObtentionCertificat" class="date-block">
+              <span>{{ formation.dateObtentionCertificat | formatMediumDatetime }}</span>
+              <small *ngIf="formation.dateExpirationCertificat">→ {{ formation.dateExpirationCertificat | formatMediumDatetime }}</small>
+            </div>
+            <span class="text-muted" *ngIf="!formation.dateObtentionCertificat">—</span>
+          </td>
+
+          <!-- Notification -->
+          <td class="col-notif">
+            <span class="notif-badge notif-yes" *ngIf="formation.notificationEnvoyee">Envoyée</span>
+            <span class="notif-badge notif-no" *ngIf="!formation.notificationEnvoyee">Non envoyée</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions" *ngIf="canEdit">
+            <div class="action-group">
+              <button type="button" class="btn-action btn-delete" (click)="delete(formation, $event)" title="Supprimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Pagination ──────────────────────────────────────── -->
+  <div class="pagination-wrapper" *ngIf="formations && formations.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

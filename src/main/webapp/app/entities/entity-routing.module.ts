@@ -101,6 +101,30 @@ const ADMIN_RH = ['ROLE_ADMIN', 'ROLE_RH'];
         canActivate: [UserRouteAccessService],
         loadChildren: () => import('./OrgaCare/type-contrat/type-contrat.module').then(m => m.OrgaCareTypeContratModule),
       },
+      {
+        path: 'theme-formation',
+        data: { authorities: ADMIN_RH, pageTitle: 'orgacaregatewayApp.orgaCareThemeFormation.home.title' },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./OrgaCare/theme-formation/theme-formation.module').then(m => m.OrgaCareThemeFormationModule),
+      },
+      {
+        path: 'formation',
+        data: { authorities: ADMIN_RH, pageTitle: 'orgacaregatewayApp.orgaCareFormation.home.title' },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./OrgaCare/formation/formation.module').then(m => m.OrgaCareFormationModule),
+      },
+      {
+        path: 'formateur',
+        data: { authorities: ADMIN_RH, pageTitle: 'orgacaregatewayApp.orgaCareFormateur.home.title' },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./OrgaCare/formateur/formateur.module').then(m => m.OrgaCareFormateurModule),
+      },
+      {
+        path: 'session-formation',
+        data: { authorities: ADMIN_RH, pageTitle: 'orgacaregatewayApp.orgaCareSessionFormation.home.title' },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./OrgaCare/session-formation/session-formation.module').then(m => m.OrgaCareSessionFormationModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

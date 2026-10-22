@@ -1,0 +1,49 @@
+{
+  "microservicePath": "D:\\CODE\\ORGACARE17\\OrgaCare",
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "theme",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cout",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "duree_validite_certificat",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "notifier_expiration_avant",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "duree_anticipation_utilisateur",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "cout_formation_individuelle",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "comments",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "no",
+  "name": "ThemeFormation",
+  "changelogDate": "20261021100155"
+}

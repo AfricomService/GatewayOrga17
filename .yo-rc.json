@@ -66,7 +66,11 @@
       "Site",
       "Societe",
       "StatusHistory",
-      "TypeContrat"
+      "TypeContrat",
+      "ThemeFormation",
+      "Formation",
+      "Formateur",
+      "SessionFormation"
     ],
     "lastLiquibaseTimestamp": 1779439847000
   }

@@ -1,0 +1,188 @@
+<div class="formation-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="graduation-cap"></fa-icon>
+      </div>
+      <div>
+        <h2
+          class="page-title"
+          id="jhi-formation-heading"
+          data-cy="FormationCreateUpdateHeading"
+          jhiTranslate="orgacaregatewayApp.orgaCareFormation.home.createOrEditLabel"
+        >
+          Créer / Modifier une formation
+        </h2>
+        <p class="page-subtitle">Renseignez les informations de la formation</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityCreateCancelButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button
+        type="button"
+        class="btn-action btn-primary-action"
+        [disabled]="editForm.invalid || isSaving"
+        (click)="save()"
+        data-cy="entityCreateSaveButton"
+      >
+        <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+        <span jhiTranslate="entity.action.save">Enregistrer</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <form name="editForm" role="form" novalidate [formGroup]="editForm" (ngSubmit)="save()">
+    <ngb-accordion #acc="ngbAccordion" [closeOthers]="false" [activeIds]="activePanels" class="formation-accordion">
+      <!-- ══════════ Panel 0 — Général ══════════ -->
+      <ngb-panel id="panel-0">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle type="button" class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon general"><fa-icon icon="building"></fa-icon></div>
+              <span>Général</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid">
+              <!-- Session -->
+              <div class="field-group">
+                <label class="field-label" for="field_sessionId">Session</label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="calendar-alt"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_sessionId" data-cy="sessionId" formControlName="sessionId">
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option [ngValue]="sessionOption.id" *ngFor="let sessionOption of sessionsSharedCollection; trackBy: trackSessionById">
+                      {{ sessionOption.title ?? sessionOption.id }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Personne -->
+              <div class="field-group">
+                <label class="field-label" for="field_personneId">Personne (ID)</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="users"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_personneId"
+                    data-cy="personneId"
+                    type="number"
+                    formControlName="personneId"
+                  />
+                </div>
+              </div>
+
+              <!-- Statut -->
+              <div class="field-group">
+                <label class="field-label" for="field_statut">Statut</label>
+                <input class="field-input" id="field_statut" data-cy="statut" type="text" formControlName="statut" placeholder="Statut" />
+              </div>
+
+              <!-- État -->
+              <div class="field-group">
+                <label class="field-label" for="field_etat">État</label>
+                <input class="field-input" id="field_etat" data-cy="etat" type="text" formControlName="etat" placeholder="État" />
+              </div>
+
+              <!-- Note -->
+              <div class="field-group">
+                <label class="field-label" for="field_note">Note</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="hashtag"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_note"
+                    data-cy="note"
+                    type="number"
+                    formControlName="note"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <!-- Commentaire -->
+              <div class="field-group full-width">
+                <label class="field-label" for="field_commentaire">Commentaire</label>
+                <input
+                  class="field-input"
+                  id="field_commentaire"
+                  data-cy="commentaire"
+                  type="text"
+                  formControlName="commentaire"
+                  placeholder="Commentaire"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+
+      <!-- ══════════ Panel 1 — Certificat ══════════ -->
+      <ngb-panel id="panel-1">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle type="button" class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon hierarchy"><fa-icon icon="calendar-alt"></fa-icon></div>
+              <span>Certificat &amp; notification</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="field-group">
+                <label class="field-label" for="field_dateObtentionCertificat">Date d'obtention</label>
+                <input
+                  class="field-input"
+                  id="field_dateObtentionCertificat"
+                  data-cy="dateObtentionCertificat"
+                  type="datetime-local"
+                  formControlName="dateObtentionCertificat"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_dateExpirationCertificat">Date d'expiration</label>
+                <input
+                  class="field-input"
+                  id="field_dateExpirationCertificat"
+                  data-cy="dateExpirationCertificat"
+                  type="datetime-local"
+                  formControlName="dateExpirationCertificat"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_notificationEnvoyee">Notification</label>
+                <div class="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    class="field-checkbox"
+                    id="field_notificationEnvoyee"
+                    data-cy="notificationEnvoyee"
+                    formControlName="notificationEnvoyee"
+                  />
+                  <span>Notification envoyée</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+  </form>
+</div>

@@ -1,0 +1,52 @@
+{
+  "microservicePath": "D:\\CODE\\ORGACARE17\\OrgaCare",
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "statut",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "etat",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "note",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "dateObtentionCertificat",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateExpirationCertificat",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "notificationEnvoyee",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "commentaire",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sessionId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "personneId",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [],
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "pagination",
+  "name": "Formation",
+  "changelogDate": "20261021103725"
+}

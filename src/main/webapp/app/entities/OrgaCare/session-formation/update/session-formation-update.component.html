@@ -1,0 +1,292 @@
+<div class="session-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="calendar-alt"></fa-icon>
+      </div>
+      <div>
+        <h2
+          class="page-title"
+          id="jhi-session-formation-heading"
+          data-cy="SessionFormationCreateUpdateHeading"
+          jhiTranslate="orgacaregatewayApp.orgaCareSessionFormation.home.createOrEditLabel"
+        >
+          Créer / Modifier une session de formation
+        </h2>
+        <p class="page-subtitle">Renseignez les informations de la session</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityCreateCancelButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button
+        type="button"
+        class="btn-action btn-primary-action"
+        [disabled]="editForm.invalid || isSaving"
+        (click)="save()"
+        data-cy="entityCreateSaveButton"
+      >
+        <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+        <span jhiTranslate="entity.action.save">Enregistrer</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <form name="editForm" role="form" novalidate [formGroup]="editForm" (ngSubmit)="save()">
+    <ngb-accordion #acc="ngbAccordion" [closeOthers]="false" [activeIds]="activePanels" class="session-accordion">
+      <!-- ══════════ Panel 0 — Général ══════════ -->
+      <ngb-panel id="panel-0">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle type="button" class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon general"><fa-icon icon="building"></fa-icon></div>
+              <span>Général</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid">
+              <!-- Titre -->
+              <div class="field-group">
+                <label class="field-label" for="field_title">Titre</label>
+                <div class="input-wrapper">
+                  <span class="input-prefix"><fa-icon icon="tag"></fa-icon></span>
+                  <input
+                    class="field-input with-prefix"
+                    id="field_title"
+                    data-cy="title"
+                    type="text"
+                    formControlName="title"
+                    placeholder="Titre de la session"
+                  />
+                </div>
+              </div>
+
+              <!-- Thème -->
+              <div class="field-group">
+                <label class="field-label" for="field_themeId">Thème</label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="project-diagram"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_themeId" data-cy="themeId" formControlName="themeId">
+                    <option [ngValue]="null" disabled hidden>— Sélectionner —</option>
+                    <option [ngValue]="themeOption.id" *ngFor="let themeOption of themesSharedCollection; trackBy: trackThemeById">
+                      {{ themeOption.theme ?? themeOption.id }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Type de formation -->
+              <div class="field-group">
+                <label class="field-label" for="field_typeFormation">Type de formation</label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="hashtag"></fa-icon></span>
+                  <select
+                    class="field-input field-select with-prefix"
+                    id="field_typeFormation"
+                    data-cy="typeFormation"
+                    formControlName="typeFormation"
+                  >
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option *ngFor="let opt of typeFormationOptions" [ngValue]="opt">{{ opt }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Statut -->
+              <div class="field-group">
+                <label class="field-label" for="field_statut">Statut</label>
+                <div class="input-wrapper select-wrapper">
+                  <select class="field-input field-select" id="field_statut" data-cy="statut" formControlName="statut">
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option *ngFor="let opt of statutOptions" [ngValue]="opt">{{ opt }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Réglementaire -->
+              <div class="field-group">
+                <label class="field-label" for="field_reglementaire">Réglementaire</label>
+                <div class="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    class="field-checkbox"
+                    id="field_reglementaire"
+                    data-cy="reglementaire"
+                    formControlName="reglementaire"
+                  />
+                  <span>Formation réglementaire</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+
+      <!-- ══════════ Panel 1 — Planification ══════════ -->
+      <ngb-panel id="panel-1">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle type="button" class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon hierarchy"><fa-icon icon="calendar-alt"></fa-icon></div>
+              <span>Planification &amp; exécution</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid two-cols">
+              <div class="field-group">
+                <label class="field-label" for="field_datePlanificationDu">Planification du</label>
+                <input
+                  class="field-input"
+                  id="field_datePlanificationDu"
+                  data-cy="datePlanificationDu"
+                  type="datetime-local"
+                  formControlName="datePlanificationDu"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_datePlanificationAu">Planification au</label>
+                <input
+                  class="field-input"
+                  id="field_datePlanificationAu"
+                  data-cy="datePlanificationAu"
+                  type="datetime-local"
+                  formControlName="datePlanificationAu"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_dateExecutionDu">Exécution du</label>
+                <input
+                  class="field-input"
+                  id="field_dateExecutionDu"
+                  data-cy="dateExecutionDu"
+                  type="datetime-local"
+                  formControlName="dateExecutionDu"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_dateExecutionAu">Exécution au</label>
+                <input
+                  class="field-input"
+                  id="field_dateExecutionAu"
+                  data-cy="dateExecutionAu"
+                  type="datetime-local"
+                  formControlName="dateExecutionAu"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+
+      <!-- ══════════ Panel 2 — Budget & affectation ══════════ -->
+      <ngb-panel id="panel-2">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle type="button" class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon membres"><fa-icon icon="users"></fa-icon></div>
+              <span>Budget &amp; affectation</span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="field-group">
+                <label class="field-label" for="field_budget">Budget</label>
+                <div class="input-wrapper select-wrapper">
+                  <select class="field-input field-select" id="field_budget" data-cy="budget" formControlName="budget">
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option *ngFor="let opt of budgetOptions" [ngValue]="opt">{{ opt }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_coutSession">Coût de la session</label>
+                <input
+                  class="field-input"
+                  id="field_coutSession"
+                  data-cy="coutSession"
+                  type="number"
+                  formControlName="coutSession"
+                  placeholder="0"
+                />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_formateurId">Formateur</label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="users"></fa-icon></span>
+                  <select
+                    class="field-input field-select with-prefix"
+                    id="field_formateurId"
+                    data-cy="formateurId"
+                    formControlName="formateurId"
+                  >
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option *ngFor="let f of formateursCollection; trackBy: trackFormateurById" [ngValue]="f.id">{{ f.nomPrenom }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_societeId">Société</label>
+                <div class="input-wrapper select-wrapper">
+                  <span class="input-prefix"><fa-icon icon="building"></fa-icon></span>
+                  <select class="field-input field-select with-prefix" id="field_societeId" data-cy="societeId" formControlName="societeId">
+                    <option [ngValue]="null" disabled hidden>— Sélectionner —</option>
+                    <option *ngFor="let s of societesCollection; trackBy: trackSocieteById" [ngValue]="s.id">{{ s.raisonSociale }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="field_dateCreation">Date de création</label>
+                <input
+                  class="field-input"
+                  id="field_dateCreation"
+                  data-cy="dateCreation"
+                  type="datetime-local"
+                  formControlName="dateCreation"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+
+              <div class="field-group full-width">
+                <label class="field-label" for="field_additionalInformations">Informations complémentaires</label>
+                <input
+                  class="field-input"
+                  id="field_additionalInformations"
+                  data-cy="additionalInformations"
+                  type="text"
+                  formControlName="additionalInformations"
+                  placeholder="Informations complémentaires"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+  </form>
+</div>

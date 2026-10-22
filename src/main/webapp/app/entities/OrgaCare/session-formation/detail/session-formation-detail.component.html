@@ -1,0 +1,194 @@
+<div class="session-page" *ngIf="sessionFormation">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="calendar-alt"></fa-icon>
+      </div>
+      <div>
+        <h2 class="page-title" data-cy="sessionFormationDetailsHeading">{{ sessionFormation.title || '—' }}</h2>
+        <p class="page-subtitle">Détails de la session de formation</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button
+        *ngIf="canEdit"
+        type="button"
+        class="btn-action btn-primary-action"
+        [routerLink]="['/session-formation', sessionFormation.id, 'edit']"
+      >
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="session-accordion">
+    <!-- ══════════ Général ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionGeneral" (click)="sectionGeneral = !sectionGeneral">
+        <div class="panel-header-content">
+          <div class="panel-icon general"><fa-icon icon="building"></fa-icon></div>
+          <span>Général</span>
+        </div>
+        <fa-icon [icon]="sectionGeneral ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionGeneral">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Titre</span>
+            <div class="readonly-value">
+              <fa-icon icon="tag" class="value-icon"></fa-icon>
+              <span>{{ sessionFormation.title || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Thème</span>
+            <div class="readonly-value">
+              <fa-icon icon="project-diagram" class="value-icon"></fa-icon>
+              <span>{{ themeLabel || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Type de formation</span>
+            <div class="readonly-value">
+              <fa-icon icon="hashtag" class="value-icon"></fa-icon>
+              <span>{{ sessionFormation.typeFormation || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Statut</span>
+            <div class="readonly-value">
+              <span>{{ sessionFormation.statut || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Réglementaire</span>
+            <div class="readonly-value">
+              <span>{{ sessionFormation.reglementaire ? 'Oui' : 'Non' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Planification ══════════ -->
+    <div class="accordion-card">
+      <button
+        type="button"
+        class="accordion-btn"
+        [class.opened]="sectionPlanification"
+        (click)="sectionPlanification = !sectionPlanification"
+      >
+        <div class="panel-header-content">
+          <div class="panel-icon hierarchy"><fa-icon icon="calendar-alt"></fa-icon></div>
+          <span>Planification &amp; exécution</span>
+        </div>
+        <fa-icon [icon]="sectionPlanification ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionPlanification">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Planification du</span>
+            <div class="readonly-value">
+              <span>{{ (sessionFormation.datePlanificationDu | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Planification au</span>
+            <div class="readonly-value">
+              <span>{{ (sessionFormation.datePlanificationAu | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Exécution du</span>
+            <div class="readonly-value">
+              <span>{{ (sessionFormation.dateExecutionDu | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Exécution au</span>
+            <div class="readonly-value">
+              <span>{{ (sessionFormation.dateExecutionAu | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Budget & affectation ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionBudget" (click)="sectionBudget = !sectionBudget">
+        <div class="panel-header-content">
+          <div class="panel-icon membres"><fa-icon icon="users"></fa-icon></div>
+          <span>Budget &amp; affectation</span>
+        </div>
+        <fa-icon [icon]="sectionBudget ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionBudget">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Budget</span>
+            <div class="readonly-value">
+              <span>{{ sessionFormation.budget || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Coût de la session</span>
+            <div class="readonly-value">
+              <span>{{ sessionFormation.coutSession ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Formateur (ID)</span>
+            <div class="readonly-value">
+              <fa-icon icon="users" class="value-icon"></fa-icon>
+              <span>{{ sessionFormation.formateurId ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Société (ID)</span>
+            <div class="readonly-value">
+              <fa-icon icon="building" class="value-icon"></fa-icon>
+              <span>{{ sessionFormation.societeId ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Date de création</span>
+            <div class="readonly-value">
+              <span>{{ (sessionFormation.dateCreation | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group full-width">
+            <span class="field-label">Informations complémentaires</span>
+            <div class="readonly-value">
+              <span>{{ sessionFormation.additionalInformations || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+<div class="formation-page" *ngIf="formation">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="graduation-cap"></fa-icon>
+      </div>
+      <div>
+        <h2 class="page-title" data-cy="formationDetailsHeading">{{ sessionLabel || 'Formation' }}</h2>
+        <p class="page-subtitle">Détails de la formation</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button *ngIf="canEdit" type="button" class="btn-action btn-primary-action" [routerLink]="['/formation', formation.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="formation-accordion">
+    <!-- ══════════ Général ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionGeneral" (click)="sectionGeneral = !sectionGeneral">
+        <div class="panel-header-content">
+          <div class="panel-icon general"><fa-icon icon="building"></fa-icon></div>
+          <span>Général</span>
+        </div>
+        <fa-icon [icon]="sectionGeneral ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionGeneral">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Session</span>
+            <div class="readonly-value">
+              <fa-icon icon="calendar-alt" class="value-icon"></fa-icon>
+              <span>{{ sessionLabel || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Personne (ID)</span>
+            <div class="readonly-value">
+              <fa-icon icon="users" class="value-icon"></fa-icon>
+              <span>{{ formation.personneId ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Statut</span>
+            <div class="readonly-value">
+              <span>{{ formation.statut || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">État</span>
+            <div class="readonly-value">
+              <span>{{ formation.etat || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Note</span>
+            <div class="readonly-value">
+              <fa-icon icon="hashtag" class="value-icon"></fa-icon>
+              <span>{{ formation.note ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group full-width">
+            <span class="field-label">Commentaire</span>
+            <div class="readonly-value">
+              <span>{{ formation.commentaire || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Certificat ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionCertificat" (click)="sectionCertificat = !sectionCertificat">
+        <div class="panel-header-content">
+          <div class="panel-icon hierarchy"><fa-icon icon="calendar-alt"></fa-icon></div>
+          <span>Certificat &amp; notification</span>
+        </div>
+        <fa-icon [icon]="sectionCertificat ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionCertificat">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Date d'obtention</span>
+            <div class="readonly-value">
+              <span>{{ (formation.dateObtentionCertificat | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Date d'expiration</span>
+            <div class="readonly-value">
+              <span>{{ (formation.dateExpirationCertificat | formatMediumDatetime) || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Notification envoyée</span>
+            <div class="readonly-value">
+              <span>{{ formation.notificationEnvoyee ? 'Oui' : 'Non' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

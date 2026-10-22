@@ -1,0 +1,115 @@
+<div class="formateur-page" *ngIf="formateur">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="ti ti-chalkboard"></i>
+      </div>
+      <div>
+        <h2 class="page-title" data-cy="formateurDetailsHeading">{{ formateur.nomPrenom || '—' }}</h2>
+        <p class="page-subtitle">Détails du formateur</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button *ngIf="canEdit" type="button" class="btn-action btn-primary-action" [routerLink]="['/formateur', formateur.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="formateur-accordion">
+    <!-- ══════════ Identité & contact ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionIdentite" (click)="sectionIdentite = !sectionIdentite">
+        <div class="panel-header-content">
+          <div class="panel-icon general"><i class="ti ti-user"></i></div>
+          <span>Identité &amp; contact</span>
+        </div>
+        <fa-icon [icon]="sectionIdentite ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionIdentite">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.nomPrenom">Nom &amp; prénom</span>
+            <div class="readonly-value">
+              <i class="ti ti-user value-icon"></i>
+              <span>{{ formateur.nomPrenom || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.cin">CIN</span>
+            <div class="readonly-value">
+              <i class="ti ti-id value-icon"></i>
+              <span>{{ formateur.cin || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.email">Email</span>
+            <div class="readonly-value">
+              <i class="ti ti-mail value-icon"></i>
+              <span>{{ formateur.email || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.telephone">Téléphone</span>
+            <div class="readonly-value">
+              <i class="ti ti-phone value-icon"></i>
+              <span>{{ formateur.telephone || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Formation ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionFormation" (click)="sectionFormation = !sectionFormation">
+        <div class="panel-header-content">
+          <div class="panel-icon formation"><i class="ti ti-school"></i></div>
+          <span>Formation</span>
+        </div>
+        <fa-icon [icon]="sectionFormation ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionFormation">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label">Thème</span>
+            <div class="readonly-value">
+              <i class="ti ti-school value-icon"></i>
+              <span>{{ themeLabel || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.status">Statut</span>
+            <div class="readonly-value">
+              <i class="ti ti-circle-check value-icon"></i>
+              <span *ngIf="formateur.status">{{ 'orgacaregatewayApp.Etat.' + formateur.status | translate }}</span>
+              <span *ngIf="!formateur.status">—</span>
+            </div>
+          </div>
+
+          <div class="field-group full">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.comments">Commentaires</span>
+            <div class="readonly-value readonly-multiline">
+              <span>{{ formateur.comments || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

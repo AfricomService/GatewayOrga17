@@ -1,0 +1,188 @@
+<div class="session-list-container">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareSessionFormation.home.title">Sessions de formation</h1>
+        <p>Gérez les sessions de formation planifiées</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header-refresh" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
+      </button>
+      <button *ngIf="canEdit" class="btn-header-create" [routerLink]="['/session-formation/new']" title="Nouvelle session">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Empty state ─────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="sessionFormations?.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    </div>
+    <p jhiTranslate="orgacaregatewayApp.orgaCareSessionFormation.home.notFound">Aucune session de formation trouvée</p>
+    <button *ngIf="canEdit" class="btn-empty-create" [routerLink]="['/session-formation/new']">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Créer une session
+    </button>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <div class="table-card" *ngIf="sessionFormations && sessionFormations.length > 0">
+    <table class="session-table" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th jhiSortBy="title">
+            <span>TITRE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="themeId">
+            <span>THÈME</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="typeFormation">
+            <span>TYPE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="datePlanificationDu">
+            <span>PLANIFICATION</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="dateExecutionDu">
+            <span>EXÉCUTION</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="statut">
+            <span>STATUT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="coutSession">
+            <span>COÛT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th class="col-actions" *ngIf="canEdit">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let sessionFormation of sessionFormations; trackBy: trackId"
+          class="session-row"
+          (click)="navigateToEdit(sessionFormation)"
+        >
+          <!-- Titre -->
+          <td class="col-title">
+            <div class="title-wrapper">
+              <div class="title-avatar">
+                {{ (sessionFormation.title ?? '?').charAt(0).toUpperCase() }}
+              </div>
+              <span class="title-text">{{ sessionFormation.title ?? '—' }}</span>
+            </div>
+          </td>
+
+          <!-- Thème -->
+          <td class="col-theme">
+            <span class="theme-badge" *ngIf="getThemeLabel(sessionFormation.themeId)">{{ getThemeLabel(sessionFormation.themeId) }}</span>
+            <span class="text-muted" *ngIf="!getThemeLabel(sessionFormation.themeId)">—</span>
+          </td>
+
+          <!-- Type -->
+          <td class="col-type">
+            <span class="type-badge" *ngIf="sessionFormation.typeFormation">{{ sessionFormation.typeFormation }}</span>
+            <span class="text-muted" *ngIf="!sessionFormation.typeFormation">—</span>
+          </td>
+
+          <!-- Planification -->
+          <td class="col-date">
+            <div *ngIf="sessionFormation.datePlanificationDu" class="date-block">
+              <span>{{ sessionFormation.datePlanificationDu | formatMediumDatetime }}</span>
+              <small *ngIf="sessionFormation.datePlanificationAu"
+                >→ {{ sessionFormation.datePlanificationAu | formatMediumDatetime }}</small
+              >
+            </div>
+            <span class="text-muted" *ngIf="!sessionFormation.datePlanificationDu">—</span>
+          </td>
+
+          <!-- Exécution -->
+          <td class="col-date">
+            <div *ngIf="sessionFormation.dateExecutionDu" class="date-block">
+              <span>{{ sessionFormation.dateExecutionDu | formatMediumDatetime }}</span>
+              <small *ngIf="sessionFormation.dateExecutionAu">→ {{ sessionFormation.dateExecutionAu | formatMediumDatetime }}</small>
+            </div>
+            <span class="text-muted" *ngIf="!sessionFormation.dateExecutionDu">—</span>
+          </td>
+
+          <!-- Statut -->
+          <td class="col-status">
+            <span class="status-badge {{ getStatusClass(sessionFormation.statut) }}" *ngIf="sessionFormation.statut">
+              {{ sessionFormation.statut }}
+            </span>
+            <span class="text-muted" *ngIf="!sessionFormation.statut">—</span>
+          </td>
+
+          <!-- Coût -->
+          <td class="col-cout">
+            <span *ngIf="sessionFormation.coutSession !== undefined && sessionFormation.coutSession !== null">{{
+              sessionFormation.coutSession
+            }}</span>
+            <span class="text-muted" *ngIf="sessionFormation.coutSession === undefined || sessionFormation.coutSession === null">—</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions" *ngIf="canEdit">
+            <div class="action-group">
+              <button type="button" class="btn-action btn-delete" (click)="delete(sessionFormation, $event)" title="Supprimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Pagination ──────────────────────────────────────── -->
+  <div class="pagination-wrapper" *ngIf="sessionFormations && sessionFormations.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

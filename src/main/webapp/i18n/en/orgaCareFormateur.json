@@ -1,0 +1,34 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareFormateur": {
+      "home": {
+        "title": "Formateurs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Formateur",
+        "createOrEditLabel": "Create or edit a Formateur",
+        "notFound": "No Formateurs found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Formateur {{ id }}?"
+      },
+      "detail": {
+        "title": "Formateur"
+      },
+      "id": "ID",
+      "nomPrenom": "Nom Prenom",
+      "cin": "Cin",
+      "email": "Email",
+      "telephone": "Telephone",
+      "status": "Status",
+      "comments": "Comments",
+      "themeId": "Theme Id"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareFormateur": {
+      "created": "A new Formateur is created with identifier {{ param }}",
+      "updated": "A Formateur is updated with identifier {{ param }}",
+      "deleted": "A Formateur is deleted with identifier {{ param }}"
+    }
+  }
+}
