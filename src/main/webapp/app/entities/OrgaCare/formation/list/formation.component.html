@@ -21,17 +21,51 @@
           <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
         </svg>
       </button>
-      <button *ngIf="canEdit" class="btn-header-create" [routerLink]="['/formation/new']" title="Nouvelle formation">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-      </button>
     </div>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
+
+  <!-- ── Recherche ───────────────────────────────────────── -->
+  <div class="filter-bar">
+    <div class="filter-search">
+      <fa-icon icon="search" class="filter-icon"></fa-icon>
+      <input
+        type="text"
+        class="filter-input with-icon"
+        placeholder="Rechercher par titre, nom ou matricule…"
+        [ngModel]="keyword"
+        (ngModelChange)="keyword = $event"
+        (keyup.enter)="search()"
+        data-cy="formationSearch"
+      />
+    </div>
+
+    <select
+      *ngIf="canEdit"
+      class="filter-input filter-select"
+      [ngModel]="selectedPersonneId"
+      (ngModelChange)="selectedPersonneId = $event; search()"
+    >
+      <option [ngValue]="null">Tous les bénéficiaires</option>
+      <option *ngFor="let b of beneficiaireOptions" [ngValue]="b.id">{{ b.name }}</option>
+    </select>
+
+    <select class="filter-input filter-select" [ngModel]="selectedFormateurId" (ngModelChange)="selectedFormateurId = $event; search()">
+      <option [ngValue]="null">Tous les formateurs</option>
+      <option *ngFor="let f of formateurOptions" [ngValue]="f.id">{{ f.name }}</option>
+    </select>
+
+    <button type="button" class="btn-filter btn-filter-primary" (click)="search()">
+      <fa-icon icon="search"></fa-icon>
+      <span>Rechercher</span>
+    </button>
+    <button type="button" class="btn-filter btn-filter-secondary" *ngIf="hasFilters" (click)="resetFilters()">
+      <fa-icon icon="times"></fa-icon>
+      <span>Réinitialiser</span>
+    </button>
+  </div>
 
   <!-- ── Empty state ─────────────────────────────────────── -->
   <div class="empty-state" *ngIf="formations?.length === 0">
@@ -43,13 +77,8 @@
       </svg>
     </div>
     <p jhiTranslate="orgacaregatewayApp.orgaCareFormation.home.notFound">Aucune formation trouvée</p>
-    <button *ngIf="canEdit" class="btn-empty-create" [routerLink]="['/formation/new']">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="12" y1="5" x2="12" y2="19" />
-        <line x1="5" y1="12" x2="19" y2="12" />
-      </svg>
-      Créer une formation
-    </button>
+    <p class="text-muted" *ngIf="!hasFilters">Les formations sont générées automatiquement à partir des sessions de formation.</p>
+    <p class="text-muted" *ngIf="hasFilters">Aucun résultat pour ces critères de recherche.</p>
   </div>
 
   <!-- ── Table ───────────────────────────────────────────── -->
@@ -57,32 +86,14 @@
     <table class="formation-table" aria-describedby="page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th jhiSortBy="sessionId">
-            <span>SESSION</span>
-            <fa-icon icon="sort" class="sort-icon"></fa-icon>
-          </th>
-          <th jhiSortBy="personneId">
-            <span>PERSONNE</span>
-            <fa-icon icon="sort" class="sort-icon"></fa-icon>
-          </th>
+          <th><span>TITRE</span></th>
+          <th><span>FORMATEUR</span></th>
+          <th><span>THÈME</span></th>
+          <th><span>BÉNÉFICIAIRE</span></th>
+          <th><span>DATE PLANIFICATION</span></th>
+          <th><span>DATE EXÉCUTION</span></th>
           <th jhiSortBy="statut">
             <span>STATUT</span>
-            <fa-icon icon="sort" class="sort-icon"></fa-icon>
-          </th>
-          <th jhiSortBy="etat">
-            <span>ÉTAT</span>
-            <fa-icon icon="sort" class="sort-icon"></fa-icon>
-          </th>
-          <th jhiSortBy="note">
-            <span>NOTE</span>
-            <fa-icon icon="sort" class="sort-icon"></fa-icon>
-          </th>
-          <th jhiSortBy="dateObtentionCertificat">
-            <span>CERTIFICAT</span>
-            <fa-icon icon="sort" class="sort-icon"></fa-icon>
-          </th>
-          <th jhiSortBy="notificationEnvoyee">
-            <span>NOTIFICATION</span>
             <fa-icon icon="sort" class="sort-icon"></fa-icon>
           </th>
           <th class="col-actions" *ngIf="canEdit">ACTIONS</th>
@@ -90,20 +101,54 @@
       </thead>
       <tbody>
         <tr *ngFor="let formation of formations; trackBy: trackId" class="formation-row" (click)="navigateToEdit(formation)">
-          <!-- Session -->
+          <!-- Titre -->
           <td class="col-session">
             <div class="session-wrapper">
               <div class="session-avatar">
-                {{ (getSessionLabel(formation.sessionId) ?? '?').charAt(0).toUpperCase() }}
+                {{ (getTitle(formation) ?? '?').charAt(0).toUpperCase() }}
               </div>
-              <span class="session-text">{{ getSessionLabel(formation.sessionId) ?? '—' }}</span>
+              <span class="session-text">{{ getTitle(formation) ?? '—' }}</span>
             </div>
           </td>
 
-          <!-- Personne -->
+          <!-- Formateur -->
+          <td>
+            <span *ngIf="getFormateur(formation)">{{ getFormateur(formation) }}</span>
+            <span class="text-muted" *ngIf="!getFormateur(formation)">—</span>
+          </td>
+
+          <!-- Thème -->
+          <td>
+            <span *ngIf="getTheme(formation)">{{ getTheme(formation) }}</span>
+            <span class="text-muted" *ngIf="!getTheme(formation)">—</span>
+          </td>
+
+          <!-- Bénéficiaire -->
           <td class="col-personne">
-            <span class="personne-badge" *ngIf="formation.personneId">#{{ formation.personneId }}</span>
-            <span class="text-muted" *ngIf="!formation.personneId">—</span>
+            <span class="personne-badge" *ngIf="getBeneficiaire(formation)">{{ getBeneficiaire(formation) }}</span>
+            <span class="text-muted" *ngIf="!getBeneficiaire(formation)">—</span>
+          </td>
+
+          <!-- Date planification -->
+          <td class="col-date">
+            <div *ngIf="getSession(formation)?.datePlanificationDu" class="date-block">
+              <span>{{ getSession(formation)?.datePlanificationDu | formatMediumDate }}</span>
+              <small *ngIf="getSession(formation)?.datePlanificationAu">
+                → {{ getSession(formation)?.datePlanificationAu | formatMediumDate }}
+              </small>
+            </div>
+            <span class="text-muted" *ngIf="!getSession(formation)?.datePlanificationDu">—</span>
+          </td>
+
+          <!-- Date exécution -->
+          <td class="col-date">
+            <div *ngIf="getSession(formation)?.dateExecutionDu" class="date-block">
+              <span>{{ getSession(formation)?.dateExecutionDu | formatMediumDate }}</span>
+              <small *ngIf="getSession(formation)?.dateExecutionAu">
+                → {{ getSession(formation)?.dateExecutionAu | formatMediumDate }}
+              </small>
+            </div>
+            <span class="text-muted" *ngIf="!getSession(formation)?.dateExecutionDu">—</span>
           </td>
 
           <!-- Statut -->
@@ -112,33 +157,6 @@
               {{ formation.statut }}
             </span>
             <span class="text-muted" *ngIf="!formation.statut">—</span>
-          </td>
-
-          <!-- État -->
-          <td class="col-etat">
-            <span class="etat-badge" *ngIf="formation.etat">{{ formation.etat }}</span>
-            <span class="text-muted" *ngIf="!formation.etat">—</span>
-          </td>
-
-          <!-- Note -->
-          <td class="col-note">
-            <span *ngIf="formation.note !== undefined && formation.note !== null">{{ formation.note }}</span>
-            <span class="text-muted" *ngIf="formation.note === undefined || formation.note === null">—</span>
-          </td>
-
-          <!-- Certificat -->
-          <td class="col-date">
-            <div *ngIf="formation.dateObtentionCertificat" class="date-block">
-              <span>{{ formation.dateObtentionCertificat | formatMediumDatetime }}</span>
-              <small *ngIf="formation.dateExpirationCertificat">→ {{ formation.dateExpirationCertificat | formatMediumDatetime }}</small>
-            </div>
-            <span class="text-muted" *ngIf="!formation.dateObtentionCertificat">—</span>
-          </td>
-
-          <!-- Notification -->
-          <td class="col-notif">
-            <span class="notif-badge notif-yes" *ngIf="formation.notificationEnvoyee">Envoyée</span>
-            <span class="notif-badge notif-no" *ngIf="!formation.notificationEnvoyee">Non envoyée</span>
           </td>
 
           <!-- Actions -->

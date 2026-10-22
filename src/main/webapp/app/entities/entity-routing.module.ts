@@ -109,7 +109,7 @@ const ADMIN_RH = ['ROLE_ADMIN', 'ROLE_RH'];
       },
       {
         path: 'formation',
-        data: { authorities: ADMIN_RH, pageTitle: 'orgacaregatewayApp.orgaCareFormation.home.title' },
+        data: { authorities: ADMIN_RH_USER, pageTitle: 'orgacaregatewayApp.orgaCareFormation.home.title' },
         canActivate: [UserRouteAccessService],
         loadChildren: () => import('./OrgaCare/formation/formation.module').then(m => m.OrgaCareFormationModule),
       },

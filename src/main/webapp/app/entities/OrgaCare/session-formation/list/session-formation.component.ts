@@ -12,6 +12,8 @@ import { SessionFormationDeleteDialogComponent } from '../delete/session-formati
 import { AccountService } from 'app/core/auth/account.service';
 import { IThemeFormation } from 'app/entities/OrgaCare/theme-formation/theme-formation.model';
 import { ThemeFormationService } from 'app/entities/OrgaCare/theme-formation/service/theme-formation.service';
+import { IFormateur } from 'app/entities/OrgaCare/formateur/formateur.model';
+import { FormateurService } from 'app/entities/OrgaCare/formateur/service/formateur.service';
 
 @Component({
   selector: 'jhi-session-formation',
@@ -29,12 +31,20 @@ export class SessionFormationComponent implements OnInit {
   ngbPaginationPage = 1;
   canEdit = false;
 
+  // Filtres de recherche
+  keyword = '';
+  selectedFormateurId: number | null = null;
+  selectedStatut: string | null = null;
+  formateurOptions: { id: number; name: string }[] = [];
+  statutOptions: string[] = ['Exécuter', 'Planifier'];
+
   // id du thème → libellé du thème
   themeLabels = new Map<number, string>();
 
   constructor(
     protected sessionFormationService: SessionFormationService,
     protected themeFormationService: ThemeFormationService,
+    protected formateurService: FormateurService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected modalService: NgbModal,
@@ -50,6 +60,7 @@ export class SessionFormationComponent implements OnInit {
         page: pageToLoad - 1,
         size: this.itemsPerPage,
         sort: this.sort(),
+        ...this.buildFilters(),
       })
       .subscribe(
         (res: HttpResponse<ISessionFormation[]>) => {
@@ -63,9 +74,21 @@ export class SessionFormationComponent implements OnInit {
       );
   }
 
+  search(): void {
+    this.loadPage(1);
+  }
+
+  resetFilters(): void {
+    this.keyword = '';
+    this.selectedFormateurId = null;
+    this.selectedStatut = null;
+    this.loadPage(1);
+  }
+
   ngOnInit(): void {
     this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.loadThemes();
+    this.loadFormateurs();
     this.handleNavigation();
   }
 
@@ -78,6 +101,10 @@ export class SessionFormationComponent implements OnInit {
       return null;
     }
     return this.themeLabels.get(themeId) ?? String(themeId);
+  }
+
+  get hasFilters(): boolean {
+    return this.keyword.trim() !== '' || this.selectedFormateurId !== null || this.selectedStatut !== null;
   }
 
   // Clic sur la ligne → édition (ADMIN/RH) ou détail (lecture seule)
@@ -112,6 +139,27 @@ export class SessionFormationComponent implements OnInit {
       default:
         return 'badge-default';
     }
+  }
+
+  protected buildFilters(): { [key: string]: any } {
+    const filters: { [key: string]: any } = {};
+    if (this.keyword.trim() !== '') {
+      filters.keyword = this.keyword.trim();
+    }
+    if (this.selectedFormateurId !== null) {
+      filters.formateurId = this.selectedFormateurId;
+    }
+    if (this.selectedStatut !== null) {
+      filters.statut = this.selectedStatut;
+    }
+    return filters;
+  }
+
+  protected loadFormateurs(): void {
+    // size élevé : l'API des formateurs est paginée (20 par défaut)
+    this.formateurService.query({ size: 1000, sort: ['nomPrenom,asc'] }).subscribe((res: HttpResponse<IFormateur[]>) => {
+      this.formateurOptions = (res.body ?? []).filter(f => f.id !== undefined).map(f => ({ id: f.id!, name: f.nomPrenom ?? String(f.id) }));
+    });
   }
 
   protected loadThemes(): void {

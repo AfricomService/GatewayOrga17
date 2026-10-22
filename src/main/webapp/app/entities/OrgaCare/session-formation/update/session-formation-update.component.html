@@ -260,6 +260,58 @@
                 </div>
               </div>
 
+              <!-- Participants -->
+              <div class="field-group full-width">
+                <label class="field-label">Participants</label>
+                <div class="list-field" [class.disabled]="!hasSociete">
+                  <div class="chips">
+                    <span class="chip" *ngFor="let p of selectedParticipants; trackBy: trackPersonneById">
+                      {{ p.nomPrenom }}
+                      <button type="button" class="chip-remove" (click)="removeParticipant(p.id!)">&times;</button>
+                    </span>
+                    <span class="placeholder" *ngIf="selectedParticipants.length === 0">
+                      {{ hasSociete ? 'Aucun participant sélectionné' : "Sélectionnez d'abord une société" }}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-action btn-secondary-action"
+                    [disabled]="!hasSociete || loadingPersonnes"
+                    (click)="openParticipantsModal()"
+                    data-cy="openParticipantsModal"
+                  >
+                    <fa-icon icon="users"></fa-icon>
+                    <span>Sélectionner</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Chefs de projet -->
+              <div class="field-group full-width">
+                <label class="field-label">Chefs de projet</label>
+                <div class="list-field" [class.disabled]="!hasSociete">
+                  <div class="chips">
+                    <span class="chip" *ngFor="let c of selectedChefs; trackBy: trackPersonneById">
+                      {{ c.nomPrenom }}
+                      <button type="button" class="chip-remove" (click)="removeChef(c.id!)">&times;</button>
+                    </span>
+                    <span class="placeholder" *ngIf="selectedChefs.length === 0">
+                      {{ hasSociete ? 'Aucun chef de projet sélectionné' : "Sélectionnez d'abord une société" }}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-action btn-secondary-action"
+                    [disabled]="!hasSociete || loadingPersonnes"
+                    (click)="openChefsModal()"
+                    data-cy="openChefsModal"
+                  >
+                    <fa-icon icon="users"></fa-icon>
+                    <span>Sélectionner</span>
+                  </button>
+                </div>
+              </div>
+
               <div class="field-group">
                 <label class="field-label" for="field_dateCreation">Date de création</label>
                 <input

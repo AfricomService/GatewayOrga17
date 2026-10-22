@@ -56,6 +56,11 @@ export class FormationService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  // Ids des bénéficiaires ayant au moins une formation
+  findBeneficiaireIds(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.resourceUrl}/beneficiaire-ids`);
+  }
+
   addFormationToCollectionIfMissing(
     formationCollection: IFormation[],
     ...formationsToCheck: (IFormation | null | undefined)[]

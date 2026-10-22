@@ -73,6 +73,10 @@
           <i class="ti ti-users"></i>
           <span>{{ 'sidebar.nav.employes' | translate }}</span>
         </a>
+        <a class="oc-sidebar__item" routerLink="/formation" routerLinkActive="active">
+          <i class="ti ti-certificate"></i>
+          <span>{{ 'sidebar.nav.formations' | translate }}</span>
+        </a>
       </ng-container>
 
       <!-- ══════ RH : ADMIN, RH uniquement (Contrats, Absences) ══════ -->
@@ -96,10 +100,6 @@
         <a class="oc-sidebar__item" routerLink="/session-formation" routerLinkActive="active">
           <i class="ti ti-calendar-event"></i>
           <span>{{ 'sidebar.nav.sessionsFormation' | translate }}</span>
-        </a>
-        <a class="oc-sidebar__item" routerLink="/formation" routerLinkActive="active">
-          <i class="ti ti-certificate"></i>
-          <span>{{ 'sidebar.nav.formations' | translate }}</span>
         </a>
       </ng-container>
 

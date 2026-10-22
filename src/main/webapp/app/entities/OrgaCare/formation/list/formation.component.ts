@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
+import { combineLatest, forkJoin } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IFormation } from '../formation.model';
@@ -12,6 +12,8 @@ import { FormationDeleteDialogComponent } from '../delete/formation-delete-dialo
 import { AccountService } from 'app/core/auth/account.service';
 import { ISessionFormation } from 'app/entities/OrgaCare/session-formation/session-formation.model';
 import { SessionFormationService } from 'app/entities/OrgaCare/session-formation/service/session-formation.service';
+import { ThemeFormationService } from 'app/entities/OrgaCare/theme-formation/service/theme-formation.service';
+import { FormateurService } from 'app/entities/OrgaCare/formateur/service/formateur.service';
 
 @Component({
   selector: 'jhi-formation',
@@ -29,12 +31,24 @@ export class FormationComponent implements OnInit {
   ngbPaginationPage = 1;
   canEdit = false;
 
-  // id de la session → titre de la session
-  sessionLabels = new Map<number, string>();
+  // Filtres de recherche
+  keyword = '';
+  selectedPersonneId: number | null = null;
+  selectedFormateurId: number | null = null;
+  beneficiaireOptions: { id: number; name: string }[] = [];
+  formateurOptions: { id: number; name: string }[] = [];
+
+  // Tables de correspondance id → valeur
+  sessionsById = new Map<number, ISessionFormation>();
+  formateurNames = new Map<number, string>();
+  themeNames = new Map<number, string>();
+  personneNames = new Map<number, string>();
 
   constructor(
     protected formationService: FormationService,
     protected sessionFormationService: SessionFormationService,
+    protected formateurService: FormateurService,
+    protected themeFormationService: ThemeFormationService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected modalService: NgbModal,
@@ -50,6 +64,7 @@ export class FormationComponent implements OnInit {
         page: pageToLoad - 1,
         size: this.itemsPerPage,
         sort: this.sort(),
+        ...this.buildFilters(),
       })
       .subscribe(
         (res: HttpResponse<IFormation[]>) => {
@@ -63,9 +78,24 @@ export class FormationComponent implements OnInit {
       );
   }
 
+  search(): void {
+    this.loadPage(1);
+  }
+
+  resetFilters(): void {
+    this.keyword = '';
+    this.selectedPersonneId = null;
+    this.selectedFormateurId = null;
+    this.loadPage(1);
+  }
+
+  get hasFilters(): boolean {
+    return this.keyword.trim() !== '' || this.selectedPersonneId !== null || this.selectedFormateurId !== null;
+  }
+
   ngOnInit(): void {
     this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
-    this.loadSessions();
+    this.loadReferences();
     this.handleNavigation();
   }
 
@@ -73,16 +103,36 @@ export class FormationComponent implements OnInit {
     return item.id!;
   }
 
-  getSessionLabel(sessionId?: number | null): string | null {
-    if (sessionId === null || sessionId === undefined) {
-      return null;
-    }
-    return this.sessionLabels.get(sessionId) ?? String(sessionId);
+  getSession(formation: IFormation): ISessionFormation | undefined {
+    return formation.sessionId != null ? this.sessionsById.get(formation.sessionId) : undefined;
   }
 
-  // Clic sur la ligne → édition (ADMIN/RH) ou détail (lecture seule)
+  getTitle(formation: IFormation): string | null {
+    const session = this.getSession(formation);
+    if (session) {
+      return session.title ?? null;
+    }
+    return formation.sessionId != null ? String(formation.sessionId) : null;
+  }
+
+  getFormateur(formation: IFormation): string | null {
+    const id = this.getSession(formation)?.formateurId;
+    return id != null ? this.formateurNames.get(id) ?? null : null;
+  }
+
+  getTheme(formation: IFormation): string | null {
+    const id = this.getSession(formation)?.themeId;
+    return id != null ? this.themeNames.get(id) ?? null : null;
+  }
+
+  getBeneficiaire(formation: IFormation): string | null {
+    const id = formation.personneId;
+    return id != null ? this.personneNames.get(id) ?? `#${id}` : null;
+  }
+
+  // Clic sur la ligne → détail (lecture seule)
   navigateToEdit(formation: IFormation): void {
-    this.router.navigate(['/formation', formation.id, this.canEdit ? 'edit' : 'view']);
+    this.router.navigate(['/formation', formation.id, 'view']);
   }
 
   delete(formation: IFormation, event: Event): void {
@@ -99,6 +149,7 @@ export class FormationComponent implements OnInit {
 
   getStatusClass(status: string | undefined | null): string {
     switch (status) {
+      case 'Exécuté':
       case 'ACTIF':
         return 'badge-actif';
       case 'DRAFT':
@@ -114,14 +165,46 @@ export class FormationComponent implements OnInit {
     }
   }
 
-  protected loadSessions(): void {
-    this.sessionFormationService.query().subscribe((res: HttpResponse<ISessionFormation[]>) => {
+  protected loadReferences(): void {
+    // size élevé : ces API sont paginées (20 par défaut)
+    this.sessionFormationService.query({ size: 1000 }).subscribe(res => {
       (res.body ?? []).forEach(s => {
         if (s.id !== undefined) {
-          this.sessionLabels.set(s.id, s.title ?? String(s.id));
+          this.sessionsById.set(s.id, s);
         }
       });
     });
+
+    this.formateurService.query({ size: 1000, sort: ['nomPrenom,asc'] }).subscribe(res => {
+      (res.body ?? []).forEach(f => {
+        if (f.id !== undefined) {
+          this.formateurNames.set(f.id, f.nomPrenom ?? String(f.id));
+        }
+      });
+      this.formateurOptions = Array.from(this.formateurNames.entries()).map(([id, name]) => ({ id, name }));
+    });
+
+    this.themeFormationService.query({ size: 1000 }).subscribe(res => {
+      (res.body ?? []).forEach(t => {
+        if (t.id !== undefined) {
+          this.themeNames.set(t.id, t.theme ?? String(t.id));
+        }
+      });
+    });
+
+    forkJoin([this.sessionFormationService.findAllPersonnes(), this.formationService.findBeneficiaireIds()]).subscribe(
+      ([personnes, beneficiaireIds]) => {
+        personnes.forEach(p => {
+          if (p.id !== undefined) {
+            this.personneNames.set(p.id, p.nomPrenom ?? p.matricule ?? String(p.id));
+          }
+        });
+        // La liste de recherche ne contient que les personnes qui ont une formation
+        this.beneficiaireOptions = beneficiaireIds
+          .map(id => ({ id, name: this.personneNames.get(id) ?? `#${id}` }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+      }
+    );
   }
 
   protected sort(): string[] {
@@ -165,5 +248,19 @@ export class FormationComponent implements OnInit {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
+  }
+
+  protected buildFilters(): { [key: string]: any } {
+    const filters: { [key: string]: any } = {};
+    if (this.keyword.trim() !== '') {
+      filters.keyword = this.keyword.trim();
+    }
+    if (this.selectedPersonneId !== null) {
+      filters.personneId = this.selectedPersonneId;
+    }
+    if (this.selectedFormateurId !== null) {
+      filters.formateurId = this.selectedFormateurId;
+    }
+    return filters;
   }
 }

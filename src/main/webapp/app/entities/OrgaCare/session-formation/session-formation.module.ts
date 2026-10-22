@@ -5,6 +5,7 @@ import { SessionFormationDetailComponent } from './detail/session-formation-deta
 import { SessionFormationUpdateComponent } from './update/session-formation-update.component';
 import { SessionFormationDeleteDialogComponent } from './delete/session-formation-delete-dialog.component';
 import { SessionFormationRoutingModule } from './route/session-formation-routing.module';
+import { PersonneSelectionModalComponent } from './personne-selection-modal/personne-selection-modal.component';
 
 @NgModule({
   imports: [SharedModule, SessionFormationRoutingModule],
@@ -13,7 +14,8 @@ import { SessionFormationRoutingModule } from './route/session-formation-routing
     SessionFormationDetailComponent,
     SessionFormationUpdateComponent,
     SessionFormationDeleteDialogComponent,
+    PersonneSelectionModalComponent,
   ],
-  entryComponents: [SessionFormationDeleteDialogComponent],
+  entryComponents: [SessionFormationDeleteDialogComponent, PersonneSelectionModalComponent],
 })
 export class OrgaCareSessionFormationModule {}

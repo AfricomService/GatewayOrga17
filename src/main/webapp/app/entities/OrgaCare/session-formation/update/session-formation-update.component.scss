@@ -378,3 +378,65 @@ $transition: all 0.2s ease;
     padding: 1.25rem 1rem;
   }
 }
+// ── Champs liste (participants / chefs) ──────────────
+.hint-text {
+  font-size: 0.85rem;
+  color: $text-muted;
+  margin-bottom: 1rem;
+}
+
+.list-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: $bg-input;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  min-height: 48px;
+
+  &.disabled {
+    opacity: 0.6;
+  }
+
+  .chips {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    max-height: 140px;
+    overflow-y: auto;
+  }
+
+  .placeholder {
+    color: $text-muted;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.2rem;
+  }
+
+  .btn-action {
+    flex-shrink: 0;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  background: $hierarchy-light;
+  color: $hierarchy;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  .chip-remove {
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+  }
+}

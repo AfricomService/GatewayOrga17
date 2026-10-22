@@ -34,6 +34,41 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
+  <!-- ── Recherche ───────────────────────────────────────── -->
+  <div class="filter-bar">
+    <div class="filter-search">
+      <fa-icon icon="search" class="filter-icon"></fa-icon>
+      <input
+        type="text"
+        class="filter-input with-icon"
+        placeholder="Rechercher par titre…"
+        [ngModel]="keyword"
+        (ngModelChange)="keyword = $event"
+        (keyup.enter)="search()"
+        data-cy="sessionSearch"
+      />
+    </div>
+
+    <select class="filter-input filter-select" [ngModel]="selectedFormateurId" (ngModelChange)="selectedFormateurId = $event; search()">
+      <option [ngValue]="null">Tous les formateurs</option>
+      <option *ngFor="let f of formateurOptions" [ngValue]="f.id">{{ f.name }}</option>
+    </select>
+
+    <select class="filter-input filter-select" [ngModel]="selectedStatut" (ngModelChange)="selectedStatut = $event; search()">
+      <option [ngValue]="null">Tous les statuts</option>
+      <option *ngFor="let s of statutOptions" [ngValue]="s">{{ s }}</option>
+    </select>
+
+    <button type="button" class="btn-filter btn-filter-primary" (click)="search()">
+      <fa-icon icon="search"></fa-icon>
+      <span>Rechercher</span>
+    </button>
+    <button type="button" class="btn-filter btn-filter-secondary" *ngIf="hasFilters" (click)="resetFilters()">
+      <fa-icon icon="times"></fa-icon>
+      <span>Réinitialiser</span>
+    </button>
+  </div>
+
   <!-- ── Empty state ─────────────────────────────────────── -->
   <div class="empty-state" *ngIf="sessionFormations?.length === 0">
     <div class="empty-icon">
@@ -45,7 +80,8 @@
       </svg>
     </div>
     <p jhiTranslate="orgacaregatewayApp.orgaCareSessionFormation.home.notFound">Aucune session de formation trouvée</p>
-    <button *ngIf="canEdit" class="btn-empty-create" [routerLink]="['/session-formation/new']">
+    <p class="text-muted" *ngIf="hasFilters">Aucun résultat pour ces critères de recherche.</p>
+    <button *ngIf="canEdit && !hasFilters" class="btn-empty-create" [routerLink]="['/session-formation/new']">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <line x1="12" y1="5" x2="12" y2="19" />
         <line x1="5" y1="12" x2="19" y2="12" />
