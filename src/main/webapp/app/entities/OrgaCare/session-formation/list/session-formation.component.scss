@@ -267,8 +267,7 @@ $inexecution-border: #93c5fd;
 }
 
 .filter-select {
-  flex: 1 1 200px;
-  width: auto;
+  width: 100%;
   cursor: pointer;
 }
 
@@ -304,6 +303,215 @@ $inexecution-border: #93c5fd;
   &:hover {
     border-color: $primary;
     background: $bg;
+  }
+}
+
+// =============================================
+// Recherche + filtres avancés
+// =============================================
+.search-wrap {
+  margin-bottom: 20px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 14px;
+  box-shadow: $shadow-card;
+  padding: 6px;
+}
+
+.btn-search-square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: $primary;
+  color: #fff;
+  cursor: pointer;
+  transition: $transition;
+  box-shadow: 0 4px 12px rgba($primary, 0.3);
+
+  &:hover {
+    background: $primary-light;
+    transform: translateY(-1px);
+  }
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: $text-dark;
+
+  &::placeholder {
+    color: $text-muted;
+  }
+}
+
+.btn-toggle-filters {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: $primary;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    background: #e0e7ff;
+  }
+
+  &.active {
+    background: $primary;
+    color: #fff;
+  }
+
+  .filter-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: $danger;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.advanced-filters {
+  margin-top: 14px;
+  background: #f8fafc;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  padding: 18px 22px 22px;
+  animation: filtersFadeIn 0.2s ease;
+}
+
+.advanced-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: $text-dark;
+}
+
+.advanced-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+
+  @media (min-width: 1100px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $text-muted;
+}
+
+.advanced-filters .filter-input {
+  height: 42px;
+  line-height: 1.2;
+  appearance: auto;
+}
+
+.advanced-filters select.filter-input {
+  padding-right: 2rem;
+}
+
+.date-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+
+  .filter-input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .range-sep {
+    color: $text-muted;
+    font-size: 0.8rem;
+  }
+
+  @media (min-width: 1100px) and (max-width: 1400px) {
+    grid-template-columns: 1fr;
+
+    .range-sep {
+      display: none;
+    }
+  }
+}
+.advanced-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-filter-danger {
+  background: #fff;
+  color: $danger;
+  border-color: lighten($danger, 30%);
+
+  &:hover {
+    background: $danger-light;
+    border-color: $danger;
+  }
+}
+
+@keyframes filtersFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -526,6 +734,18 @@ $inexecution-border: #93c5fd;
   background: $inexecution-bg;
   color: $inexecution-color;
   border-color: $inexecution-border;
+}
+
+.badge-planifie {
+  background: $inexecution-bg;
+  color: $inexecution-color;
+  border-color: $inexecution-border;
+}
+
+.badge-execute {
+  background: $actif-bg;
+  color: $actif-color;
+  border-color: $actif-border;
 }
 
 .badge-default {

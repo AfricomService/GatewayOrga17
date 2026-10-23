@@ -69,6 +69,15 @@
               <span>{{ formateur.telephone || '—' }}</span>
             </div>
           </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.status">Statut</span>
+            <div class="readonly-value">
+              <i class="ti ti-circle-check value-icon"></i>
+              <span *ngIf="formateur.status">{{ 'orgacaregatewayApp.Etat.' + formateur.status | translate }}</span>
+              <span *ngIf="!formateur.status">—</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -90,15 +99,6 @@
             <div class="readonly-value">
               <i class="ti ti-school value-icon"></i>
               <span>{{ themeLabel || '—' }}</span>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.status">Statut</span>
-            <div class="readonly-value">
-              <i class="ti ti-circle-check value-icon"></i>
-              <span *ngIf="formateur.status">{{ 'orgacaregatewayApp.Etat.' + formateur.status | translate }}</span>
-              <span *ngIf="!formateur.status">—</span>
             </div>
           </div>
 

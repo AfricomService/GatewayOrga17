@@ -40,6 +40,12 @@ export class SessionFormationService {
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
 
+  executer(id: number): Observable<EntityResponseType> {
+    return this.http
+      .put<ISessionFormation>(`${this.resourceUrl}/${id}/executer`, null, { observe: 'response' })
+      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+  }
+
   partialUpdate(sessionFormation: ISessionFormation): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(sessionFormation);
     return this.http

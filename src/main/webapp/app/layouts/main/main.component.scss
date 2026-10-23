@@ -62,3 +62,41 @@
 .oc-sidebar.collapsed .oc-sidebar__lang {
   display: none;
 }
+
+// ── Titres de section cliquables ─────────────────────
+.oc-sidebar__section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: left;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  i {
+    font-size: 13px;
+    transition: transform 0.2s ease;
+    transform: rotate(-90deg); // fermé : flèche vers la droite
+  }
+
+  &.open i {
+    transform: rotate(0deg); // ouvert : flèche vers le bas
+  }
+}
+
+// En mode collapsed : tous les liens sont visibles, les titres sont masqués
+.oc-sidebar.collapsed .oc-sidebar__section-toggle {
+  display: none;
+}

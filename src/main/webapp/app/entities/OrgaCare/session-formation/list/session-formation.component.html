@@ -35,38 +35,140 @@
   <jhi-alert></jhi-alert>
 
   <!-- ── Recherche ───────────────────────────────────────── -->
-  <div class="filter-bar">
-    <div class="filter-search">
-      <fa-icon icon="search" class="filter-icon"></fa-icon>
-      <input
-        type="text"
-        class="filter-input with-icon"
-        placeholder="Rechercher par titre…"
-        [ngModel]="keyword"
-        (ngModelChange)="keyword = $event"
-        (keyup.enter)="search()"
-        data-cy="sessionSearch"
-      />
+  <div class="search-wrap">
+    <div class="search-row">
+      <div class="search-box">
+        <button type="button" class="btn-search-square" (click)="search()" title="Rechercher" data-cy="sessionSearchButton">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Rechercher une session (titre)"
+          [ngModel]="keyword"
+          (ngModelChange)="keyword = $event"
+          (keyup.enter)="search()"
+          data-cy="sessionSearch"
+        />
+        <button
+          type="button"
+          class="btn-toggle-filters"
+          [class.active]="showAdvancedFilters"
+          (click)="toggleAdvancedFilters()"
+          title="Filtres avancés"
+          data-cy="toggleAdvancedFilters"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <circle cx="9" cy="6" r="2" fill="currentColor" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <circle cx="15" cy="12" r="2" fill="currentColor" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+            <circle cx="9" cy="18" r="2" fill="currentColor" />
+          </svg>
+          <span class="filter-count" *ngIf="activeAdvancedFiltersCount > 0">{{ activeAdvancedFiltersCount }}</span>
+        </button>
+      </div>
     </div>
 
-    <select class="filter-input filter-select" [ngModel]="selectedFormateurId" (ngModelChange)="selectedFormateurId = $event; search()">
-      <option [ngValue]="null">Tous les formateurs</option>
-      <option *ngFor="let f of formateurOptions" [ngValue]="f.id">{{ f.name }}</option>
-    </select>
+    <!-- Panneau des filtres avancés -->
+    <div class="advanced-filters" *ngIf="showAdvancedFilters">
+      <div class="advanced-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+        </svg>
+        <span>FILTRES AVANCÉS</span>
+      </div>
 
-    <select class="filter-input filter-select" [ngModel]="selectedStatut" (ngModelChange)="selectedStatut = $event; search()">
-      <option [ngValue]="null">Tous les statuts</option>
-      <option *ngFor="let s of statutOptions" [ngValue]="s">{{ s }}</option>
-    </select>
+      <div class="advanced-grid">
+        <div class="filter-group">
+          <label class="filter-label" for="filter_formateur">Formateur</label>
+          <select
+            class="filter-input filter-select"
+            id="filter_formateur"
+            [ngModel]="selectedFormateurId"
+            (ngModelChange)="selectedFormateurId = $event"
+          >
+            <option [ngValue]="null">Tous les formateurs</option>
+            <option *ngFor="let f of formateurOptions" [ngValue]="f.id">{{ f.name }}</option>
+          </select>
+        </div>
 
-    <button type="button" class="btn-filter btn-filter-primary" (click)="search()">
-      <fa-icon icon="search"></fa-icon>
-      <span>Rechercher</span>
-    </button>
-    <button type="button" class="btn-filter btn-filter-secondary" *ngIf="hasFilters" (click)="resetFilters()">
-      <fa-icon icon="times"></fa-icon>
-      <span>Réinitialiser</span>
-    </button>
+        <div class="filter-group">
+          <label class="filter-label" for="filter_statut">Statut</label>
+          <select
+            class="filter-input filter-select"
+            id="filter_statut"
+            [ngModel]="selectedStatut"
+            (ngModelChange)="selectedStatut = $event"
+          >
+            <option [ngValue]="null">Tous les statuts</option>
+            <option *ngFor="let s of statutOptions" [ngValue]="s">{{ s }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Date de planification</span>
+          <div class="date-range">
+            <input
+              type="date"
+              class="filter-input"
+              [ngModel]="datePlanificationDebut"
+              (ngModelChange)="datePlanificationDebut = $event"
+              data-cy="datePlanificationDebut"
+            />
+            <span class="range-sep">à</span>
+            <input
+              type="date"
+              class="filter-input"
+              [ngModel]="datePlanificationFin"
+              (ngModelChange)="datePlanificationFin = $event"
+              data-cy="datePlanificationFin"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Date d'exécution</span>
+          <div class="date-range">
+            <input
+              type="date"
+              class="filter-input"
+              [ngModel]="dateExecutionDebut"
+              (ngModelChange)="dateExecutionDebut = $event"
+              data-cy="dateExecutionDebut"
+            />
+            <span class="range-sep">à</span>
+            <input
+              type="date"
+              class="filter-input"
+              [ngModel]="dateExecutionFin"
+              (ngModelChange)="dateExecutionFin = $event"
+              data-cy="dateExecutionFin"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="advanced-actions">
+        <button type="button" class="btn-filter btn-filter-primary" (click)="search()" data-cy="applyFilters">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span>Appliquer les filtres</span>
+        </button>
+        <button type="button" class="btn-filter btn-filter-danger" (click)="resetFilters()" data-cy="resetFilters">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+          <span>Réinitialiser</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- ── Empty state ─────────────────────────────────────── -->

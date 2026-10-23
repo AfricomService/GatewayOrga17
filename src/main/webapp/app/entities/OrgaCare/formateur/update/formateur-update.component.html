@@ -134,6 +134,23 @@
                 />
               </div>
             </div>
+
+            <!-- Statut -->
+            <div class="field-group">
+              <label class="field-label" for="field_status" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.status">Statut</label>
+              <div class="input-wrapper select-wrapper">
+                <span class="input-prefix"><i class="ti ti-circle-check"></i></span>
+                <select
+                  class="field-input field-select with-prefix"
+                  id="field_status"
+                  data-cy="status"
+                  name="status"
+                  formControlName="status"
+                >
+                  <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -166,23 +183,6 @@
                   <option *ngFor="let themeOption of themesCollection; trackBy: trackThemeById" [ngValue]="themeOption.id">
                     {{ themeOption.theme }}
                   </option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Statut -->
-            <div class="field-group">
-              <label class="field-label" for="field_status" jhiTranslate="orgacaregatewayApp.orgaCareFormateur.status">Statut</label>
-              <div class="input-wrapper select-wrapper">
-                <span class="input-prefix"><i class="ti ti-circle-check"></i></span>
-                <select
-                  class="field-input field-select with-prefix"
-                  id="field_status"
-                  data-cy="status"
-                  name="status"
-                  formControlName="status"
-                >
-                  <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
                 </select>
               </div>
             </div>

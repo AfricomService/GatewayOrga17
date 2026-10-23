@@ -122,6 +122,17 @@ $transition: all 0.2s ease;
   }
 }
 
+.btn-success-action {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  border-color: #16a34a;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
 .btn-secondary-action {
   background: #fff;
   color: $primary;

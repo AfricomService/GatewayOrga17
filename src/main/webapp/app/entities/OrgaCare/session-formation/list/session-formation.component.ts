@@ -35,8 +35,13 @@ export class SessionFormationComponent implements OnInit {
   keyword = '';
   selectedFormateurId: number | null = null;
   selectedStatut: string | null = null;
+  showAdvancedFilters = false;
+  datePlanificationDebut = '';
+  datePlanificationFin = '';
+  dateExecutionDebut = '';
+  dateExecutionFin = '';
   formateurOptions: { id: number; name: string }[] = [];
-  statutOptions: string[] = ['Exécuter', 'Planifier'];
+  statutOptions: string[] = ['Planifié', 'Exécuté'];
 
   // id du thème → libellé du thème
   themeLabels = new Map<number, string>();
@@ -82,7 +87,15 @@ export class SessionFormationComponent implements OnInit {
     this.keyword = '';
     this.selectedFormateurId = null;
     this.selectedStatut = null;
+    this.datePlanificationDebut = '';
+    this.datePlanificationFin = '';
+    this.dateExecutionDebut = '';
+    this.dateExecutionFin = '';
     this.loadPage(1);
+  }
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
   ngOnInit(): void {
@@ -104,7 +117,19 @@ export class SessionFormationComponent implements OnInit {
   }
 
   get hasFilters(): boolean {
-    return this.keyword.trim() !== '' || this.selectedFormateurId !== null || this.selectedStatut !== null;
+    return this.keyword.trim() !== '' || this.activeAdvancedFiltersCount > 0;
+  }
+
+  // Nombre de filtres avancés actifs (pastille sur le bouton)
+  get activeAdvancedFiltersCount(): number {
+    return [
+      this.selectedFormateurId !== null,
+      this.selectedStatut !== null,
+      this.datePlanificationDebut !== '',
+      this.datePlanificationFin !== '',
+      this.dateExecutionDebut !== '',
+      this.dateExecutionFin !== '',
+    ].filter(Boolean).length;
   }
 
   // Clic sur la ligne → édition (ADMIN/RH) ou détail (lecture seule)
@@ -126,6 +151,10 @@ export class SessionFormationComponent implements OnInit {
 
   getStatusClass(status: string | undefined | null): string {
     switch (status) {
+      case 'Planifié':
+        return 'badge-planifie';
+      case 'Exécuté':
+        return 'badge-execute';
       case 'ACTIF':
         return 'badge-actif';
       case 'DRAFT':
@@ -151,6 +180,18 @@ export class SessionFormationComponent implements OnInit {
     }
     if (this.selectedStatut !== null) {
       filters.statut = this.selectedStatut;
+    }
+    if (this.datePlanificationDebut) {
+      filters.datePlanificationDebut = this.datePlanificationDebut;
+    }
+    if (this.datePlanificationFin) {
+      filters.datePlanificationFin = this.datePlanificationFin;
+    }
+    if (this.dateExecutionDebut) {
+      filters.dateExecutionDebut = this.dateExecutionDebut;
+    }
+    if (this.dateExecutionFin) {
+      filters.dateExecutionFin = this.dateExecutionFin;
     }
     return filters;
   }

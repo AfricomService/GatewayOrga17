@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { finalize, switchMap } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPersonne } from 'app/entities/OrgaCare/personne/personne.model';
@@ -51,8 +51,10 @@ export class SessionFormationUpdateComponent implements OnInit {
 
   // Listes de valeurs fixes
   typeFormationOptions: string[] = ['Inter', 'Intra'];
-  statutOptions: string[] = ['Exécuter', 'Planifier'];
   budgetOptions: string[] = ['TFP', 'Suivant réglementaire'];
+
+  // Statut courant (lecture seule, géré par le backend)
+  statut: string | null = null;
 
   editForm = this.fb.group({
     id: [],
@@ -65,7 +67,6 @@ export class SessionFormationUpdateComponent implements OnInit {
     typeFormation: [],
     budget: [],
     coutSession: [],
-    statut: [],
     additionalInformations: [],
     dateCreation: [],
     themeId: [],
@@ -89,6 +90,14 @@ export class SessionFormationUpdateComponent implements OnInit {
 
   get hasSociete(): boolean {
     return !!this.editForm.get('societeId')!.value;
+  }
+
+  get isEditMode(): boolean {
+    return this.editForm.get('id')!.value != null;
+  }
+
+  get canExecute(): boolean {
+    return this.isEditMode && this.statut !== 'Exécuté';
   }
 
   ngOnInit(): void {
@@ -115,7 +124,11 @@ export class SessionFormationUpdateComponent implements OnInit {
     window.history.back();
   }
 
-  save(): void {
+  executer(): void {
+    this.save(true);
+  }
+
+  save(executer = false): void {
     this.isSaving = true;
     const sessionFormation = this.createFromForm();
     const save$ =
@@ -130,7 +143,13 @@ export class SessionFormationUpdateComponent implements OnInit {
           return forkJoin([
             this.sessionFormationService.saveParticipants(sessionId, this.editForm.get('participantIds')!.value ?? []),
             this.sessionFormationService.saveChefs(sessionId, this.editForm.get('chefProjetIds')!.value ?? []),
-          ]).pipe(switchMap(() => this.sessionFormationService.syncFormations(sessionId)));
+          ]).pipe(
+            switchMap(() => (executer ? this.sessionFormationService.executer(sessionId) : of(null))),
+            // Les formations ne sont générées qu'à l'exécution (ou si la session est déjà exécutée)
+            switchMap(() =>
+              executer || this.statut === 'Exécuté' ? this.sessionFormationService.syncFormations(sessionId) : of(undefined)
+            )
+          );
         }),
         finalize(() => this.onSaveFinalize())
       )
@@ -284,13 +303,14 @@ export class SessionFormationUpdateComponent implements OnInit {
       typeFormation: sessionFormation.typeFormation ?? null,
       budget: sessionFormation.budget ?? null,
       coutSession: sessionFormation.coutSession,
-      statut: sessionFormation.statut ?? null,
       additionalInformations: sessionFormation.additionalInformations,
       dateCreation: sessionFormation.dateCreation ? sessionFormation.dateCreation.format(DATE_TIME_FORMAT) : null,
       themeId: sessionFormation.themeId ?? null,
       formateurId: sessionFormation.formateurId ?? null,
       societeId: sessionFormation.societeId ?? null,
     });
+
+    this.statut = sessionFormation.statut ?? null;
 
     // Chargement des personnes de la société + des sélections existantes (mode édition)
     this.currentSocieteId = sessionFormation.societeId ?? null;
@@ -328,7 +348,6 @@ export class SessionFormationUpdateComponent implements OnInit {
       typeFormation: this.editForm.get(['typeFormation'])!.value,
       budget: this.editForm.get(['budget'])!.value,
       coutSession: this.editForm.get(['coutSession'])!.value,
-      statut: this.editForm.get(['statut'])!.value,
       additionalInformations: this.editForm.get(['additionalInformations'])!.value,
       dateCreation: this.editForm.get(['dateCreation'])!.value
         ? dayjs(this.editForm.get(['dateCreation'])!.value, DATE_TIME_FORMAT)
