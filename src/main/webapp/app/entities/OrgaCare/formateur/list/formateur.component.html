@@ -1,0 +1,199 @@
+<div class="formateur-list-container">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+          <circle cx="12" cy="9" r="2" />
+          <path d="M8.5 14c.6-1.5 2-2 3.5-2s2.9.5 3.5 2" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareFormateur.home.title">Formateurs</h1>
+        <p>Gérez les formateurs internes et externes</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header-refresh" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
+      </button>
+      <button *ngIf="canEdit" class="btn-header-create" [routerLink]="['/formateur/new']" title="Nouveau formateur">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Recherche & filtre ──────────────────────────────── -->
+  <div class="filters-bar">
+    <div class="search-bar">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        #searchInput
+        type="text"
+        class="search-input"
+        placeholder="Rechercher par nom, CIN, email, téléphone ou commentaire…"
+        (input)="onSearchChange(searchInput.value)"
+      />
+      <button type="button" class="search-clear" *ngIf="searchInput.value" (click)="clearSearch(searchInput)" title="Effacer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <select class="filter-select" (change)="onStatusChange($any($event.target).value)">
+      <option value="">Tous les statuts</option>
+      <option value="ACTIF">Actif</option>
+      <option value="INACTIF">Inactif</option>
+    </select>
+  </div>
+
+  <!-- ── Empty state ─────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="formateurs?.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <rect x="2" y="3" width="20" height="14" rx="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+        <circle cx="12" cy="9" r="2" />
+        <path d="M8.5 14c.6-1.5 2-2 3.5-2s2.9.5 3.5 2" />
+      </svg>
+    </div>
+    <p jhiTranslate="orgacaregatewayApp.orgaCareFormateur.home.notFound">Aucun formateur trouvé</p>
+    <button *ngIf="canEdit && !searchTerm && !statusFilter" class="btn-empty-create" [routerLink]="['/formateur/new']">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Créer un formateur
+    </button>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <div class="table-card" *ngIf="formateurs && formateurs.length > 0">
+    <table class="formateur-table" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th jhiSortBy="nomPrenom">
+            <span>NOM &amp; PRÉNOM</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="cin" class="col-hide-sm">
+            <span>CIN</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="email" class="col-hide-sm">
+            <span>EMAIL</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="telephone" class="col-hide-sm">
+            <span>TÉLÉPHONE</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="themeId">
+            <span>THÈME</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th jhiSortBy="status">
+            <span>STATUT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th class="col-actions" *ngIf="canEdit">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let formateur of formateurs; trackBy: trackId" class="formateur-row" (click)="navigateToEdit(formateur)">
+          <!-- Nom & prénom -->
+          <td class="col-nom">
+            <div class="nom-wrapper">
+              <div class="nom-avatar">
+                {{ (formateur.nomPrenom ?? '?').charAt(0).toUpperCase() }}
+              </div>
+              <span class="nom-text">{{ formateur.nomPrenom ?? '—' }}</span>
+            </div>
+          </td>
+
+          <!-- CIN -->
+          <td class="col-hide-sm">
+            <span class="code-badge" *ngIf="formateur.cin">{{ formateur.cin }}</span>
+            <span class="text-muted" *ngIf="!formateur.cin">—</span>
+          </td>
+
+          <!-- Email -->
+          <td class="col-email col-hide-sm">
+            <span *ngIf="formateur.email">{{ formateur.email }}</span>
+            <span class="text-muted" *ngIf="!formateur.email">—</span>
+          </td>
+
+          <!-- Téléphone -->
+          <td class="col-hide-sm">
+            <span *ngIf="formateur.telephone">{{ formateur.telephone }}</span>
+            <span class="text-muted" *ngIf="!formateur.telephone">—</span>
+          </td>
+
+          <!-- Thème -->
+          <td class="col-theme">
+            <span class="theme-badge" *ngIf="getThemeLabel(formateur.themeId)">{{ getThemeLabel(formateur.themeId) }}</span>
+            <span class="text-muted" *ngIf="!getThemeLabel(formateur.themeId)">—</span>
+          </td>
+
+          <!-- Statut -->
+          <td class="col-status">
+            <span
+              class="status-badge {{ getStatusClass(formateur.status) }}"
+              *ngIf="formateur.status"
+              jhiTranslate="{{ 'orgacaregatewayApp.Etat.' + formateur.status }}"
+            >
+              {{ formateur.status }}
+            </span>
+            <span class="text-muted" *ngIf="!formateur.status">—</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions" *ngIf="canEdit">
+            <div class="action-group">
+              <button type="button" class="btn-action btn-delete" (click)="delete(formateur, $event)" title="Supprimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Pagination ──────────────────────────────────────── -->
+  <div class="pagination-wrapper" *ngIf="formateurs && formateurs.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

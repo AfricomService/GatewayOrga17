@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IContrat } from '../contrat.model';
 
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
+import { AccountService } from 'app/core/auth/account.service';
 import { ContratService } from '../service/contrat.service';
 import { ContratDeleteDialogComponent } from '../delete/contrat-delete-dialog.component';
 
@@ -25,11 +26,15 @@ export class ContratComponent implements OnInit {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
+  // true si l'utilisateur a ROLE_ADMIN ou ROLE_RH
+  canEdit = false;
+
   constructor(
     protected contratService: ContratService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -55,6 +60,7 @@ export class ContratComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -62,11 +68,18 @@ export class ContratComponent implements OnInit {
     return item.id!;
   }
 
-  navigateToEdit(contrat: IContrat): void {
-    this.router.navigate(['/contrat', contrat.id, 'edit']);
+  // Un seul clic : édition si ADMIN/RH, sinon consultation (lecture seule)
+  openContrat(contrat: IContrat): void {
+    if (contrat.id === undefined) {
+      return;
+    }
+    this.router.navigate(['/contrat', contrat.id, this.canEdit ? 'edit' : 'view']);
   }
 
   delete(contrat: IContrat): void {
+    if (!this.canEdit) {
+      return;
+    }
     const modalRef = this.modalService.open(ContratDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.contrat = contrat;
     // unsubscribe not needed because closed completes on modal close

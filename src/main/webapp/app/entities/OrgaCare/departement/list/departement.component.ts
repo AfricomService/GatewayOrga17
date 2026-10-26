@@ -9,6 +9,7 @@ import { IDepartement } from '../departement.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { DepartementService } from '../service/departement.service';
 import { DepartementDeleteDialogComponent } from '../delete/departement-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-departement',
@@ -24,12 +25,14 @@ export class DepartementComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected departementService: DepartementService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -55,6 +58,7 @@ export class DepartementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -62,9 +66,9 @@ export class DepartementComponent implements OnInit {
     return item.id!;
   }
 
-  // Double-click → navigate to edit
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
   navigateToEdit(departement: IDepartement): void {
-    this.router.navigate(['/departement', departement.id, 'edit']);
+    this.router.navigate(['/departement', departement.id, this.canEdit ? 'edit' : 'view']);
   }
 
   delete(departement: IDepartement, event: Event): void {

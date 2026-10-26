@@ -1,0 +1,123 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-piece-jointe-heading"
+        data-cy="PieceJointeCreateUpdateHeading"
+        jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.home.createOrEditLabel"
+      >
+        Create or edit a Piece Jointe
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.nomFichier" for="field_nomFichier"
+            >Nom Fichier</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="nomFichier"
+            id="field_nomFichier"
+            data-cy="nomFichier"
+            formControlName="nomFichier"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.type" for="field_type">Type</label>
+          <input type="text" class="form-control" name="type" id="field_type" data-cy="type" formControlName="type" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.fichierURL" for="field_fichierURL"
+            >Fichier URL</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="fichierURL"
+            id="field_fichierURL"
+            data-cy="fichierURL"
+            formControlName="fichierURL"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.dateUpload" for="field_dateUpload"
+            >Date Upload</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_dateUpload"
+              data-cy="dateUpload"
+              type="datetime-local"
+              class="form-control"
+              name="dateUpload"
+              formControlName="dateUpload"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.formateurId" for="field_formateurId"
+            >Formateur Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="formateurId"
+            id="field_formateurId"
+            data-cy="formateurId"
+            formControlName="formateurId"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.sessionId" for="field_sessionId"
+            >Session Id</label
+          >
+          <input type="number" class="form-control" name="sessionId" id="field_sessionId" data-cy="sessionId" formControlName="sessionId" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.formationId" for="field_formationId"
+            >Formation Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="formationId"
+            id="field_formationId"
+            data-cy="formationId"
+            formControlName="formationId"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

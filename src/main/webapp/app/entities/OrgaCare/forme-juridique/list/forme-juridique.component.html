@@ -1,101 +1,136 @@
-<div>
-  <h2 id="page-heading" data-cy="FormeJuridiqueHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.title">Forme Juridiques</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.refreshListLabel">Refresh List</span>
-      </button>
-
+<div class="fj-list-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="balance-scale"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1 id="page-heading" data-cy="FormeJuridiqueHeading" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.title">
+          Formes juridiques
+        </h1>
+        <p>Gérez et consultez la liste des formes juridiques</p>
+      </div>
+    </div>
+    <div class="header-actions">
       <button
+        class="btn-header-secondary"
+        (click)="loadPage()"
+        [disabled]="isLoading"
+        title="{{ 'orgacaregatewayApp.orgaCareFormeJuridique.home.refreshListLabel' | translate }}"
+      >
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+      </button>
+      <button
+        *ngIf="canEdit"
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-forme-juridique"
+        class="btn-header-primary"
         [routerLink]="['/forme-juridique/new']"
+        title="{{ 'orgacaregatewayApp.orgaCareFormeJuridique.home.createLabel' | translate }}"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.createLabel"> Create a new Forme Juridique </span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
-
   <jhi-alert></jhi-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="formeJuridiques?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.notFound">No formeJuridiques found</span>
+  <!-- Empty State -->
+  <div class="empty-state" id="no-result" *ngIf="!isLoading && formeJuridiques?.length === 0">
+    <div class="empty-icon">⚖️</div>
+    <h3 jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.notFound">Aucune forme juridique trouvée</h3>
+    <ng-container *ngIf="canEdit">
+      <p>Commencez par créer une nouvelle forme juridique</p>
+      <button class="btn-create" [routerLink]="['/forme-juridique/new']">
+        <fa-icon icon="plus"></fa-icon>
+        Créer une forme juridique
+      </button>
+    </ng-container>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="formeJuridiques && formeJuridiques.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="abreviation">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.abreviation">Abreviation</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="nom">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.nom">Nom</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="dateCreation">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.dateCreation">Date Creation</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="etat">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.etat">Etat</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let formeJuridique of formeJuridiques; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/forme-juridique', formeJuridique.id, 'view']">{{ formeJuridique.id }}</a>
-          </td>
-          <td>{{ formeJuridique.abreviation }}</td>
-          <td>{{ formeJuridique.nom }}</td>
-          <td>{{ formeJuridique.dateCreation | formatMediumDatetime }}</td>
-          <td>{{ formeJuridique.etat }}</td>
-          <td class="text-right">
-            <div class="btn-group">
+  <!-- Table Card -->
+  <div class="table-card" id="entities" *ngIf="formeJuridiques && formeJuridiques.length > 0">
+    <div class="table-wrapper">
+      <table aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+            <th scope="col" jhiSortBy="nom">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.nom">Nom</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="abreviation">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.abreviation">Abréviation</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateCreation">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.dateCreation">Date création</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="etat">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.etat">État</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" class="th-actions" *ngIf="canEdit">
+              <span>Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let formeJuridique of formeJuridiques; trackBy: trackId"
+            data-cy="entityTable"
+            (click)="openFormeJuridique(formeJuridique)"
+            class="table-row"
+          >
+            <td>
+              <div class="cell-nom">
+                <div class="nom-avatar">{{ (formeJuridique.nom || '?')[0].toUpperCase() }}</div>
+                <span class="nom-text">{{ formeJuridique.nom || '—' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge-code" *ngIf="formeJuridique.abreviation; else noAbrev">{{ formeJuridique.abreviation }}</span>
+              <ng-template #noAbrev><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td>
+              <span class="cell-date" *ngIf="formeJuridique.dateCreation; else noDate">
+                {{ formeJuridique.dateCreation | formatMediumDatetime }}
+              </span>
+              <ng-template #noDate><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td>
+              <span class="badge-status" *ngIf="formeJuridique.etat; else noEtat">{{ formeJuridique.etat }}</span>
+              <ng-template #noEtat><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td class="td-actions" *ngIf="canEdit">
               <button
-                type="submit"
-                [routerLink]="['/forme-juridique', formeJuridique.id, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
+                type="button"
+                class="btn-delete"
+                data-cy="entityDeleteButton"
+                (click)="delete(formeJuridique); $event.stopPropagation()"
+                title="{{ 'entity.action.delete' | translate }}"
               >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                <fa-icon icon="trash"></fa-icon>
               </button>
-
-              <button
-                type="submit"
-                [routerLink]="['/forme-juridique', formeJuridique.id, 'edit']"
-                class="btn btn-primary btn-sm"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
-
-              <button type="submit" (click)="delete(formeJuridique)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="formeJuridiques && formeJuridiques.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="row justify-content-center">
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
       <ngb-pagination
         [collectionSize]="totalItems"
         [(page)]="ngbPaginationPage"

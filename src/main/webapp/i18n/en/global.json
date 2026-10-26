@@ -1,7 +1,7 @@
 {
   "global": {
     "title": "Orgacaregateway",
-    "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
+    "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "home": "Home",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
@@ -22,6 +22,10 @@
         "orgaCareSociete": "Societe",
         "orgaCareStatusHistory": "Status History",
         "orgaCareTypeContrat": "Type Contrat",
+        "orgaCareThemeFormation": "Theme Formation",
+        "orgaCareFormation": "Formation",
+        "orgaCareFormateur": "Formateur",
+        "orgaCareSessionFormation": "Session Formation",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -133,8 +137,7 @@
       "maxbytes": "This field cannot be more than {{ max }} bytes.",
       "pattern": "This field should follow pattern for {{ pattern }}.",
       "number": "This field should be a number.",
-      "datetimelocal": "This field should be a date and time.",
-      "patternLogin": "This field can only contain letters, digits and e-mail addresses."
+      "datetimelocal": "This field should be a date and time."
     }
   },
   "error": {
@@ -159,8 +162,8 @@
     "sections": {
       "principal": "Main",
       "organisation": "Organization",
-      "rh": "HR",
-      "referentiels": "References",
+      "rh": "Human Resources",
+      "referentiels": "Reference data",
       "administration": "Administration",
       "langue": "Language"
     },
@@ -169,12 +172,16 @@
       "societes": "Companies",
       "sites": "Sites",
       "departements": "Departments",
-      "organigramme": "Org Chart",
+      "organigramme": "Org chart",
       "employes": "Employees",
       "contrats": "Contracts",
       "absences": "Absences",
+      "themesFormation": "Training themes",
+      "formateurs": "Trainers",
+      "sessionsFormation": "Training sessions",
+      "formations": "Trainings",
       "grades": "Grades",
-      "fonctions": "Functions",
+      "fonctions": "Job titles",
       "typesContrat": "Contract types",
       "formesJuridiques": "Legal forms",
       "metriques": "Metrics",
@@ -182,9 +189,9 @@
       "logs": "Logs"
     },
     "user": {
-      "admin": "Administrator",
+      "admin": "Admin",
       "user": "User"
     },
-    "logout": "Logout"
+    "logout": "Sign out"
   }
 }

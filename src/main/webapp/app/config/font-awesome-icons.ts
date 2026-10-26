@@ -77,6 +77,12 @@ import {
   faProjectDiagram,
   faCalendarTimes,
   faKey,
+  faBalanceScale,
+  faAward,
+  faPlay,
+  faPaperclip,
+  faDownload,
+  faGraduationCap,
 
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
@@ -161,6 +167,12 @@ export const fontAwesomeIcons = [
   faProjectDiagram,
   faCalendarTimes,
   faKey,
+  faBalanceScale,
+  faAward,
+  faPlay,
+  faPaperclip,
+  faDownload,
+  faGraduationCap,
 
   // jhipster-needle-add-icon-import
 ];

@@ -21,7 +21,23 @@ export class MainComponent implements OnInit {
 
   currentLang = 'fr';
 
+  // Sections de la sidebar : seule "principal" est ouverte au départ
+  openSections: Record<string, boolean> = {
+    principal: true,
+    organisation: false,
+    rh: false,
+    referentiels: false,
+    administration: false,
+  };
+
   private renderer: Renderer2;
+
+  private readonly sectionRoutes: { key: string; prefixes: string[] }[] = [
+    { key: 'organisation', prefixes: ['/societe', '/site', '/departement', '/organigramme'] },
+    { key: 'rh', prefixes: ['/personne', '/session-formation', '/formation', '/contrat', '/absence'] },
+    { key: 'referentiels', prefixes: ['/grade', '/fonction', '/type-contrat', '/forme-juridique', '/theme-formation', '/formateur'] },
+    { key: 'administration', prefixes: ['/admin'] },
+  ];
 
   constructor(
     private accountService: AccountService,
@@ -55,6 +71,7 @@ export class MainComponent implements OnInit {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.updateTitle();
+        this.openSectionForUrl(event.urlAfterRedirects);
       }
     });
 
@@ -77,9 +94,26 @@ export class MainComponent implements OnInit {
     localStorage.setItem('oc-sidebar-collapsed', String(this.sidebarCollapsed));
   }
 
+  toggleSection(key: string): void {
+    this.openSections[key] = !this.openSections[key];
+  }
+
+  // En mode réduit (icônes seules), tous les liens restent accessibles
+  isSectionOpen(key: string): boolean {
+    return this.sidebarCollapsed || this.openSections[key];
+  }
+
   logout(): void {
     this.loginService.logout();
     this.router.navigate(['']);
+  }
+
+  private openSectionForUrl(url: string): void {
+    const path = url.split('?')[0];
+    const match = this.sectionRoutes.find(s => s.prefixes.some(p => path === p || path.startsWith(p + '/')));
+    if (match) {
+      this.openSections[match.key] = true;
+    }
   }
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {

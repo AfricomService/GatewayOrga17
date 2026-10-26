@@ -1,0 +1,36 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareFormation": {
+      "home": {
+        "title": "Formations",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Formation",
+        "createOrEditLabel": "Créer ou éditer un Formation",
+        "notFound": "Aucun Formation trouvé"
+      },
+      "delete": {
+        "question": "Etes-vous certain de vouloir supprimer le Formation {{ id }} ?"
+      },
+      "detail": {
+        "title": "Formation"
+      },
+      "id": "ID",
+      "statut": "Statut",
+      "etat": "Etat",
+      "note": "Note",
+      "dateObtentionCertificat": "Date Obtention Certificat",
+      "dateExpirationCertificat": "Date Expiration Certificat",
+      "notificationEnvoyee": "Notification Envoyee",
+      "commentaire": "Commentaire",
+      "sessionId": "Session Id",
+      "personneId": "Personne Id"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareFormation": {
+      "created": "Un nouveau Formation a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Formation avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Formation avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

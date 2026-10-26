@@ -23,6 +23,7 @@
         </button>
 
         <button
+          *ngIf="canEdit"
           id="jh-create-entity"
           data-cy="entityCreateButton"
           class="btn btn-primary btn-action"
@@ -76,12 +77,12 @@
               <span jhiTranslate="orgacaregatewayApp.orgaCareSociete.codeOrganigramme">Code Organigramme</span>
               <fa-icon icon="sort"></fa-icon>
             </th>
-            <th scope="col" class="actions-col">Actions</th>
+            <th scope="col" class="actions-col" *ngIf="canEdit">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr *ngFor="let societe of societes; trackBy: trackId" data-cy="entityTable" (dblclick)="edit(societe)" class="clickable-row">
+          <tr *ngFor="let societe of societes; trackBy: trackId" data-cy="entityTable" (click)="edit(societe)" class="clickable-row">
             <td class="font-medium">{{ societe.raisonSociale }}</td>
             <td>{{ societe.abreviation || '-' }}</td>
             <td>{{ societe.activite || '-' }}</td>
@@ -92,7 +93,7 @@
               <span class="code-badge">{{ societe.codeOrganigramme || '-' }}</span>
             </td>
 
-            <td class="text-right" (dblclick)="$event.stopPropagation()">
+            <td class="text-right" *ngIf="canEdit" (click)="$event.stopPropagation()">
               <div class="btn-group action-group">
                 <button
                   type="button"

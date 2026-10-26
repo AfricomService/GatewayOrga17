@@ -9,10 +9,12 @@ import { IGrade } from '../grade.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { GradeService } from '../service/grade.service';
 import { GradeDeleteDialogComponent } from '../delete/grade-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-grade',
   templateUrl: './grade.component.html',
+  styleUrls: ['./grade.component.scss'],
 })
 export class GradeComponent implements OnInit {
   grades?: IGrade[];
@@ -23,12 +25,14 @@ export class GradeComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected gradeService: GradeService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -54,6 +58,7 @@ export class GradeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -61,10 +66,14 @@ export class GradeComponent implements OnInit {
     return item.id!;
   }
 
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
+  openGrade(grade: IGrade): void {
+    this.router.navigate(['/grade', grade.id, this.canEdit ? 'edit' : 'view']);
+  }
+
   delete(grade: IGrade): void {
     const modalRef = this.modalService.open(GradeDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.grade = grade;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();

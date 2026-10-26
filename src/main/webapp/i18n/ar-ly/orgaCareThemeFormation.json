@@ -1,0 +1,35 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareThemeFormation": {
+      "home": {
+        "title": "Theme Formations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Theme Formation",
+        "createOrEditLabel": "Create or edit a Theme Formation",
+        "notFound": "No Theme Formations found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Theme Formation {{ id }}?"
+      },
+      "detail": {
+        "title": "Theme Formation"
+      },
+      "id": "ID",
+      "theme": "Theme",
+      "cout": "Cout",
+      "duree_validite_certificat": "Duree Validite Certificat",
+      "notifier_expiration_avant": "Notifier Expiration Avant",
+      "duree_anticipation_utilisateur": "Duree Anticipation Utilisateur",
+      "cout_formation_individuelle": "Cout Formation Individuelle",
+      "status": "Status",
+      "comments": "Comments"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareThemeFormation": {
+      "created": "A new Theme Formation is created with identifier {{ param }}",
+      "updated": "A Theme Formation is updated with identifier {{ param }}",
+      "deleted": "A Theme Formation is deleted with identifier {{ param }}"
+    }
+  }
+}

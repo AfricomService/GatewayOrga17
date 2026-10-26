@@ -1,0 +1,193 @@
+<div class="formation-list-container">
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 10L12 5 2 10l10 5 10-5z" />
+          <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+          <line x1="22" y1="10" x2="22" y2="16" />
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1 jhiTranslate="orgacaregatewayApp.orgaCareFormation.home.title">Formations</h1>
+        <p>Gérez les formations suivies par le personnel</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-header-refresh" (click)="loadPage()" [disabled]="isLoading" title="Rafraîchir">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spinning]="isLoading">
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Recherche ───────────────────────────────────────── -->
+  <div class="filter-bar">
+    <div class="filter-search">
+      <fa-icon icon="search" class="filter-icon"></fa-icon>
+      <input
+        type="text"
+        class="filter-input with-icon"
+        placeholder="Rechercher par titre, nom ou matricule…"
+        [ngModel]="keyword"
+        (ngModelChange)="keyword = $event"
+        (keyup.enter)="search()"
+        data-cy="formationSearch"
+      />
+    </div>
+
+    <select
+      *ngIf="canEdit"
+      class="filter-input filter-select"
+      [ngModel]="selectedPersonneId"
+      (ngModelChange)="selectedPersonneId = $event; search()"
+    >
+      <option [ngValue]="null">Tous les bénéficiaires</option>
+      <option *ngFor="let b of beneficiaireOptions" [ngValue]="b.id">{{ b.name }}</option>
+    </select>
+
+    <select class="filter-input filter-select" [ngModel]="selectedFormateurId" (ngModelChange)="selectedFormateurId = $event; search()">
+      <option [ngValue]="null">Tous les formateurs</option>
+      <option *ngFor="let f of formateurOptions" [ngValue]="f.id">{{ f.name }}</option>
+    </select>
+
+    <button type="button" class="btn-filter btn-filter-primary" (click)="search()">
+      <fa-icon icon="search"></fa-icon>
+      <span>Rechercher</span>
+    </button>
+    <button type="button" class="btn-filter btn-filter-secondary" *ngIf="hasFilters" (click)="resetFilters()">
+      <fa-icon icon="times"></fa-icon>
+      <span>Réinitialiser</span>
+    </button>
+  </div>
+
+  <!-- ── Empty state ─────────────────────────────────────── -->
+  <div class="empty-state" *ngIf="formations?.length === 0">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M22 10L12 5 2 10l10 5 10-5z" />
+        <path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5" />
+        <line x1="22" y1="10" x2="22" y2="16" />
+      </svg>
+    </div>
+    <p jhiTranslate="orgacaregatewayApp.orgaCareFormation.home.notFound">Aucune formation trouvée</p>
+    <p class="text-muted" *ngIf="!hasFilters">Les formations sont générées automatiquement à partir des sessions de formation.</p>
+    <p class="text-muted" *ngIf="hasFilters">Aucun résultat pour ces critères de recherche.</p>
+  </div>
+
+  <!-- ── Table ───────────────────────────────────────────── -->
+  <div class="table-card" *ngIf="formations && formations.length > 0">
+    <table class="formation-table" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+          <th><span>TITRE</span></th>
+          <th><span>FORMATEUR</span></th>
+          <th><span>THÈME</span></th>
+          <th><span>BÉNÉFICIAIRE</span></th>
+          <th><span>DATE PLANIFICATION</span></th>
+          <th><span>DATE EXÉCUTION</span></th>
+          <th jhiSortBy="statut">
+            <span>STATUT</span>
+            <fa-icon icon="sort" class="sort-icon"></fa-icon>
+          </th>
+          <th class="col-actions" *ngIf="canEdit">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let formation of formations; trackBy: trackId" class="formation-row" (click)="navigateToEdit(formation)">
+          <!-- Titre -->
+          <td class="col-session">
+            <div class="session-wrapper">
+              <div class="session-avatar">
+                {{ (getTitle(formation) ?? '?').charAt(0).toUpperCase() }}
+              </div>
+              <span class="session-text">{{ getTitle(formation) ?? '—' }}</span>
+            </div>
+          </td>
+
+          <!-- Formateur -->
+          <td>
+            <span *ngIf="getFormateur(formation)">{{ getFormateur(formation) }}</span>
+            <span class="text-muted" *ngIf="!getFormateur(formation)">—</span>
+          </td>
+
+          <!-- Thème -->
+          <td>
+            <span *ngIf="getTheme(formation)">{{ getTheme(formation) }}</span>
+            <span class="text-muted" *ngIf="!getTheme(formation)">—</span>
+          </td>
+
+          <!-- Bénéficiaire -->
+          <td class="col-personne">
+            <span class="personne-badge" *ngIf="getBeneficiaire(formation)">{{ getBeneficiaire(formation) }}</span>
+            <span class="text-muted" *ngIf="!getBeneficiaire(formation)">—</span>
+          </td>
+
+          <!-- Date planification -->
+          <td class="col-date">
+            <div *ngIf="getSession(formation)?.datePlanificationDu" class="date-block">
+              <span>{{ getSession(formation)?.datePlanificationDu | formatMediumDate }}</span>
+              <small *ngIf="getSession(formation)?.datePlanificationAu">
+                → {{ getSession(formation)?.datePlanificationAu | formatMediumDate }}
+              </small>
+            </div>
+            <span class="text-muted" *ngIf="!getSession(formation)?.datePlanificationDu">—</span>
+          </td>
+
+          <!-- Date exécution -->
+          <td class="col-date">
+            <div *ngIf="getSession(formation)?.dateExecutionDu" class="date-block">
+              <span>{{ getSession(formation)?.dateExecutionDu | formatMediumDate }}</span>
+              <small *ngIf="getSession(formation)?.dateExecutionAu">
+                → {{ getSession(formation)?.dateExecutionAu | formatMediumDate }}
+              </small>
+            </div>
+            <span class="text-muted" *ngIf="!getSession(formation)?.dateExecutionDu">—</span>
+          </td>
+
+          <!-- Statut -->
+          <td class="col-status">
+            <span class="status-badge {{ getStatusClass(formation.statut) }}" *ngIf="formation.statut">
+              {{ formation.statut }}
+            </span>
+            <span class="text-muted" *ngIf="!formation.statut">—</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="col-actions" *ngIf="canEdit">
+            <div class="action-group">
+              <button type="button" class="btn-action btn-delete" (click)="delete(formation, $event)" title="Supprimer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14H6L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Pagination ──────────────────────────────────────── -->
+  <div class="pagination-wrapper" *ngIf="formations && formations.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="ngbPaginationPage"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"
+    ></ngb-pagination>
+  </div>
+</div>

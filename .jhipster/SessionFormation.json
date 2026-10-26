@@ -1,0 +1,80 @@
+{
+  "microservicePath": "D:\\CODE\\ORGACARE17\\OrgaCare",
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "datePlanificationDu",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "datePlanificationAu",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateExecutionDu",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "dateExecutionAu",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "reglementaire",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "typeFormation",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "budget",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "coutSession",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "statut",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "additionalInformations",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateCreation",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "themeId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "formateurId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "societeId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [],
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "pagination",
+  "name": "SessionFormation",
+  "changelogDate": "20261021103128"
+}

@@ -27,31 +27,33 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
       </button>
 
-      <input type="file" #fileInput (change)="onFileSelected($event)" accept=".xls,.xlsx" style="display: none" />
-      <button
-        class="btn-header-secondary"
-        (click)="triggerFileInput(fileInput)"
-        title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.importer' | translate }}"
-      >
-        <fa-icon icon="file-upload"></fa-icon>
-      </button>
+      <ng-container *ngIf="canEdit">
+        <input type="file" #fileInput (change)="onFileSelected($event)" accept=".xls,.xlsx" style="display: none" />
+        <button
+          class="btn-header-secondary"
+          (click)="triggerFileInput(fileInput)"
+          title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.importer' | translate }}"
+        >
+          <fa-icon icon="file-upload"></fa-icon>
+        </button>
 
-      <button
-        class="btn-header-secondary"
-        (click)="openKeycloakCreateUser()"
-        [disabled]="!keycloakAdminUrl"
-        title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.keycloakLabel' | translate }}"
-      >
-        <fa-icon icon="user-plus"></fa-icon>
-      </button>
+        <button
+          class="btn-header-secondary"
+          (click)="openKeycloakCreateUser()"
+          [disabled]="!keycloakAdminUrl"
+          title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.keycloakLabel' | translate }}"
+        >
+          <fa-icon icon="user-plus"></fa-icon>
+        </button>
 
-      <button
-        class="btn-header-primary"
-        [routerLink]="['/personne/new']"
-        title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.createLabel' | translate }}"
-      >
-        <fa-icon icon="plus"></fa-icon>
-      </button>
+        <button
+          class="btn-header-primary"
+          [routerLink]="['/personne/new']"
+          title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.createLabel' | translate }}"
+        >
+          <fa-icon icon="plus"></fa-icon>
+        </button>
+      </ng-container>
     </div>
   </div>
 
@@ -139,7 +141,7 @@
     <div class="empty-icon">👤</div>
     <h3 jhiTranslate="orgacaregatewayApp.orgaCarePersonne.home.notFound">Aucune personne trouvée</h3>
     <p>{{ 'orgacaregatewayApp.orgaCarePersonne.home.emptyHint' | translate }}</p>
-    <button class="btn-create" [routerLink]="['/personne/new']">
+    <button *ngIf="canEdit" class="btn-create" [routerLink]="['/personne/new']">
       <fa-icon icon="plus"></fa-icon>
       {{ 'orgacaregatewayApp.orgaCarePersonne.home.createLabel' | translate }}
     </button>
@@ -190,19 +192,13 @@
             <th scope="col" class="th-center">
               <span>{{ 'orgacaregatewayApp.orgaCarePersonne.home.compte' | translate }}</span>
             </th>
-            <th scope="col" class="th-actions">
+            <th scope="col" class="th-actions" *ngIf="canEdit">
               <span>{{ 'entity.action.actions' | translate }}</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let personne of personnes; trackBy: trackId"
-            data-cy="entityTable"
-            (dblclick)="editPersonne(personne)"
-            class="table-row"
-            title="{{ 'orgacaregatewayApp.orgaCarePersonne.home.dblClickHint' | translate }}"
-          >
+          <tr *ngFor="let personne of personnes; trackBy: trackId" data-cy="entityTable" (click)="editPersonne(personne)" class="table-row">
             <!-- Matricule -->
             <td>
               <div class="cell-nom">
@@ -259,7 +255,7 @@
             </td>
 
             <!-- Actions -->
-            <td class="td-actions">
+            <td class="td-actions" *ngIf="canEdit">
               <button
                 type="button"
                 class="btn-delete"

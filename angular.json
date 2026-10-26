@@ -20,7 +20,6 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "baseHref": "/orga/",
             "customWebpackConfig": {
               "path": "./webpack/webpack.custom.js"
             },
@@ -49,7 +48,6 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/orga/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

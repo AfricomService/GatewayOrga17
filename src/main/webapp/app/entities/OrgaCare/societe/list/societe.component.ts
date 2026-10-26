@@ -10,6 +10,7 @@ import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants
 import { SocieteService } from '../service/societe.service';
 import { SocieteDeleteDialogComponent } from '../delete/societe-delete-dialog.component';
 import { DataUtils } from 'app/core/util/data-util.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-societe',
@@ -25,13 +26,15 @@ export class SocieteComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected societeService: SocieteService,
     protected activatedRoute: ActivatedRoute,
     protected dataUtils: DataUtils,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -57,6 +60,7 @@ export class SocieteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -84,7 +88,7 @@ export class SocieteComponent implements OnInit {
   }
 
   edit(societe: ISociete): void {
-    this.router.navigate(['/societe', societe.id, 'edit']);
+    this.router.navigate(['/societe', societe.id, this.canEdit ? 'edit' : 'view']);
   }
 
   protected sort(): string[] {

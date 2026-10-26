@@ -9,10 +9,12 @@ import { IAbsence } from '../absence.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { AbsenceService } from '../service/absence.service';
 import { AbsenceDeleteDialogComponent } from '../delete/absence-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-absence',
   templateUrl: './absence.component.html',
+  styleUrls: ['./absence.component.scss'],
 })
 export class AbsenceComponent implements OnInit {
   absences?: IAbsence[];
@@ -23,12 +25,14 @@ export class AbsenceComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected absenceService: AbsenceService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -54,6 +58,7 @@ export class AbsenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -61,15 +66,36 @@ export class AbsenceComponent implements OnInit {
     return item.id!;
   }
 
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
+  openAbsence(absence: IAbsence): void {
+    this.router.navigate(['/absence', absence.id, this.canEdit ? 'edit' : 'view']);
+  }
+
   delete(absence: IAbsence): void {
     const modalRef = this.modalService.open(AbsenceDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.absence = absence;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();
       }
     });
+  }
+
+  getEtatClass(etat: string | null | undefined): string {
+    switch (etat) {
+      case 'ACTIF':
+        return 'etat--actif';
+      case 'DRAFT':
+        return 'etat--draft';
+      case 'CANCELED':
+        return 'etat--canceled';
+      case 'CLOSED':
+        return 'etat--closed';
+      case 'INEXECUTION':
+        return 'etat--inexecution';
+      default:
+        return 'etat--default';
+    }
   }
 
   protected sort(): string[] {

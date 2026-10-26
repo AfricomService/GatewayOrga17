@@ -1,93 +1,107 @@
-<div>
-  <h2 id="page-heading" data-cy="FonctionHeading">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.home.title">Fonctions</span>
-
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info mr-2" (click)="loadPage()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.home.refreshListLabel">Refresh List</span>
-      </button>
-
+<div class="fonction-list-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="briefcase"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1 id="page-heading" data-cy="FonctionHeading" jhiTranslate="orgacaregatewayApp.orgaCareFonction.home.title">Fonctions</h1>
+        <p>Gérez et consultez la liste des fonctions</p>
+      </div>
+    </div>
+    <div class="header-actions">
       <button
+        class="btn-header-secondary"
+        (click)="loadPage()"
+        [disabled]="isLoading"
+        title="{{ 'orgacaregatewayApp.orgaCareFonction.home.refreshListLabel' | translate }}"
+      >
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+      </button>
+      <button
+        *ngIf="canEdit"
         id="jh-create-entity"
         data-cy="entityCreateButton"
-        class="btn btn-primary jh-create-entity create-fonction"
+        class="btn-header-primary"
         [routerLink]="['/fonction/new']"
+        title="{{ 'orgacaregatewayApp.orgaCareFonction.home.createLabel' | translate }}"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.home.createLabel"> Create a new Fonction </span>
       </button>
     </div>
-  </h2>
+  </div>
 
   <jhi-alert-error></jhi-alert-error>
-
   <jhi-alert></jhi-alert>
 
-  <div class="alert alert-warning" id="no-result" *ngIf="fonctions?.length === 0">
-    <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.home.notFound">No fonctions found</span>
+  <!-- Empty State -->
+  <div class="empty-state" id="no-result" *ngIf="!isLoading && fonctions?.length === 0">
+    <div class="empty-icon">💼</div>
+    <h3 jhiTranslate="orgacaregatewayApp.orgaCareFonction.home.notFound">Aucune fonction trouvée</h3>
+    <ng-container *ngIf="canEdit">
+      <p>Commencez par créer une nouvelle fonction</p>
+      <button class="btn-create" [routerLink]="['/fonction/new']">
+        <fa-icon icon="plus"></fa-icon>
+        Créer une fonction
+      </button>
+    </ng-container>
   </div>
 
-  <div class="table-responsive" id="entities" *ngIf="fonctions && fonctions.length > 0">
-    <table class="table table-striped" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="code">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.code">Code</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="label">
-            <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.label">Label</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let fonction of fonctions; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <a [routerLink]="['/fonction', fonction.id, 'view']">{{ fonction.id }}</a>
-          </td>
-          <td>{{ fonction.code }}</td>
-          <td>{{ fonction.label }}</td>
-          <td class="text-right">
-            <div class="btn-group">
+  <!-- Table Card -->
+  <div class="table-card" id="entities" *ngIf="fonctions && fonctions.length > 0">
+    <div class="table-wrapper">
+      <table aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="loadPage()">
+            <th scope="col" jhiSortBy="label">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.label">Libellé</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="code">
+              <div class="th-content">
+                <span jhiTranslate="orgacaregatewayApp.orgaCareFonction.code">Code</span>
+                <fa-icon icon="sort" class="sort-icon"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" class="th-actions" *ngIf="canEdit">
+              <span>Actions</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fonction of fonctions; trackBy: trackId" data-cy="entityTable" (click)="openFonction(fonction)" class="table-row">
+            <td>
+              <div class="cell-nom">
+                <div class="nom-avatar">{{ (fonction.label || fonction.code || '?')[0].toUpperCase() }}</div>
+                <span class="nom-text">{{ fonction.label || '—' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge-code" *ngIf="fonction.code; else noCode">{{ fonction.code }}</span>
+              <ng-template #noCode><span class="cell-empty">—</span></ng-template>
+            </td>
+            <td class="td-actions" *ngIf="canEdit">
               <button
-                type="submit"
-                [routerLink]="['/fonction', fonction.id, 'view']"
-                class="btn btn-info btn-sm"
-                data-cy="entityDetailsButton"
+                type="button"
+                class="btn-delete"
+                data-cy="entityDeleteButton"
+                (click)="delete(fonction); $event.stopPropagation()"
+                title="{{ 'entity.action.delete' | translate }}"
               >
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                <fa-icon icon="trash"></fa-icon>
               </button>
-
-              <button
-                type="submit"
-                [routerLink]="['/fonction', fonction.id, 'edit']"
-                class="btn btn-primary btn-sm"
-                data-cy="entityEditButton"
-              >
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-              </button>
-
-              <button type="submit" (click)="delete(fonction)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="fonctions && fonctions.length > 0">
-    <div class="row justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="row justify-content-center">
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
       <ngb-pagination
         [collectionSize]="totalItems"
         [(page)]="ngbPaginationPage"

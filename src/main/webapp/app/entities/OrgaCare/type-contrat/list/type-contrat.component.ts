@@ -9,10 +9,12 @@ import { ITypeContrat } from '../type-contrat.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { TypeContratService } from '../service/type-contrat.service';
 import { TypeContratDeleteDialogComponent } from '../delete/type-contrat-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-type-contrat',
   templateUrl: './type-contrat.component.html',
+  styleUrls: ['./type-contrat.component.scss'],
 })
 export class TypeContratComponent implements OnInit {
   typeContrats?: ITypeContrat[];
@@ -23,12 +25,14 @@ export class TypeContratComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected typeContratService: TypeContratService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -54,6 +58,7 @@ export class TypeContratComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -61,10 +66,14 @@ export class TypeContratComponent implements OnInit {
     return item.id!;
   }
 
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
+  openTypeContrat(typeContrat: ITypeContrat): void {
+    this.router.navigate(['/type-contrat', typeContrat.id, this.canEdit ? 'edit' : 'view']);
+  }
+
   delete(typeContrat: ITypeContrat): void {
     const modalRef = this.modalService.open(TypeContratDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.typeContrat = typeContrat;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed.subscribe(reason => {
       if (reason === 'deleted') {
         this.loadPage();

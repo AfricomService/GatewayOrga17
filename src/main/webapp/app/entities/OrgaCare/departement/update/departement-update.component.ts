@@ -138,6 +138,10 @@ export class DepartementUpdateComponent implements OnInit {
 
   // ── Chargement des membres réels via AffectationService ───────────────────
 
+  getPersonnesLabel(personnes: IPersonneAffectationDTO[]): string {
+    return personnes.map(p => p.nomPrenom || p.matricule || String(p.personneId)).join(', ');
+  }
+
   protected loadPersonnesByDepartement(departementId: number): void {
     this.affectationService.findPersonnesByDepartementId(departementId).subscribe({
       next: (personnes: IPersonneAffectationDTO[]) => {
@@ -154,10 +158,6 @@ export class DepartementUpdateComponent implements OnInit {
         this.interims = [];
       },
     });
-  }
-
-  getPersonnesLabel(personnes: IPersonneAffectationDTO[]): string {
-    return personnes.map(p => p.nomPrenom ?? p.matricule ?? p.personneId).join(', ');
   }
 
   // ── Save helpers ─────────────────────────────────────────────────────────

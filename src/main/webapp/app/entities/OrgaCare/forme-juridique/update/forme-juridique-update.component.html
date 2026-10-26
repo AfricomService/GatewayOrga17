@@ -1,79 +1,117 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-forme-juridique-heading"
-        data-cy="FormeJuridiqueCreateUpdateHeading"
-        jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.createOrEditLabel"
-      >
-        Create or edit a Forme Juridique
-      </h2>
+<div class="fj-update-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="balance-scale"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1
+          id="jhi-forme-juridique-heading"
+          data-cy="FormeJuridiqueCreateUpdateHeading"
+          jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.home.createOrEditLabel"
+        >
+          Créer ou éditer une Forme juridique
+        </h1>
+        <p>Renseignez les informations de la forme juridique</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button type="button" class="btn-header-primary" [disabled]="editForm.invalid || isSaving" (click)="save()">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
+  </div>
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+  <jhi-alert-error></jhi-alert-error>
 
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <!-- Hidden ID field -->
+    <div [hidden]="true">
+      <input type="number" formControlName="id" />
+    </div>
+
+    <!-- Section Générale -->
+    <div class="accordion-card" [class.open]="sectionGenerale">
+      <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Générale</span>
         </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.abreviation" for="field_abreviation"
-            >Abreviation</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            name="abreviation"
-            id="field_abreviation"
-            data-cy="abreviation"
-            formControlName="abreviation"
-          />
+        <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.nom" for="field_nom">Nom</label>
-          <input type="text" class="form-control" name="nom" id="field_nom" data-cy="nom" formControlName="nom" />
-        </div>
+      <div class="accordion-body" *ngIf="sectionGenerale">
+        <div class="form-grid-3">
+          <div class="field-group">
+            <label for="field_nom" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.nom">NOM</label>
+            <input
+              type="text"
+              id="field_nom"
+              data-cy="nom"
+              class="field-input"
+              placeholder="Nom de la forme juridique"
+              formControlName="nom"
+            />
+          </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.dateCreation" for="field_dateCreation"
-            >Date Creation</label
-          >
-          <div class="d-flex">
+          <div class="field-group">
+            <label for="field_abreviation" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.abreviation">ABRÉVIATION</label>
+            <input
+              type="text"
+              id="field_abreviation"
+              data-cy="abreviation"
+              class="field-input"
+              placeholder="Abréviation"
+              formControlName="abreviation"
+            />
+          </div>
+
+          <div class="field-group">
+            <label for="field_dateCreation" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.dateCreation">DATE CRÉATION</label>
             <input
               id="field_dateCreation"
               data-cy="dateCreation"
               type="datetime-local"
-              class="form-control"
-              name="dateCreation"
+              class="field-input"
               formControlName="dateCreation"
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.etat" for="field_etat">Etat</label>
-          <input type="text" class="form-control" name="etat" id="field_etat" data-cy="etat" formControlName="etat" />
+          <div class="field-group">
+            <label for="field_etat" jhiTranslate="orgacaregatewayApp.orgaCareFormeJuridique.etat">ÉTAT</label>
+            <input type="text" id="field_etat" data-cy="etat" class="field-input" placeholder="État" formControlName="etat" />
+          </div>
         </div>
       </div>
+    </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
-      </div>
-    </form>
-  </div>
+    <!-- Footer Actions -->
+    <div class="form-footer">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn-cancel" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        <span jhiTranslate="entity.action.cancel">Annuler</span>
+      </button>
+      <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="btn-save">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
+  </form>
 </div>

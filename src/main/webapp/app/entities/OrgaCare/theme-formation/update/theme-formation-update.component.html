@@ -1,0 +1,249 @@
+<div class="theme-page">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="ti ti-school"></i>
+      </div>
+      <div>
+        <h2
+          class="page-title"
+          id="jhi-theme-formation-heading"
+          data-cy="ThemeFormationCreateUpdateHeading"
+          jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.home.createOrEditLabel"
+        >
+          Créer / Modifier un thème de formation
+        </h2>
+        <p class="page-subtitle">Renseignez les informations du thème</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        type="button"
+        id="cancel-save"
+        data-cy="entityCreateCancelButton"
+        class="btn-action btn-secondary-action"
+        (click)="previousState()"
+      >
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button
+        type="button"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        class="btn-action btn-primary-action"
+        [disabled]="editForm.invalid || isSaving"
+        (click)="save()"
+      >
+        <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-1" role="status"></span>
+        <span jhiTranslate="entity.action.save">Enregistrer</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <div class="theme-accordion">
+      <!-- ══════════ Informations ══════════ -->
+      <div class="accordion-card">
+        <button type="button" class="accordion-btn" [class.opened]="sectionInfo" (click)="sectionInfo = !sectionInfo">
+          <div class="panel-header-content">
+            <div class="panel-icon general"><i class="ti ti-school"></i></div>
+            <span>Informations</span>
+          </div>
+          <fa-icon [icon]="sectionInfo ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+        </button>
+
+        <div class="panel-body" [hidden]="!sectionInfo">
+          <div class="form-grid">
+            <!-- Thème -->
+            <div class="field-group required">
+              <label class="field-label" for="field_theme" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.theme">Thème</label>
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-tag"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_theme"
+                  data-cy="theme"
+                  type="text"
+                  name="theme"
+                  formControlName="theme"
+                  placeholder="Ex: Travail en hauteur"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('theme', 'required')" jhiTranslate="entity.validation.required">
+                Ce champ est obligatoire.
+              </small>
+            </div>
+
+            <!-- Statut -->
+            <div class="field-group">
+              <label class="field-label" for="field_status" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.status">Actif</label>
+              <div class="input-wrapper select-wrapper">
+                <span class="input-prefix"><i class="ti ti-circle-check"></i></span>
+                <select
+                  class="field-input field-select with-prefix"
+                  id="field_status"
+                  data-cy="status"
+                  name="status"
+                  formControlName="status"
+                >
+                  <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Commentaires -->
+            <div class="field-group full">
+              <label class="field-label" for="field_comments" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.comments"
+                >Commentaires</label
+              >
+              <textarea
+                class="field-input field-textarea"
+                id="field_comments"
+                data-cy="comments"
+                name="comments"
+                formControlName="comments"
+                rows="4"
+                placeholder="Remarques sur ce thème…"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ Coûts & certificat ══════════ -->
+      <div class="accordion-card">
+        <button type="button" class="accordion-btn" [class.opened]="sectionCout" (click)="sectionCout = !sectionCout">
+          <div class="panel-header-content">
+            <div class="panel-icon certificat"><i class="ti ti-certificate"></i></div>
+            <span>Coûts &amp; certificat</span>
+          </div>
+          <fa-icon [icon]="sectionCout ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+        </button>
+
+        <div class="panel-body" [hidden]="!sectionCout">
+          <div class="form-grid">
+            <!-- Coût -->
+            <div class="field-group">
+              <label class="field-label" for="field_cout" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.cout">Coût</label>
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-coin"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_cout"
+                  data-cy="cout"
+                  type="number"
+                  min="0"
+                  step="any"
+                  name="cout"
+                  formControlName="cout"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('cout', 'min')">La valeur doit être positive.</small>
+            </div>
+
+            <!-- Coût formation individuelle -->
+            <div class="field-group">
+              <label
+                class="field-label"
+                for="field_cout_formation_individuelle"
+                jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.cout_formation_individuelle"
+                >Coût formation individuelle</label
+              >
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-coin"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_cout_formation_individuelle"
+                  data-cy="cout_formation_individuelle"
+                  type="number"
+                  min="0"
+                  step="any"
+                  name="cout_formation_individuelle"
+                  formControlName="cout_formation_individuelle"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('cout_formation_individuelle', 'min')">La valeur doit être positive.</small>
+            </div>
+
+            <!-- Durée de validité du certificat -->
+            <div class="field-group">
+              <label
+                class="field-label"
+                for="field_duree_validite_certificat"
+                jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.duree_validite_certificat"
+                >Durée de validité du certificat (mois)</label
+              >
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-certificate"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_duree_validite_certificat"
+                  data-cy="duree_validite_certificat"
+                  type="number"
+                  min="0"
+                  step="1"
+                  name="duree_validite_certificat"
+                  formControlName="duree_validite_certificat"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('duree_validite_certificat', 'min')">La valeur doit être positive.</small>
+            </div>
+
+            <!-- Notifier l'expiration avant -->
+            <div class="field-group">
+              <label
+                class="field-label"
+                for="field_notifier_expiration_avant"
+                jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.notifier_expiration_avant"
+                >Notifier l'expiration avant (mois)</label
+              >
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-bell"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_notifier_expiration_avant"
+                  data-cy="notifier_expiration_avant"
+                  type="number"
+                  min="0"
+                  step="1"
+                  name="notifier_expiration_avant"
+                  formControlName="notifier_expiration_avant"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('notifier_expiration_avant', 'min')">La valeur doit être positive.</small>
+            </div>
+
+            <!-- Durée d'anticipation utilisateur -->
+            <div class="field-group">
+              <label
+                class="field-label"
+                for="field_duree_anticipation_utilisateur"
+                jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.duree_anticipation_utilisateur"
+                >Durée d'anticipation utilisateur</label
+              >
+              <div class="input-wrapper">
+                <span class="input-prefix"><i class="ti ti-clock"></i></span>
+                <input
+                  class="field-input with-prefix"
+                  id="field_duree_anticipation_utilisateur"
+                  data-cy="duree_anticipation_utilisateur"
+                  type="number"
+                  min="0"
+                  step="1"
+                  name="duree_anticipation_utilisateur"
+                  formControlName="duree_anticipation_utilisateur"
+                />
+              </div>
+              <small class="field-error" *ngIf="hasError('duree_anticipation_utilisateur', 'min')">La valeur doit être positive.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

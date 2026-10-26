@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, isDevMode, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { SessionStorageService } from 'ngx-webstorage';
@@ -14,6 +14,8 @@ import { LoginService } from 'app/login/login.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  isDev = isDevMode();
+
   account: Account | null = null;
   today = new Date();
   languages = LANGUAGES;
@@ -28,7 +30,14 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.accountService.identity().subscribe(account => (this.account = account));
+    this.accountService.identity().subscribe(account => {
+      this.account = account;
+      if (!this.isDev && !account) {
+        this.login();
+      }
+    });
+    // In production, start authentication automatically
+    // if the user is not authenticated.
     const saved = localStorage.getItem('oc-sidebar-collapsed');
     if (saved !== null) {
       this.sidebarCollapsed = saved === 'true';

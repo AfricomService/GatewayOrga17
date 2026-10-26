@@ -1,0 +1,136 @@
+<div class="theme-page" *ngIf="themeFormation">
+  <!-- ══════════════ EN-TÊTE ══════════════ -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <i class="ti ti-school"></i>
+      </div>
+      <div>
+        <h2 class="page-title" data-cy="themeFormationDetailsHeading">{{ themeFormation.theme || '—' }}</h2>
+        <p class="page-subtitle">Détails du thème de formation</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-action btn-secondary-action" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button
+        *ngIf="canEdit"
+        type="button"
+        class="btn-action btn-primary-action"
+        [routerLink]="['/theme-formation', themeFormation.id, 'edit']"
+      >
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Modifier</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="theme-accordion">
+    <!-- ══════════ Informations ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionInfo" (click)="sectionInfo = !sectionInfo">
+        <div class="panel-header-content">
+          <div class="panel-icon general"><i class="ti ti-school"></i></div>
+          <span>Informations</span>
+        </div>
+        <fa-icon [icon]="sectionInfo ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionInfo">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.theme">Thème</span>
+            <div class="readonly-value">
+              <i class="ti ti-tag value-icon"></i>
+              <span>{{ themeFormation.theme || '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.status">Statut</span>
+            <div class="readonly-value">
+              <i class="ti ti-circle-check value-icon"></i>
+              <span *ngIf="themeFormation.status">{{ 'orgacaregatewayApp.Etat.' + themeFormation.status | translate }}</span>
+              <span *ngIf="!themeFormation.status">—</span>
+            </div>
+          </div>
+
+          <div class="field-group full">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.comments">Commentaires</span>
+            <div class="readonly-value readonly-multiline">
+              <span>{{ themeFormation.comments || '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ Coûts & certificat ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionCout" (click)="sectionCout = !sectionCout">
+        <div class="panel-header-content">
+          <div class="panel-icon certificat"><i class="ti ti-certificate"></i></div>
+          <span>Coûts &amp; certificat</span>
+        </div>
+        <fa-icon [icon]="sectionCout ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionCout">
+        <div class="form-grid">
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.cout">Coût</span>
+            <div class="readonly-value">
+              <i class="ti ti-coin value-icon"></i>
+              <span>{{ themeFormation.cout ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.cout_formation_individuelle"
+              >Coût formation individuelle</span
+            >
+            <div class="readonly-value">
+              <i class="ti ti-coin value-icon"></i>
+              <span>{{ themeFormation.cout_formation_individuelle ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.duree_validite_certificat"
+              >Durée de validité du certificat (mois)</span
+            >
+            <div class="readonly-value">
+              <i class="ti ti-certificate value-icon"></i>
+              <span>{{ themeFormation.duree_validite_certificat ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.notifier_expiration_avant"
+              >Notifier l'expiration avant (mois)</span
+            >
+            <div class="readonly-value">
+              <i class="ti ti-bell value-icon"></i>
+              <span>{{ themeFormation.notifier_expiration_avant ?? '—' }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" jhiTranslate="orgacaregatewayApp.orgaCareThemeFormation.duree_anticipation_utilisateur"
+              >Durée d'anticipation utilisateur</span
+            >
+            <div class="readonly-value">
+              <i class="ti ti-clock value-icon"></i>
+              <span>{{ themeFormation.duree_anticipation_utilisateur ?? '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="pieceJointe">
+      <h2 data-cy="pieceJointeDetailsHeading">
+        <span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.detail.title">Piece Jointe</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ pieceJointe.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.nomFichier">Nom Fichier</span></dt>
+        <dd>
+          <span>{{ pieceJointe.nomFichier }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.type">Type</span></dt>
+        <dd>
+          <span>{{ pieceJointe.type }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.fichierURL">Fichier URL</span></dt>
+        <dd>
+          <span>{{ pieceJointe.fichierURL }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.dateUpload">Date Upload</span></dt>
+        <dd>
+          <span>{{ pieceJointe.dateUpload | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.formateurId">Formateur Id</span></dt>
+        <dd>
+          <span>{{ pieceJointe.formateurId }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.sessionId">Session Id</span></dt>
+        <dd>
+          <span>{{ pieceJointe.sessionId }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCarePieceJointe.formationId">Formation Id</span></dt>
+        <dd>
+          <span>{{ pieceJointe.formationId }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/piece-jointe', pieceJointe.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

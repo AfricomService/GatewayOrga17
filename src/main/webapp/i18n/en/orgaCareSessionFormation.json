@@ -1,0 +1,43 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareSessionFormation": {
+      "home": {
+        "title": "Session Formations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Session Formation",
+        "createOrEditLabel": "Create or edit a Session Formation",
+        "notFound": "No Session Formations found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Session Formation {{ id }}?"
+      },
+      "detail": {
+        "title": "Session Formation"
+      },
+      "id": "ID",
+      "title": "Title",
+      "datePlanificationDu": "Date Planification Du",
+      "datePlanificationAu": "Date Planification Au",
+      "dateExecutionDu": "Date Execution Du",
+      "dateExecutionAu": "Date Execution Au",
+      "reglementaire": "Reglementaire",
+      "typeFormation": "Type Formation",
+      "budget": "Budget",
+      "coutSession": "Cout Session",
+      "statut": "Statut",
+      "additionalInformations": "Additional Informations",
+      "dateCreation": "Date Creation",
+      "themeId": "Theme Id",
+      "formateurId": "Formateur Id",
+      "societeId": "Societe Id",
+      "description": "Description"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareSessionFormation": {
+      "created": "A new Session Formation is created with identifier {{ param }}",
+      "updated": "A Session Formation is updated with identifier {{ param }}",
+      "deleted": "A Session Formation is deleted with identifier {{ param }}"
+    }
+  }
+}

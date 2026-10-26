@@ -160,7 +160,7 @@ $passif-border: #fdba74;
   border: 1px solid $border;
   border-radius: $radius-card;
   box-shadow: $shadow-card;
-  overflow: hidden;
+  overflow-x: auto;
   transition: $transition;
 
   &:hover {
@@ -283,6 +283,7 @@ $passif-border: #fdba74;
   font-size: 0.78rem;
   font-weight: 600;
   text-decoration: none;
+  cursor: pointer;
 
   // Société — teal
   background: #e0f7f6;

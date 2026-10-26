@@ -1,0 +1,44 @@
+{
+  "microservicePath": "D:\\CODE\\ORGACARE17\\OrgaCare",
+  "microserviceName": "OrgaCare",
+  "clientRootFolder": "OrgaCare",
+  "databaseType": "sql",
+  "fields": [
+    {
+      "fieldName": "nomFichier",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "fichierURL",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateUpload",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "formateurId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "sessionId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "formationId",
+      "fieldType": "Long"
+    }
+  ],
+  "relationships": [],
+  "service": "serviceClass",
+  "dto": "mapstruct",
+  "jpaMetamodelFiltering": false,
+  "readOnly": false,
+  "pagination": "no",
+  "name": "PieceJointe",
+  "changelogDate": "20261023082701"
+}

@@ -120,7 +120,7 @@ public class SecurityConfiguration {
 
         http.oauth2Login(oauth2 -> oauth2
                 .authorizationRequestResolver(authorizationRequestResolver(this.clientRegistrationRepository))
-                .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/orga/"))
+                .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler("/"))
             )
             .logout(logout -> logout
                 .logoutSuccessHandler(oidcLogoutSuccessHandler())

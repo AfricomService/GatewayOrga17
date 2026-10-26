@@ -7,7 +7,7 @@
       </div>
       <div>
         <h2 class="page-title" jhiTranslate="orgacaregatewayApp.orgaCareContrat.home.title">Contrats</h2>
-        <p class="page-subtitle">Gérez les contrats enregistrés</p>
+        <p class="page-subtitle">{{ canEdit ? 'Gérez les contrats enregistrés' : 'Consultation des contrats enregistrés' }}</p>
       </div>
     </div>
     <div class="header-actions">
@@ -15,6 +15,7 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
       </button>
       <button
+        *ngIf="canEdit"
         type="button"
         id="jh-create-entity"
         data-cy="entityCreateButton"
@@ -57,7 +58,7 @@
           <th scope="col" jhiSortBy="personne.id">
             <span jhiTranslate="orgacaregatewayApp.orgaCareContrat.personne">Personne</span> <fa-icon icon="sort"></fa-icon>
           </th>
-          <th scope="col" class="actions-col"></th>
+          <th scope="col" class="actions-col" *ngIf="canEdit"></th>
         </tr>
       </thead>
       <tbody>
@@ -65,8 +66,8 @@
           *ngFor="let contrat of contrats; trackBy: trackId"
           data-cy="entityTable"
           class="contrat-row"
-          (dblclick)="navigateToEdit(contrat)"
-          title="Double-cliquez pour modifier"
+          (click)="openContrat(contrat)"
+          [title]="canEdit ? 'Cliquez pour modifier' : 'Cliquez pour consulter'"
         >
           <td>{{ contrat.dateDebut | formatMediumDatetime }}</td>
           <td>{{ contrat.dateFin | formatMediumDatetime }}</td>
@@ -83,24 +84,36 @@
             </span>
           </td>
           <td>
-            <a *ngIf="contrat.societe" [routerLink]="['/societe', contrat.societe?.id, 'view']" class="ref-link">{{
-              contrat.societe?.raisonSociale ?? contrat.societe?.id
-            }}</a>
+            <a
+              *ngIf="contrat.societe"
+              [routerLink]="['/societe', contrat.societe.id, 'view']"
+              class="ref-link"
+              (click)="$event.stopPropagation()"
+              >{{ contrat.societe.raisonSociale ?? contrat.societe.id }}</a
+            >
             <span *ngIf="!contrat.societe" class="empty-cell">—</span>
           </td>
           <td>
-            <a *ngIf="contrat.typeContrat" [routerLink]="['/type-contrat', contrat.typeContrat?.id, 'view']" class="ref-link">{{
-              contrat.typeContrat?.nom ?? contrat.typeContrat?.id
-            }}</a>
+            <a
+              *ngIf="contrat.typeContrat"
+              [routerLink]="['/type-contrat', contrat.typeContrat.id, 'view']"
+              class="ref-link ref-link-typecontrat"
+              (click)="$event.stopPropagation()"
+              >{{ contrat.typeContrat.nom ?? contrat.typeContrat.id }}</a
+            >
             <span *ngIf="!contrat.typeContrat" class="empty-cell">—</span>
           </td>
           <td>
-            <a *ngIf="contrat.personne" [routerLink]="['/personne', contrat.personne?.id, 'view']" class="ref-link">{{
-              contrat.personne?.nomPrenom ?? contrat.personne?.id
-            }}</a>
+            <a
+              *ngIf="contrat.personne"
+              [routerLink]="['/personne', contrat.personne.id, 'view']"
+              class="ref-link ref-link-personne"
+              (click)="$event.stopPropagation()"
+              >{{ contrat.personne.nomPrenom ?? contrat.personne.id }}</a
+            >
             <span *ngIf="!contrat.personne" class="empty-cell">—</span>
           </td>
-          <td class="actions-col">
+          <td class="actions-col" *ngIf="canEdit">
             <button
               type="button"
               (click)="delete(contrat); $event.stopPropagation()"

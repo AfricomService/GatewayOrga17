@@ -9,6 +9,7 @@ import { ISite } from '../site.model';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/config/pagination.constants';
 import { SiteService } from '../service/site.service';
 import { SiteDeleteDialogComponent } from '../delete/site-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-site',
@@ -24,12 +25,14 @@ export class SiteComponent implements OnInit {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  canEdit = false;
 
   constructor(
     protected siteService: SiteService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -55,6 +58,7 @@ export class SiteComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.canEdit = this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_RH']);
     this.handleNavigation();
   }
 
@@ -62,9 +66,9 @@ export class SiteComponent implements OnInit {
     return item.id!;
   }
 
-  // Double-click → navigate to edit page
+  // Click → edit page (ADMIN/RH) or detail page (read-only)
   editSite(site: ISite): void {
-    this.router.navigate(['/site', site.id, 'edit']);
+    this.router.navigate(['/site', site.id, this.canEdit ? 'edit' : 'view']);
   }
 
   delete(site: ISite): void {

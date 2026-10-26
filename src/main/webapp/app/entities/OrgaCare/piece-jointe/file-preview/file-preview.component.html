@@ -1,0 +1,33 @@
+<div class="preview-container">
+  <div *ngIf="isLoading" class="loading-spinner">Chargement de l'aperçu...</div>
+
+  <div *ngIf="errorMsg" class="error-msg">
+    {{ errorMsg }}
+  </div>
+
+  <div *ngIf="!isLoading && !errorMsg" class="content-area">
+    <div [ngSwitch]="fileType">
+      <div *ngSwitchCase="'image'" class="img-wrapper">
+        <img [src]="imageSrc" alt="Aperçu du fichier" />
+      </div>
+
+      <div *ngSwitchCase="'pdf'" class="pdf-wrapper">
+        <iframe [src]="pdfSrc!" style="width: 100%; height: 80vh; border: none"></iframe>
+      </div>
+
+      <div *ngSwitchCase="'docx'" class="docx-wrapper">
+        <div #docxContainer class="docx-canvas"></div>
+      </div>
+
+      <div *ngSwitchCase="'excel'" class="excel-wrapper">
+        <div [innerHTML]="excelHtml" class="excel-table-container"></div>
+      </div>
+
+      <div *ngSwitchDefault class="fallback-wrapper">
+        <div class="file-icon">📄</div>
+        <h3>Aperçu non disponible pour ce type de fichier</h3>
+        <p>Téléchargez le fichier pour le consulter.</p>
+      </div>
+    </div>
+  </div>
+</div>

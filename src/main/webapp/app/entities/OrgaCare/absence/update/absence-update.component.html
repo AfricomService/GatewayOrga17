@@ -1,156 +1,220 @@
-<div class="row justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-absence-heading"
-        data-cy="AbsenceCreateUpdateHeading"
-        jhiTranslate="orgacaregatewayApp.orgaCareAbsence.home.createOrEditLabel"
-      >
-        Create or edit a Absence
-      </h2>
+<div class="absence-update-container">
+  <!-- Header Banner -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <fa-icon icon="calendar-times"></fa-icon>
+      </div>
+      <div class="header-text">
+        <h1
+          id="jhi-absence-heading"
+          data-cy="AbsenceCreateUpdateHeading"
+          jhiTranslate="orgacaregatewayApp.orgaCareAbsence.home.createOrEditLabel"
+        >
+          Créer ou éditer une Absence
+        </h1>
+        <p>Renseignez les informations de l'absence</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="btn-header-secondary" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+      <button type="button" class="btn-header-primary" [disabled]="editForm.invalid || isSaving" (click)="save()">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
+  </div>
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+  <jhi-alert-error></jhi-alert-error>
 
-        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
-          <label class="form-control-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+    <!-- Hidden ID field -->
+    <div [hidden]="true">
+      <input type="number" formControlName="id" />
+    </div>
+
+    <!-- Section Générale -->
+    <div class="accordion-card" [class.open]="sectionGenerale">
+      <div class="accordion-header" (click)="sectionGenerale = !sectionGenerale">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Générale</span>
         </div>
+        <div class="accordion-chevron" [class.rotated]="sectionGenerale">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateCreation" for="field_dateCreation"
-            >Date Creation</label
-          >
-          <div class="d-flex">
+      <div class="accordion-body" *ngIf="sectionGenerale">
+        <div class="form-grid-3">
+          <div class="field-group">
+            <label for="field_etat" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.etat">ETAT <span class="required">*</span></label>
+            <div class="select-wrapper">
+              <select
+                id="field_etat"
+                data-cy="etat"
+                class="field-select"
+                formControlName="etat"
+                [ngStyle]="{ color: editForm.get('etat')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null" disabled>-- Sélectionner un état --</option>
+                <option *ngFor="let etat of etatValues" [ngValue]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
+              <small class="error-msg" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
+                Ce champ est obligatoire.
+              </small>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="field_dateCreation" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateCreation">DATE CRÉATION</label>
             <input
               id="field_dateCreation"
               data-cy="dateCreation"
               type="datetime-local"
-              class="form-control"
-              name="dateCreation"
+              class="field-input"
               formControlName="dateCreation"
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.etat" for="field_etat">Etat</label>
-          <select class="form-control" name="etat" formControlName="etat" id="field_etat" data-cy="etat">
-            <option [ngValue]="null">{{ 'orgacaregatewayApp.Etat.null' | translate }}</option>
-            <option *ngFor="let etat of etatValues" [value]="etat">{{ 'orgacaregatewayApp.Etat.' + etat | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('etat')!.invalid && (editForm.get('etat')!.dirty || editForm.get('etat')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('etat')?.errors?.required" jhiTranslate="entity.validation.required">
-              This field is required.
-            </small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateDebut" for="field_dateDebut"
-            >Date Debut</label
-          >
-          <div class="d-flex">
+          <div class="field-group">
+            <label for="field_dateDebut" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateDebut">DATE DÉBUT</label>
             <input
               id="field_dateDebut"
               data-cy="dateDebut"
               type="datetime-local"
-              class="form-control"
-              name="dateDebut"
+              class="field-input"
               formControlName="dateDebut"
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateFin" for="field_dateFin">Date Fin</label>
-          <div class="d-flex">
+          <div class="field-group">
+            <label for="field_dateFin" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.dateFin">DATE FIN</label>
             <input
               id="field_dateFin"
               data-cy="dateFin"
               type="datetime-local"
-              class="form-control"
-              name="dateFin"
+              class="field-input"
               formControlName="dateFin"
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.motif" for="field_motif">Motif</label>
-          <input type="text" class="form-control" name="motif" id="field_motif" data-cy="motif" formControlName="motif" />
+        <div class="form-grid-1 mt-16">
+          <div class="field-group">
+            <label for="field_motif" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.motif">MOTIF</label>
+            <input
+              type="text"
+              id="field_motif"
+              data-cy="motif"
+              class="field-input"
+              placeholder="Motif de l'absence"
+              formControlName="motif"
+            />
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div class="form-group">
-          <label class="form-control-label" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneAbscent" for="field_personneAbscent"
-            >Personne Abscent</label
-          >
-          <select
-            class="form-control"
-            id="field_personneAbscent"
-            data-cy="personneAbscent"
-            name="personneAbscent"
-            formControlName="personneAbscent"
-          >
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="
-                personneOption.id === editForm.get('personneAbscent')!.value?.id ? editForm.get('personneAbscent')!.value : personneOption
-              "
-              *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById"
-            >
-              {{ personneOption.id }}
-            </option>
-          </select>
+    <!-- Section Personnes -->
+    <div class="accordion-card" [class.open]="sectionPersonnes">
+      <div class="accordion-header" (click)="sectionPersonnes = !sectionPersonnes">
+        <div class="accordion-header-left">
+          <div class="accordion-icon icon-green">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <span class="accordion-title">Section Personnes</span>
         </div>
-
-        <div class="form-group">
-          <label
-            class="form-control-label"
-            jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneRemplacant"
-            for="field_personneRemplacant"
-            >Personne Remplacant</label
-          >
-          <select
-            class="form-control"
-            id="field_personneRemplacant"
-            data-cy="personneRemplacant"
-            name="personneRemplacant"
-            formControlName="personneRemplacant"
-          >
-            <option [ngValue]="null"></option>
-            <option
-              [ngValue]="
-                personneOption.id === editForm.get('personneRemplacant')!.value?.id
-                  ? editForm.get('personneRemplacant')!.value
-                  : personneOption
-              "
-              *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById"
-            >
-              {{ personneOption.id }}
-            </option>
-          </select>
+        <div class="accordion-chevron" [class.rotated]="sectionPersonnes">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
+      <div class="accordion-body" *ngIf="sectionPersonnes">
+        <div class="form-grid-3">
+          <div class="field-group">
+            <label for="field_personneAbscent" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneAbscent">PERSONNE ABSENTE</label>
+            <div class="select-wrapper">
+              <select
+                id="field_personneAbscent"
+                data-cy="personneAbscent"
+                class="field-select"
+                formControlName="personneAbscent"
+                [compareWith]="comparePersonne"
+                [ngStyle]="{ color: editForm.get('personneAbscent')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null">-- Sélectionner une personne --</option>
+                <option [ngValue]="personneOption" *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById">
+                  {{ personneOption.nomPrenom || personneOption.id }}
+                </option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
 
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
-        </button>
+          <div class="field-group">
+            <label for="field_personneRemplacant" jhiTranslate="orgacaregatewayApp.orgaCareAbsence.personneRemplacant">REMPLAÇANT</label>
+            <div class="select-wrapper">
+              <select
+                id="field_personneRemplacant"
+                data-cy="personneRemplacant"
+                class="field-select"
+                formControlName="personneRemplacant"
+                [compareWith]="comparePersonne"
+                [ngStyle]="{ color: editForm.get('personneRemplacant')!.value ? '#1a1a2e' : '#8890a6' }"
+              >
+                <option [ngValue]="null">-- Sélectionner une personne --</option>
+                <option [ngValue]="personneOption" *ngFor="let personneOption of personnesSharedCollection; trackBy: trackPersonneById">
+                  {{ personneOption.nomPrenom || personneOption.id }}
+                </option>
+              </select>
+              <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="form-footer">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn-cancel" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        <span jhiTranslate="entity.action.cancel">Annuler</span>
+      </button>
+      <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="btn-save">
+        <fa-icon icon="save"></fa-icon>
+        <span jhiTranslate="entity.action.save">Sauvegarder</span>
+      </button>
+    </div>
+  </form>
 </div>
