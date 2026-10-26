@@ -130,9 +130,9 @@ export class FormationComponent implements OnInit {
     return id != null ? this.personneNames.get(id) ?? `#${id}` : null;
   }
 
-  // Clic sur la ligne → détail (lecture seule)
+  // Clic sur la ligne → édition (ADMIN/RH) ou détail (lecture seule)
   navigateToEdit(formation: IFormation): void {
-    this.router.navigate(['/formation', formation.id, 'view']);
+    this.router.navigate(['/formation', formation.id, this.canEdit ? 'edit' : 'view']);
   }
 
   delete(formation: IFormation, event: Event): void {

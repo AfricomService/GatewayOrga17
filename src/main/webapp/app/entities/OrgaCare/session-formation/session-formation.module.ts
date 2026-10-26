@@ -6,9 +6,10 @@ import { SessionFormationUpdateComponent } from './update/session-formation-upda
 import { SessionFormationDeleteDialogComponent } from './delete/session-formation-delete-dialog.component';
 import { SessionFormationRoutingModule } from './route/session-formation-routing.module';
 import { PersonneSelectionModalComponent } from './personne-selection-modal/personne-selection-modal.component';
+import { PieceJointeSharedModule } from 'app/entities/OrgaCare/piece-jointe/piece-jointe-shared.module';
 
 @NgModule({
-  imports: [SharedModule, SessionFormationRoutingModule],
+  imports: [SharedModule, PieceJointeSharedModule, SessionFormationRoutingModule],
   declarations: [
     SessionFormationComponent,
     SessionFormationDetailComponent,

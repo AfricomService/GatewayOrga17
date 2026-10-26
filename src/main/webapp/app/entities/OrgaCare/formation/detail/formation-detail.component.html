@@ -117,5 +117,49 @@
         </div>
       </div>
     </div>
+
+    <!-- ══════════ Pièces jointes ══════════ -->
+    <div class="accordion-card">
+      <button type="button" class="accordion-btn" [class.opened]="sectionPj" (click)="sectionPj = !sectionPj">
+        <div class="panel-header-content">
+          <div class="panel-icon pj"><fa-icon icon="paperclip"></fa-icon></div>
+          <span>Pièces jointes</span>
+          <span class="pj-count" *ngIf="pieceJointes.length > 0">{{ pieceJointes.length }}</span>
+        </div>
+        <fa-icon [icon]="sectionPj ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+      </button>
+
+      <div class="panel-body" *ngIf="sectionPj">
+        <div *ngIf="loadingPieceJointes" class="pj-empty">Chargement...</div>
+        <div *ngIf="!loadingPieceJointes && pieceJointes.length === 0" class="pj-empty">Aucune pièce jointe.</div>
+
+        <div class="pj-grid" *ngIf="!loadingPieceJointes && pieceJointes.length > 0">
+          <div class="pj-card" *ngFor="let pj of pieceJointes; trackBy: trackPjById" [class.selected]="selectedPjForPreview?.id === pj.id">
+            <div class="pj-name" (click)="togglePjPreview(pj)" [title]="pjFullName(pj)">
+              <fa-icon icon="paperclip"></fa-icon>
+              <strong>{{ pjFullName(pj) }}</strong>
+            </div>
+            <button type="button" class="pj-icon-btn" (click)="downloadPieceJointe(pj)" title="Télécharger">
+              <fa-icon icon="download"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="pj-preview" *ngIf="selectedPjForPreview">
+          <div class="pj-preview-header">
+            <strong>{{ pjFullName(selectedPjForPreview) }}</strong>
+            <div class="pj-preview-actions">
+              <button type="button" class="pj-icon-btn" (click)="downloadPieceJointe(selectedPjForPreview)" title="Télécharger">
+                <fa-icon icon="download"></fa-icon>
+              </button>
+              <button type="button" class="pj-icon-btn" (click)="closePjPreview()" title="Fermer l'aperçu">✕</button>
+            </div>
+          </div>
+          <div class="pj-preview-body">
+            <jhi-file-preview [pjId]="selectedPjForPreview.id!" [fileName]="pjFullName(selectedPjForPreview)"></jhi-file-preview>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

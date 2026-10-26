@@ -68,18 +68,22 @@
                 </div>
               </div>
 
-              <!-- Personne -->
+              <!-- Bénéficiaire -->
               <div class="field-group">
-                <label class="field-label" for="field_personneId">Personne (ID)</label>
-                <div class="input-wrapper">
+                <label class="field-label" for="field_personneId">Bénéficiaire</label>
+                <div class="input-wrapper select-wrapper">
                   <span class="input-prefix"><fa-icon icon="users"></fa-icon></span>
-                  <input
-                    class="field-input with-prefix"
+                  <select
+                    class="field-input field-select with-prefix"
                     id="field_personneId"
                     data-cy="personneId"
-                    type="number"
                     formControlName="personneId"
-                  />
+                  >
+                    <option [ngValue]="null">— Sélectionner —</option>
+                    <option [ngValue]="personne.id" *ngFor="let personne of personnesCollection; trackBy: trackPersonneById">
+                      {{ personne.name }}
+                    </option>
+                  </select>
                 </div>
               </div>
 
@@ -87,41 +91,6 @@
               <div class="field-group">
                 <label class="field-label" for="field_statut">Statut</label>
                 <input class="field-input" id="field_statut" data-cy="statut" type="text" formControlName="statut" placeholder="Statut" />
-              </div>
-
-              <!-- État -->
-              <div class="field-group">
-                <label class="field-label" for="field_etat">État</label>
-                <input class="field-input" id="field_etat" data-cy="etat" type="text" formControlName="etat" placeholder="État" />
-              </div>
-
-              <!-- Note -->
-              <div class="field-group">
-                <label class="field-label" for="field_note">Note</label>
-                <div class="input-wrapper">
-                  <span class="input-prefix"><fa-icon icon="hashtag"></fa-icon></span>
-                  <input
-                    class="field-input with-prefix"
-                    id="field_note"
-                    data-cy="note"
-                    type="number"
-                    formControlName="note"
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-
-              <!-- Commentaire -->
-              <div class="field-group full-width">
-                <label class="field-label" for="field_commentaire">Commentaire</label>
-                <input
-                  class="field-input"
-                  id="field_commentaire"
-                  data-cy="commentaire"
-                  type="text"
-                  formControlName="commentaire"
-                  placeholder="Commentaire"
-                />
               </div>
             </div>
           </div>
@@ -183,6 +152,837 @@
           </div>
         </ng-template>
       </ngb-panel>
+
+      <!-- ══════════ Panel 2 — Pièces jointes ══════════ -->
+      <ngb-panel id="panel-2">
+        <ng-template ngbPanelHeader let-opened="opened">
+          <button ngbPanelToggle type="button" class="accordion-btn" [class.opened]="opened">
+            <div class="panel-header-content">
+              <div class="panel-icon pj"><fa-icon icon="paperclip"></fa-icon></div>
+              <span>Pièces jointes</span>
+              <span class="pj-count" *ngIf="pieceJointes.length + pendingPieceJointes.length > 0">
+                {{ pieceJointes.length + pendingPieceJointes.length }}
+              </span>
+            </div>
+            <fa-icon [icon]="opened ? 'chevron-up' : 'chevron-down'" class="chevron"></fa-icon>
+          </button>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="panel-body">
+            <!-- Barre d'actions -->
+            <div class="pj-toolbar">
+              <button type="button" class="btn-action btn-secondary-action" (click)="fileInput.click()" [disabled]="uploadingPieceJointe">
+                <fa-icon icon="plus"></fa-icon>
+                <span>Ajouter</span>
+              </button>
+              <button type="button" class="btn-action btn-secondary-action" (click)="openScanModal(ScanModal)">
+                <span>📠</span>
+                <span>Scanner</span>
+              </button>
+              <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
+            </div>
+
+            <!-- Mode création : fichiers en attente -->
+            <div class="pj-info" *ngIf="pendingPieceJointes.length > 0">
+              ℹ️ Ces pièces jointes seront envoyées automatiquement lors de l'enregistrement de la formation.
+            </div>
+
+            <div class="pj-grid" *ngIf="pendingPieceJointes.length > 0">
+              <div
+                class="pj-card pending"
+                *ngFor="let pending of pendingPieceJointes"
+                [title]="pending.displayName + '.' + pending.extension"
+              >
+                <div class="pj-name">
+                  <span>⏳</span>
+                  <strong>{{ pending.displayName }}.{{ pending.extension }}</strong>
+                </div>
+                <button type="button" class="pj-icon-btn danger" (click)="removePendingPieceJointe(pending.tempId)" title="Retirer">
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <!-- Pièces jointes enregistrées -->
+            <div *ngIf="loadingPieceJointes" class="pj-empty">Chargement...</div>
+
+            <div *ngIf="!loadingPieceJointes && pieceJointes.length === 0 && pendingPieceJointes.length === 0" class="pj-empty">
+              Aucune pièce jointe pour le moment.
+            </div>
+
+            <div class="pj-grid" *ngIf="!loadingPieceJointes && pieceJointes.length > 0">
+              <div
+                class="pj-card"
+                *ngFor="let pj of pieceJointes; trackBy: trackPjById"
+                [class.selected]="selectedPjForPreview?.id === pj.id"
+              >
+                <div class="pj-name" (click)="togglePjPreview(pj)" [title]="pjFullName(pj)">
+                  <fa-icon icon="paperclip"></fa-icon>
+                  <strong>{{ pjFullName(pj) }}</strong>
+                </div>
+
+                <button type="button" class="pj-icon-btn" (click)="openRenamePjModal(pj)" title="Renommer">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </button>
+                <button type="button" class="pj-icon-btn" (click)="downloadPieceJointe(pj)" title="Télécharger">
+                  <fa-icon icon="download"></fa-icon>
+                </button>
+                <button type="button" class="pj-icon-btn danger" (click)="removePieceJointe(pj.id!)" title="Supprimer">✕</button>
+              </div>
+            </div>
+
+            <div *ngIf="uploadingPieceJointe" class="pj-empty">Téléchargement en cours...</div>
+
+            <!-- Aperçu inline -->
+            <div class="pj-preview" *ngIf="selectedPjForPreview">
+              <div class="pj-preview-header">
+                <strong>{{ pjFullName(selectedPjForPreview) }}</strong>
+                <div class="pj-preview-actions">
+                  <button type="button" class="pj-icon-btn" (click)="downloadPieceJointe(selectedPjForPreview)" title="Télécharger">
+                    <fa-icon icon="download"></fa-icon>
+                  </button>
+                  <button type="button" class="pj-icon-btn" (click)="closePjPreview()" title="Fermer l'aperçu">✕</button>
+                </div>
+              </div>
+              <div class="pj-preview-body">
+                <jhi-file-preview [pjId]="selectedPjForPreview.id!" [fileName]="pjFullName(selectedPjForPreview)"></jhi-file-preview>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
     </ngb-accordion>
   </form>
+
+  <!-- ====================================================== -->
+  <!-- MODAL SCAN PJCARE -->
+  <!-- ====================================================== -->
+  <ng-template #ScanModal let-modal>
+    <div class="modal-header" style="border-bottom: 2px solid #e9ecef; padding: 16px 20px">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <span style="font-size: 20px">📠</span>
+        <h4
+          class="modal-title"
+          style="font-weight: 700; color: #1a2332; margin: 0; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px"
+        >
+          Numérisation via PjCare
+        </h4>
+      </div>
+
+      <span
+        *ngIf="currentDocumentPages.length > 0"
+        style="
+          margin-left: auto;
+          background: #0f172a;
+          color: #fff;
+          border-radius: 20px;
+          padding: 4px 14px;
+          font-size: 13px;
+          font-weight: 700;
+        "
+      >
+        {{ currentDocumentPages.length }} page{{ currentDocumentPages.length > 1 ? 's' : '' }} dans le document
+      </span>
+    </div>
+
+    <div class="modal-body" style="padding: 20px; background: #f8fafc">
+      <div
+        *ngIf="!pjcareAvailable"
+        style="
+          background: #fff8e1;
+          border: 1px solid #f59e0b;
+          border-radius: 10px;
+          padding: 16px;
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+        "
+      >
+        <span style="font-size: 22px; flex-shrink: 0">⚠️</span>
+        <div>
+          <p style="font-weight: 600; color: #92400e; margin: 0 0 6px">PjCare n'est pas démarré</p>
+          <p style="color: #78350f; margin: 0 0 10px; font-size: 14px">
+            Lancez l'application PjCare sur ce poste puis cliquez sur Réessayer.
+          </p>
+          <button class="btn btn-sm btn-warning" (click)="checkPjCare()" style="font-weight: 600">🔄 Réessayer</button>
+        </div>
+      </div>
+
+      <div *ngIf="pjcareAvailable">
+        <div *ngIf="loadingDrivers || loadingScanners" style="text-align: center; padding: 40px 0; color: #6c757d">
+          <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+          <span>{{ loadingDrivers ? 'Chargement des drivers...' : 'Recherche des scanners...' }}</span>
+        </div>
+
+        <div *ngIf="!loadingDrivers">
+          <!-- ── BLOC 1 : Source ── -->
+          <div style="border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 14px; overflow: hidden">
+            <div
+              (click)="scanAccordionStates['scanSource'] = !scanAccordionStates['scanSource']"
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 16px;
+                background: #f1f5f9;
+                cursor: pointer;
+                user-select: none;
+              "
+            >
+              <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin: 0">
+                📡 Source de numérisation
+              </p>
+              <svg
+                [style.transform]="scanAccordionStates['scanSource'] ? 'rotate(180deg)' : 'rotate(0deg)'"
+                style="transition: transform 0.3s ease; width: 16px; height: 16px; color: #64748b"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <div
+              [style.max-height]="scanAccordionStates['scanSource'] !== false ? '1000px' : '0'"
+              style="overflow: hidden; transition: max-height 0.4s ease; background: #fff"
+              [style.padding]="scanAccordionStates['scanSource'] !== false ? '16px' : '0 16px'"
+            >
+              <!-- Drivers multiples -->
+              <div *ngIf="availableDrivers.length > 1" style="margin-bottom: 14px">
+                <label class="form-label fw-semibold" style="font-size: 13px; color: #374151; margin-bottom: 8px; display: block"
+                  >Pilote (driver)</label
+                >
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px">
+                  <button
+                    *ngFor="let d of availableDrivers"
+                    type="button"
+                    (click)="selectedDriver = $any(d.key); onDriverChange()"
+                    [title]="d.description"
+                    style="
+                      padding: 8px 16px;
+                      border-radius: 8px;
+                      font-size: 13px;
+                      font-weight: 700;
+                      cursor: pointer;
+                      transition: all 0.15s;
+                      border-width: 2px;
+                      border-style: solid;
+                      letter-spacing: 0.3px;
+                    "
+                    [style.background]="selectedDriver === d.key ? '#1e40af' : '#f1f5f9'"
+                    [style.color]="selectedDriver === d.key ? '#fff' : '#374151'"
+                    [style.border-color]="selectedDriver === d.key ? '#1e40af' : '#e2e8f0'"
+                  >
+                    {{ d.key.toUpperCase() }}
+                  </button>
+                </div>
+                <ng-container *ngFor="let d of availableDrivers">
+                  <p
+                    *ngIf="d.key === selectedDriver"
+                    style="
+                      margin: 0;
+                      font-size: 12px;
+                      color: #64748b;
+                      padding: 6px 10px;
+                      background: #eff6ff;
+                      border-radius: 6px;
+                      border-left: 3px solid #1e40af;
+                    "
+                  >
+                    {{ d.description }}
+                  </p>
+                </ng-container>
+              </div>
+
+              <!-- Driver unique -->
+              <div
+                *ngIf="availableDrivers.length === 1"
+                style="
+                  margin-bottom: 14px;
+                  padding: 8px 12px;
+                  background: #eff6ff;
+                  border-radius: 8px;
+                  border: 1px solid #bfdbfe;
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                "
+              >
+                <span style="font-weight: 700; color: #1e40af; font-size: 13px">{{ availableDrivers[0].key.toUpperCase() }}</span>
+                <span style="color: #3b82f6; font-size: 12px">— {{ availableDrivers[0].description }}</span>
+              </div>
+
+              <!-- Chargement scanners -->
+              <div *ngIf="loadingScanners" style="padding: 12px 0; color: #6c757d; font-size: 13px">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Recherche des scanners avec le driver <strong>{{ selectedDriver || '...' }}</strong
+                >…
+              </div>
+
+              <!-- Aucun scanner -->
+              <div
+                *ngIf="!loadingScanners && scanners.length === 0"
+                style="
+                  background: #fef3c7;
+                  border: 1px solid #fcd34d;
+                  border-radius: 8px;
+                  padding: 12px 14px;
+                  font-size: 13px;
+                  color: #78350f;
+                "
+              >
+                ℹ️ Aucun scanner détecté avec le driver <strong>{{ selectedDriver }}</strong
+                >. Essayez un autre driver ou vérifiez la connexion.
+              </div>
+
+              <!-- Select scanner -->
+              <div *ngIf="!loadingScanners && scanners.length > 0">
+                <label class="form-label fw-semibold" style="font-size: 13px; color: #374151; margin-bottom: 6px; display: block"
+                  >Scanner</label
+                >
+                <select
+                  class="form-select"
+                  [(ngModel)]="selectedScanner"
+                  name="selectedScanner"
+                  style="font-size: 14px; border-radius: 8px; border-color: #e2e8f0"
+                >
+                  <option *ngFor="let s of scanners" [value]="s">{{ s }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── BLOC 2 : Paramètres ── -->
+          <div style="border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 14px; overflow: hidden">
+            <div
+              (click)="scanAccordionStates['scanParams'] = !scanAccordionStates['scanParams']"
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 16px;
+                background: #f1f5f9;
+                cursor: pointer;
+                user-select: none;
+              "
+            >
+              <div style="display: flex; align-items: center; gap: 8px">
+                <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin: 0">
+                  ⚙️ Paramètres
+                </p>
+                <span style="font-size: 10px; background: #dcfce7; color: #166534; border-radius: 10px; padding: 2px 8px; font-weight: 600"
+                  >mémorisés</span
+                >
+              </div>
+              <svg
+                [style.transform]="scanAccordionStates['scanParams'] !== false ? 'rotate(180deg)' : 'rotate(0deg)'"
+                style="transition: transform 0.3s ease; width: 16px; height: 16px; color: #64748b"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <div
+              [style.max-height]="scanAccordionStates['scanParams'] !== false ? '1000px' : '0'"
+              style="overflow: hidden; transition: max-height 0.4s ease; background: #fff"
+              [style.padding]="scanAccordionStates['scanParams'] !== false ? '16px' : '0 16px'"
+            >
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+                <!-- Format -->
+                <div>
+                  <label class="form-label" style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block"
+                    >Format de sortie</label
+                  >
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap">
+                    <button
+                      *ngFor="
+                        let fmt of [
+                          { val: 'jpg', lbl: 'JPEG' },
+                          { val: 'png', lbl: 'PNG' },
+                          { val: 'pdf', lbl: 'PDF' },
+                          { val: 'tiff', lbl: 'TIFF' }
+                        ]
+                      "
+                      type="button"
+                      (click)="scanFormat = $any(fmt.val)"
+                      [disabled]="currentDocumentPages.length > 0"
+                      [title]="currentDocumentPages.length > 0 ? 'Videz le document avant de changer le format' : ''"
+                      style="
+                        padding: 5px 12px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        border-width: 1.5px;
+                        border-style: solid;
+                      "
+                      [style.background]="scanFormat === fmt.val ? '#0f172a' : '#f8fafc'"
+                      [style.color]="scanFormat === fmt.val ? '#fff' : '#475569'"
+                      [style.border-color]="scanFormat === fmt.val ? '#0f172a' : '#e2e8f0'"
+                      [style.opacity]="currentDocumentPages.length > 0 ? '0.5' : '1'"
+                    >
+                      {{ fmt.lbl }}
+                    </button>
+                  </div>
+                  <p *ngIf="currentDocumentPages.length > 0" style="margin: 4px 0 0; font-size: 11px; color: #94a3b8">
+                    ⚠️ Format verrouillé — {{ scanFormat.toUpperCase() }} (pages déjà numérisées)
+                  </p>
+                </div>
+
+                <!-- Mode couleur -->
+                <div>
+                  <label class="form-label" style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block"
+                    >Mode couleur</label
+                  >
+                  <div style="display: flex; gap: 6px">
+                    <button
+                      *ngFor="
+                        let bd of [
+                          { val: 'color', lbl: 'Couleur' },
+                          { val: 'gray', lbl: 'Gris' },
+                          { val: 'bw', lbl: 'N/B' }
+                        ]
+                      "
+                      type="button"
+                      (click)="scanBitdepth = $any(bd.val)"
+                      style="
+                        padding: 5px 12px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        border-width: 1.5px;
+                        border-style: solid;
+                      "
+                      [style.background]="scanBitdepth === bd.val ? '#0f172a' : '#f8fafc'"
+                      [style.color]="scanBitdepth === bd.val ? '#fff' : '#475569'"
+                      [style.border-color]="scanBitdepth === bd.val ? '#0f172a' : '#e2e8f0'"
+                    >
+                      {{ bd.lbl }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Résolution -->
+                <div>
+                  <label class="form-label" style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block">
+                    Résolution — <strong style="color: #1e40af">{{ scanDpi }} DPI</strong>
+                  </label>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap">
+                    <button
+                      *ngFor="let dpiVal of [75, 150, 200, 300, 600]"
+                      type="button"
+                      (click)="scanDpi = dpiVal"
+                      style="
+                        padding: 5px 12px;
+                        border-radius: 6px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        border-width: 1.5px;
+                        border-style: solid;
+                      "
+                      [style.background]="scanDpi === dpiVal ? '#0f172a' : '#f8fafc'"
+                      [style.color]="scanDpi === dpiVal ? '#fff' : '#475569'"
+                      [style.border-color]="scanDpi === dpiVal ? '#0f172a' : '#e2e8f0'"
+                    >
+                      {{ dpiVal }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Qualité JPEG -->
+                <div *ngIf="scanFormat === 'jpg'">
+                  <label class="form-label" style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block">
+                    Qualité JPEG — <strong style="color: #1e40af">{{ scanQuality }}%</strong>
+                  </label>
+                  <input
+                    type="range"
+                    class="form-range"
+                    [(ngModel)]="scanQuality"
+                    name="scanQuality"
+                    min="10"
+                    max="100"
+                    step="5"
+                    style="width: 100%"
+                  />
+                  <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 2px">
+                    <span>Léger</span><span>Équilibré</span><span>Maximum</span>
+                  </div>
+                </div>
+
+                <!-- Duplex -->
+                <div style="display: flex; align-items: center; gap: 10px; padding-top: 4px; grid-column: 1 / -1">
+                  <div
+                    (click)="scanDuplex = !scanDuplex"
+                    style="
+                      width: 40px;
+                      height: 22px;
+                      border-radius: 11px;
+                      cursor: pointer;
+                      position: relative;
+                      transition: background 0.2s;
+                      flex-shrink: 0;
+                    "
+                    [style.background]="scanDuplex ? '#1e40af' : '#cbd5e1'"
+                  >
+                    <div
+                      style="
+                        width: 18px;
+                        height: 18px;
+                        border-radius: 50%;
+                        background: #fff;
+                        position: absolute;
+                        top: 2px;
+                        transition: left 0.2s;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                      "
+                      [style.left]="scanDuplex ? '20px' : '2px'"
+                    ></div>
+                  </div>
+                  <div>
+                    <p style="margin: 0; font-size: 13px; font-weight: 600; color: #374151">Recto-verso (duplex)</p>
+                    <p style="margin: 0; font-size: 11px; color: #94a3b8">Scanner les deux faces automatiquement</p>
+                  </div>
+                </div>
+
+                <!-- Pages blanches -->
+                <div style="grid-column: 1 / -1; border-top: 1px solid #e2e8f0; padding-top: 14px; margin-top: 4px">
+                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+                    <div
+                      (click)="scanExcludeBlank = !scanExcludeBlank"
+                      style="
+                        width: 40px;
+                        height: 22px;
+                        border-radius: 11px;
+                        cursor: pointer;
+                        position: relative;
+                        transition: background 0.2s;
+                        flex-shrink: 0;
+                      "
+                      [style.background]="scanExcludeBlank ? '#1e40af' : '#cbd5e1'"
+                    >
+                      <div
+                        style="
+                          width: 18px;
+                          height: 18px;
+                          border-radius: 50%;
+                          background: #fff;
+                          position: absolute;
+                          top: 2px;
+                          transition: left 0.2s;
+                          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                        "
+                        [style.left]="scanExcludeBlank ? '20px' : '2px'"
+                      ></div>
+                    </div>
+                    <div>
+                      <p style="margin: 0; font-size: 13px; font-weight: 600; color: #374151">Exclure les pages blanches</p>
+                      <p style="margin: 0; font-size: 11px; color: #94a3b8">Supprimer automatiquement les pages vides</p>
+                    </div>
+                  </div>
+                  <div *ngIf="scanExcludeBlank" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+                    <div>
+                      <label
+                        class="form-label"
+                        style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block"
+                      >
+                        Seuil du blanc — <strong style="color: #1e40af">{{ scanBlankThreshold }}</strong>
+                      </label>
+                      <input
+                        type="range"
+                        class="form-range"
+                        [(ngModel)]="scanBlankThreshold"
+                        name="scanBlankThreshold"
+                        min="0"
+                        max="255"
+                        step="1"
+                        style="width: 100%"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        class="form-label"
+                        style="font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; display: block"
+                      >
+                        Seuil de couverture — <strong style="color: #1e40af">{{ scanCoverageThreshold }}</strong>
+                      </label>
+                      <input
+                        type="range"
+                        class="form-range"
+                        [(ngModel)]="scanCoverageThreshold"
+                        name="scanCoverageThreshold"
+                        min="0"
+                        max="100"
+                        step="1"
+                        style="width: 100%"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /pjcareAvailable -->
+
+      <!-- ── Erreur courante ── -->
+      <div
+        *ngIf="scanError"
+        style="
+          background: #fef2f2;
+          border: 1px solid #fca5a5;
+          border-radius: 8px;
+          padding: 12px 14px;
+          display: flex;
+          gap: 10px;
+          align-items: flex-start;
+          margin-top: 10px;
+        "
+      >
+        <span style="font-size: 18px; flex-shrink: 0">❌</span>
+        <div>
+          <p style="margin: 0; font-weight: 600; color: #991b1b; font-size: 14px">Erreur de numérisation</p>
+          <p style="margin: 4px 0 0; font-size: 13px; color: #b91c1c">{{ scanError }}</p>
+        </div>
+      </div>
+
+      <!-- ── BLOC 3 : Pages du document en cours ── -->
+      <div
+        *ngIf="currentDocumentPages.length > 0"
+        style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-top: 14px"
+      >
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px">
+          <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0">
+            📄 Document en cours — {{ currentDocumentPages.length }} page{{ currentDocumentPages.length > 1 ? 's' : '' }}
+            <span style="color: #64748b; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 11px">
+              (toutes les pages formeront <strong>une seule pièce jointe</strong>)
+            </span>
+          </p>
+          <button
+            type="button"
+            (click)="currentDocumentPages = []; scanPreview = null"
+            style="
+              font-size: 11px;
+              color: #dc2626;
+              background: none;
+              border: 1px solid #fca5a5;
+              border-radius: 6px;
+              padding: 3px 10px;
+              cursor: pointer;
+              font-weight: 600;
+            "
+          >
+            Tout effacer
+          </button>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <div *ngFor="let page of currentDocumentPages; let i = index" style="position: relative; width: 80px; flex-shrink: 0">
+            <div
+              style="
+                width: 80px;
+                height: 100px;
+                border-radius: 6px;
+                overflow: hidden;
+                background: #e2e8f0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 2px solid #e2e8f0;
+              "
+            >
+              <img *ngIf="page.preview" [src]="page.preview" style="width: 100%; height: 100%; object-fit: cover" />
+              <span *ngIf="!page.preview" style="font-size: 30px">📄</span>
+            </div>
+
+            <div
+              style="
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                background: rgba(0, 0, 0, 0.55);
+                color: #fff;
+                border-radius: 4px;
+                padding: 1px 5px;
+                font-size: 10px;
+                font-weight: 700;
+              "
+            >
+              p.{{ page.pageNumber }}
+            </div>
+
+            <button
+              type="button"
+              (click)="removePage(i)"
+              style="
+                position: absolute;
+                top: 4px;
+                right: 4px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: none;
+                background: #ef4444;
+                color: #fff;
+                font-size: 11px;
+                font-weight: 700;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+              "
+              title="Retirer cette page"
+            >
+              ×
+            </button>
+
+            <p style="margin: 4px 0 0; font-size: 10px; color: #64748b; text-align: center; text-transform: uppercase">
+              {{ page.format }}
+            </p>
+          </div>
+        </div>
+
+        <div
+          *ngIf="currentDocumentPages.length > 1"
+          style="
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #1e40af;
+          "
+        >
+          ℹ️ Ces {{ currentDocumentPages.length }} pages seront fusionnées en un seul fichier
+          <strong>{{ scanFormat.toUpperCase() }}</strong> lors de l'attachement.
+        </div>
+      </div>
+
+      <!-- ── Fusion en cours ── -->
+      <div
+        *ngIf="isMerging"
+        style="
+          margin-top: 14px;
+          padding: 14px;
+          background: #f0fdf4;
+          border: 1px solid #86efac;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        "
+      >
+        <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+        <p style="margin: 0; font-size: 13px; color: #166534; font-weight: 600">
+          Fusion des {{ currentDocumentPages.length }} pages en cours…
+        </p>
+      </div>
+    </div>
+    <!-- /modal-body -->
+
+    <!-- ── Footer ── -->
+    <div class="modal-footer" style="border-top: 2px solid #e9ecef; padding: 14px 20px; gap: 8px">
+      <button class="btn btn-light" (click)="modal.close()" style="font-weight: 600; border-radius: 8px">Annuler</button>
+
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        (click)="resetScanSettings()"
+        style="font-weight: 600; border-radius: 8px; margin-right: auto"
+        title="Réinitialiser les paramètres de numérisation"
+      >
+        ↺ Paramètres par défaut
+      </button>
+
+      <button
+        *ngIf="pjcareAvailable && !loadingScanners && scanners.length > 0"
+        class="btn btn-primary"
+        (click)="launchScan()"
+        [disabled]="isScanning || isMerging || !selectedScanner"
+        style="font-weight: 600; border-radius: 8px; min-width: 160px"
+      >
+        <span *ngIf="isScanning" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <span *ngIf="!isScanning" style="margin-right: 4px">📠</span>
+        {{
+          isScanning
+            ? 'Numérisation...'
+            : currentDocumentPages.length > 0
+            ? 'Numériser encore (page ' + (currentDocumentPages.length + 1) + ')'
+            : 'Numériser'
+        }}
+      </button>
+
+      <button
+        *ngIf="currentDocumentPages.length > 0"
+        class="btn btn-success"
+        (click)="attachScanResult(modal)"
+        [disabled]="isMerging || isScanning"
+        style="font-weight: 600; border-radius: 8px; min-width: 200px"
+      >
+        <span *ngIf="isMerging" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        <span *ngIf="!isMerging">✅</span>
+        {{
+          isMerging
+            ? 'Fusion en cours...'
+            : currentDocumentPages.length === 1
+            ? 'Attacher le document (1 page)'
+            : 'Attacher le document (' + currentDocumentPages.length + ' pages)'
+        }}
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- ====================================================== -->
+  <!-- MODAL RENOMMER PIÈCE JOINTE -->
+  <!-- ====================================================== -->
+  <div *ngIf="showRenamePjModal" class="rename-pj-overlay" (click)="closeRenamePjModal()">
+    <div class="rename-pj-dialog" (click)="$event.stopPropagation()">
+      <div class="rename-pj-header">
+        <h5>✎ Renommer la pièce jointe</h5>
+        <button type="button" [disabled]="isRenamingPj" (click)="closeRenamePjModal()" class="rename-pj-close-btn">✕</button>
+      </div>
+
+      <div class="rename-pj-body">
+        <p class="rename-pj-current-name">
+          Nom actuel : <strong>{{ pjToRename?.nomFichier }}.{{ pjToRename?.type }}</strong>
+        </p>
+
+        <label class="form-label fw-semibold" style="margin-top: 10px">Nouveau nom</label>
+        <div class="rename-pj-input-row">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="renamePjNewName"
+            name="renamePjNewName"
+            [ngModelOptions]="{ standalone: true }"
+            [class.is-invalid]="renamePjError"
+            (keyup.enter)="confirmRenamePj()"
+            [disabled]="isRenamingPj"
+            autofocus
+          />
+          <span class="rename-pj-extension">.{{ pjToRename?.type }}</span>
+        </div>
+        <div *ngIf="renamePjError" class="invalid-feedback" style="display: block">
+          {{ renamePjError }}
+        </div>
+      </div>
+
+      <div class="rename-pj-footer">
+        <button type="button" class="btn btn-light" [disabled]="isRenamingPj" (click)="closeRenamePjModal()">Annuler</button>
+        <button type="button" class="btn btn-primary" [disabled]="isRenamingPj" (click)="confirmRenamePj()">
+          <span *ngIf="isRenamingPj" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

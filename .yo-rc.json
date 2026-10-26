@@ -70,7 +70,8 @@
       "ThemeFormation",
       "Formation",
       "Formateur",
-      "SessionFormation"
+      "SessionFormation",
+      "PieceJointe"
     ],
     "lastLiquibaseTimestamp": 1779439847000
   }

@@ -451,3 +451,262 @@ $transition: all 0.2s ease;
     padding: 0;
   }
 }
+// ══════════════════════════════════════════════════════
+//  Pièces jointes
+// ══════════════════════════════════════════════════════
+.panel-icon.pj {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: $primary-light;
+}
+
+.pj-count {
+  background: $hierarchy-light;
+  color: $hierarchy;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+
+.pj-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.pj-info {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #eff6ff;
+  border-left: 3px solid $primary-light;
+  border-radius: $radius-sm;
+  font-size: 0.82rem;
+  color: $primary;
+}
+
+.pj-empty {
+  text-align: center;
+  padding: 1rem;
+  color: $text-muted;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.pj-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 12px;
+}
+
+.pj-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid $border;
+  border-radius: 40px;
+  background: $bg-input;
+  transition: $transition;
+
+  &.selected {
+    border-color: $hierarchy;
+    background: $hierarchy-light;
+  }
+
+  &.pending {
+    border: 1px dashed $primary-light;
+    background: #eef4ff;
+  }
+
+  .pj-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    color: $text-dark;
+
+    strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.pj-icon-btn {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  transition: $transition;
+
+  &:hover {
+    background: $bg-page;
+    color: $primary;
+  }
+
+  &.danger {
+    background: rgba($danger, 0.12);
+    color: $danger;
+    font-size: 14px;
+    font-weight: 700;
+
+    &:hover {
+      background: $danger;
+      color: #fff;
+    }
+  }
+}
+
+.pj-preview {
+  margin-top: 14px;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+
+  .pj-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 16px;
+    background: $bg-page;
+    border-bottom: 1px solid $border;
+    font-size: 13px;
+
+    strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .pj-preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .pj-preview-body {
+    max-height: 700px;
+    overflow: auto;
+    background: $bg-input;
+  }
+}
+
+// ── Modal renommer PJ ─────────────────────────────────
+.rename-pj-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1065;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.rename-pj-dialog {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.rename-pj-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid $border;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: $bg-page;
+  border-radius: 12px 12px 0 0;
+
+  h5 {
+    margin: 0;
+    font-weight: 700;
+    color: $text-dark;
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+}
+
+.rename-pj-close-btn {
+  background: none;
+  border: 1px solid $border;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: $text-muted;
+
+  &:hover:not(:disabled) {
+    background: #f1f5f9;
+  }
+}
+
+.rename-pj-body {
+  padding: 20px;
+}
+
+.rename-pj-current-name {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.rename-pj-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .form-control {
+    flex: 1;
+  }
+}
+
+.rename-pj-extension {
+  color: $text-muted;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.rename-pj-footer {
+  padding: 14px 20px;
+  border-top: 1px solid $border;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: $bg-page;
+  border-radius: 0 0 12px 12px;
+}
+
+// ── Largeur de la modale scan PjCare (windowClass passé à modalService.open) ──
+::ng-deep .scan-modal-window .modal-dialog {
+  max-width: 700px;
+}
+
+@media (max-width: 992px) {
+  ::ng-deep .scan-modal-window .modal-dialog {
+    max-width: 95vw;
+  }
+}

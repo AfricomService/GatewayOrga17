@@ -80,6 +80,9 @@ import {
   faBalanceScale,
   faAward,
   faPlay,
+  faPaperclip,
+  faDownload,
+  faGraduationCap,
 
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
@@ -167,6 +170,9 @@ export const fontAwesomeIcons = [
   faBalanceScale,
   faAward,
   faPlay,
+  faPaperclip,
+  faDownload,
+  faGraduationCap,
 
   // jhipster-needle-add-icon-import
 ];
