@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { IPersonne } from '../personne.model';
 import { ITypeContrat } from 'app/entities/OrgaCare/type-contrat/type-contrat.model';
@@ -13,6 +13,7 @@ import { PersonneDeleteDialogComponent } from '../delete/personne-delete-dialog.
 import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/type-contrat.service';
 import { FrontendConfigService } from '../service/frontend-config.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { SalaireService, ISalaireImportResult } from 'app/entities/OrgaCare/salaire/service/salaire.service';
 
 @Component({
   selector: 'jhi-personne',
@@ -44,6 +45,15 @@ export class PersonneComponent implements OnInit {
   keycloakAdminUrl?: string;
   canEdit = false;
 
+  // Import en masse des salaires
+  salaireFile: File | null = null;
+  isImportingSalaire = false;
+  isDownloadingTemplate = false;
+  salaireImportResult: ISalaireImportResult | null = null;
+  salaireImportError: string | null = null;
+
+  private importSalaireModalRef?: NgbModalRef;
+
   constructor(
     protected personneService: PersonneService,
     protected activatedRoute: ActivatedRoute,
@@ -52,6 +62,7 @@ export class PersonneComponent implements OnInit {
     protected typeContratService: TypeContratService,
     protected frontendConfigService: FrontendConfigService,
     protected accountService: AccountService,
+    protected salaireService: SalaireService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -109,6 +120,83 @@ export class PersonneComponent implements OnInit {
         this.loadPage();
       }
     });
+  }
+
+  // ── Import en masse des salaires ─────────────────────
+  openImportSalaireModal(content: unknown): void {
+    this.salaireFile = null;
+    this.salaireImportResult = null;
+    this.salaireImportError = null;
+    this.importSalaireModalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  downloadSalaireTemplate(): void {
+    this.isDownloadingTemplate = true;
+    this.salaireImportError = null;
+    this.salaireService.downloadImportTemplate().subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'modele_salaires.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.isDownloadingTemplate = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isDownloadingTemplate = false;
+        this.salaireImportError = 'Erreur lors du téléchargement du modèle.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  onSalaireFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.salaireImportResult = null;
+    this.salaireImportError = null;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (!file.name.toLowerCase().endsWith('.xlsx')) {
+        this.salaireFile = null;
+        this.salaireImportError = 'Format invalide : veuillez choisir un fichier .xlsx.';
+      } else {
+        this.salaireFile = file;
+      }
+      input.value = ''; // permet de re-sélectionner le même fichier après correction
+    }
+  }
+
+  importSalaires(): void {
+    if (!this.salaireFile) {
+      return;
+    }
+    this.isImportingSalaire = true;
+    this.salaireImportResult = null;
+    this.salaireImportError = null;
+
+    this.salaireService.importFromExcel(this.salaireFile).subscribe({
+      next: (res: ISalaireImportResult) => {
+        this.isImportingSalaire = false;
+        this.salaireImportResult = res;
+        this.salaireFile = null;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.isImportingSalaire = false;
+        this.salaireImportError = err?.error?.message ?? err?.error?.title ?? "Erreur lors de l'import des salaires.";
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  closeImportSalaireModal(): void {
+    this.importSalaireModalRef?.close();
   }
 
   trackId(_index: number, item: IPersonne): number {

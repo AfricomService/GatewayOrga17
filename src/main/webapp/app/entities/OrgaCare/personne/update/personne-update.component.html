@@ -47,6 +47,19 @@
               : ('orgacaregatewayApp.orgaCarePersonne.home.assignAccount' | translate)
           }}</span>
         </button>
+
+        <!-- Bouton Activer / Désactiver -->
+        <button
+          type="button"
+          class="btn-action"
+          [ngClass]="isPersonneActive ? 'btn-action--deactivate' : 'btn-action--activate'"
+          [disabled]="isTogglingEtat"
+          (click)="toggleEtat()"
+        >
+          <span *ngIf="isTogglingEtat" class="spinner-border spinner-border-sm" role="status"></span>
+          <fa-icon *ngIf="!isTogglingEtat" [icon]="isPersonneActive ? 'ban' : 'check-circle'"></fa-icon>
+          <span>{{ isPersonneActive ? 'Désactiver' : 'Activer' }}</span>
+        </button>
       </ng-container>
 
       <button type="button" class="btn-action btn-primary-action" [disabled]="editForm.invalid || isSaving" (click)="save()">
@@ -68,6 +81,19 @@
     <fa-icon icon="exclamation-circle"></fa-icon>
     <span>{{ syncError }}</span>
     <button class="sync-banner__close" (click)="syncError = null">×</button>
+  </div>
+
+  <!-- ══ RÉSULTAT CHANGEMENT D'ÉTAT ══ -->
+  <div *ngIf="etatChangeMessage" class="sync-banner sync-banner--success">
+    <fa-icon icon="check-circle"></fa-icon>
+    <span>{{ etatChangeMessage }}</span>
+    <button class="sync-banner__close" (click)="etatChangeMessage = null">×</button>
+  </div>
+
+  <div *ngIf="etatChangeError" class="sync-banner sync-banner--error">
+    <fa-icon icon="exclamation-circle"></fa-icon>
+    <span>{{ etatChangeError }}</span>
+    <button class="sync-banner__close" (click)="etatChangeError = null">×</button>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
@@ -352,10 +378,16 @@
                   <fa-icon icon="file-contract"></fa-icon>
                   {{ contratsPersonne.length }} {{ 'orgacaregatewayApp.orgaCarePersonne.panel.contracts' | translate }}
                 </span>
-                <button type="button" class="btn-action btn-action--contrat" (click)="openAjouterContratModal(ajouterContratModal)">
-                  <fa-icon icon="plus"></fa-icon>
-                  <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.addContrat' | translate }}</span>
-                </button>
+                <div class="toolbar-buttons">
+                  <button type="button" class="btn-action btn-action--salaire" (click)="openAjouterSalaireModal(ajouterSalaireModal)">
+                    <fa-icon icon="plus"></fa-icon>
+                    <span>Ajouter salaire</span>
+                  </button>
+                  <button type="button" class="btn-action btn-action--contrat" (click)="openAjouterContratModal(ajouterContratModal)">
+                    <fa-icon icon="plus"></fa-icon>
+                    <span>{{ 'orgacaregatewayApp.orgaCarePersonne.panel.addContrat' | translate }}</span>
+                  </button>
+                </div>
               </div>
 
               <div *ngIf="isLoadingContrats" class="text-center py-3">
@@ -390,6 +422,31 @@
                         {{ c.dateFin?.toDate() | date: 'dd/MM/yyyy' }}</span
                       >
                     </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Historique des salaires -->
+              <div class="salaire-section">
+                <div class="salaire-section__title">
+                  <fa-icon icon="money-bill-wave"></fa-icon>
+                  <span>Historique des salaires ({{ salairesPersonne.length }})</span>
+                </div>
+
+                <div *ngIf="isLoadingSalaires" class="text-center py-2">
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  {{ 'orgacaregatewayApp.orgaCarePersonne.panel.loading' | translate }}
+                </div>
+
+                <p *ngIf="!isLoadingSalaires && salairesPersonne.length === 0" class="panel-empty__text text-center py-2">
+                  Aucun salaire enregistré.
+                </p>
+
+                <div class="salaire-list" *ngIf="!isLoadingSalaires && salairesPersonne.length > 0">
+                  <div class="salaire-item" *ngFor="let s of salairesPersonne; let first = first">
+                    <div class="salaire-badge" [class.salaire-badge--current]="first">{{ first ? 'ACTUEL' : 'ANCIEN' }}</div>
+                    <span class="salaire-valeur">{{ s.valeur | number: '1.2-2' }}</span>
+                    <span class="salaire-date">{{ s.date?.toDate() | date: 'dd/MM/yyyy' }}</span>
                   </div>
                 </div>
               </div>
@@ -843,6 +900,54 @@
       <button type="button" class="btn btn-primary" [disabled]="!newAbsenceDateDebut || isAbsenceSaving" (click)="confirmAjouterAbsence()">
         <span *ngIf="isAbsenceSaving" class="spinner-border spinner-border-sm me-1"></span>
         <fa-icon *ngIf="!isAbsenceSaving" icon="save" class="me-1"></fa-icon>
+        {{ 'entity.action.save' | translate }}
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- ══════════════ MODAL AJOUT SALAIRE ══════════════ -->
+  <ng-template #ajouterSalaireModal let-modal>
+    <div class="modal-header">
+      <div class="modal-title-block">
+        <span class="modal-icon-primary"><fa-icon icon="money-bill-wave"></fa-icon></span>
+        <h5 class="modal-title">Ajouter un salaire</h5>
+      </div>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+      <div class="affectation-modal-personne mb-3">
+        <span class="label-personne">{{ 'orgacaregatewayApp.orgaCarePersonne.modal.contrat.person' | translate }} :</span>
+        <strong>{{ editForm.get('nomPrenom')!.value }}</strong>
+      </div>
+
+      <div class="form-grid-2 mb-3">
+        <div class="field-group">
+          <label class="field-label">Valeur <span style="color: red">*</span></label>
+          <input class="field-input" type="number" min="0" step="0.01" [(ngModel)]="newSalaireValeur" placeholder="0.00" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Date <span style="color: red">*</span></label>
+          <input class="field-input" type="date" [(ngModel)]="newSalaireDate" />
+        </div>
+      </div>
+
+      <div *ngIf="salaireSaveError" class="sync-banner sync-banner--error">
+        <fa-icon icon="exclamation-circle"></fa-icon><span>{{ salaireSaveError }}</span>
+      </div>
+      <div *ngIf="salaireSaveSuccess" class="sync-banner sync-banner--success">
+        <fa-icon icon="check-circle"></fa-icon><span>Salaire enregistré avec succès.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">{{ 'entity.action.cancel' | translate }}</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="newSalaireValeur === null || !newSalaireDate || isSalaireSaving"
+        (click)="confirmAjouterSalaire()"
+      >
+        <span *ngIf="isSalaireSaving" class="spinner-border spinner-border-sm me-1"></span>
+        <fa-icon *ngIf="!isSalaireSaving" icon="save" class="me-1"></fa-icon>
         {{ 'entity.action.save' | translate }}
       </button>
     </div>

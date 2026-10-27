@@ -627,6 +627,49 @@ $transition: all 0.2s ease;
   }
 }
 
+// ── Boutons Activer / Désactiver ─────────────────────
+.btn-action--deactivate {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+  }
+}
+
+.btn-action--activate {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.88;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+  }
+}
+
 // ── Bannière résultat sync ───────────────────────────
 .sync-banner {
   display: flex;
@@ -1315,4 +1358,88 @@ $transition: all 0.2s ease;
 .remplacant-check {
   color: #dc2626;
   font-size: 1.1rem;
+}
+// ── Panel Contrat : salaires ──────────────────────────
+.toolbar-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-action--salaire {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+}
+
+.salaire-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed $border;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-muted;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.salaire-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.salaire-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1rem;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+
+  .salaire-valeur {
+    font-weight: 700;
+    color: $text-dark;
+    font-size: 0.95rem;
+  }
+
+  .salaire-date {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: $text-muted;
+  }
+}
+
+.salaire-badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #64748b;
+  flex-shrink: 0;
+
+  &--current {
+    background: #dcfce7;
+    color: #16a34a;
+  }
 }

@@ -71,7 +71,8 @@
       "Formation",
       "Formateur",
       "SessionFormation",
-      "PieceJointe"
+      "PieceJointe",
+      "Salaire"
     ],
     "lastLiquibaseTimestamp": 1779439847000
   }
