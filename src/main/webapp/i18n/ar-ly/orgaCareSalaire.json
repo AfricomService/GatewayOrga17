@@ -1,0 +1,30 @@
+{
+  "orgacaregatewayApp": {
+    "orgaCareSalaire": {
+      "home": {
+        "title": "Salaires",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Salaire",
+        "createOrEditLabel": "Create or edit a Salaire",
+        "notFound": "No Salaires found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Salaire {{ id }}?"
+      },
+      "detail": {
+        "title": "Salaire"
+      },
+      "id": "ID",
+      "valeur": "Valeur",
+      "date": "Date",
+      "personneId": "Personne Id"
+    }
+  },
+  "orgaCareApp": {
+    "orgaCareSalaire": {
+      "created": "A new Salaire is created with identifier {{ param }}",
+      "updated": "A Salaire is updated with identifier {{ param }}",
+      "deleted": "A Salaire is deleted with identifier {{ param }}"
+    }
+  }
+}

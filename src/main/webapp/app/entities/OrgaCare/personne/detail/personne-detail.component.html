@@ -256,6 +256,31 @@
               </div>
             </div>
           </div>
+
+          <!-- Historique des salaires (lecture seule) -->
+          <div class="salaire-section">
+            <div class="salaire-section__title">
+              <fa-icon icon="money-bill-wave"></fa-icon>
+              <span>Historique des salaires ({{ salairesPersonne.length }})</span>
+            </div>
+
+            <div *ngIf="isLoadingSalaires" class="text-center py-2">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              {{ 'orgacaregatewayApp.orgaCarePersonne.panel.loading' | translate }}
+            </div>
+
+            <p *ngIf="!isLoadingSalaires && salairesPersonne.length === 0" class="panel-empty__text text-center py-2">
+              Aucun salaire enregistré.
+            </p>
+
+            <div class="salaire-list" *ngIf="!isLoadingSalaires && salairesPersonne.length > 0">
+              <div class="salaire-item" *ngFor="let s of salairesPersonne; let first = first">
+                <div class="salaire-badge" [class.salaire-badge--current]="first">{{ first ? 'ACTUEL' : 'ANCIEN' }}</div>
+                <span class="salaire-valeur">{{ s.valeur | number: '1.2-2' }}</span>
+                <span class="salaire-date">{{ s.date?.toDate() | date: 'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </ng-template>
     </ngb-panel>

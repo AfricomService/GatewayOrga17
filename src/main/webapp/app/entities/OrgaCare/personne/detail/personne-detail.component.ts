@@ -14,6 +14,8 @@ import { IGrade } from 'app/entities/OrgaCare/grade/grade.model';
 import { GradeService } from 'app/entities/OrgaCare/grade/service/grade.service';
 import { IFonction } from 'app/entities/OrgaCare/fonction/fonction.model';
 import { FonctionService } from 'app/entities/OrgaCare/fonction/service/fonction.service';
+import { ISalaire } from 'app/entities/OrgaCare/salaire/salaire.model';
+import { SalaireService } from 'app/entities/OrgaCare/salaire/service/salaire.service';
 
 @Component({
   selector: 'jhi-personne-detail',
@@ -38,6 +40,9 @@ export class PersonneDetailComponent implements OnInit {
   absencesPersonne: IAbsence[] = [];
   isLoadingAbsences = false;
 
+  salairesPersonne: ISalaire[] = [];
+  isLoadingSalaires = false;
+
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
@@ -46,7 +51,8 @@ export class PersonneDetailComponent implements OnInit {
     protected contratService: ContratService,
     protected absenceService: AbsenceService,
     protected gradeService: GradeService,
-    protected fonctionService: FonctionService
+    protected fonctionService: FonctionService,
+    protected salaireService: SalaireService
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +65,7 @@ export class PersonneDetailComponent implements OnInit {
         this.loadAffectations(this.personne.id);
         this.loadContrats(this.personne.id);
         this.loadAbsences(this.personne.id);
+        this.loadSalaires(this.personne.id);
       }
     });
   }
@@ -150,6 +157,17 @@ export class PersonneDetailComponent implements OnInit {
         this.isLoadingAbsences = false;
       },
       error: () => (this.isLoadingAbsences = false),
+    });
+  }
+
+  protected loadSalaires(personneId: number): void {
+    this.isLoadingSalaires = true;
+    this.salaireService.findByPersonneId(personneId).subscribe({
+      next: (salaires: ISalaire[]) => {
+        this.salairesPersonne = salaires;
+        this.isLoadingSalaires = false;
+      },
+      error: () => (this.isLoadingSalaires = false),
     });
   }
 }

@@ -224,6 +224,13 @@ export class PersonneService {
     return this.http.get<string[]>(`${this.resourceUrl}/assigned-user-ids`);
   }
 
+  // Bascule l'état ACTIF <-> CANCELED
+  toggleEtat(personneId: number): Observable<EntityResponseType> {
+    return this.http
+      .put<IPersonne>(`${this.resourceUrl}/${personneId}/toggle-etat`, null, { observe: 'response' })
+      .pipe(map(res => this.convertDateFromServer(res)));
+  }
+
   // ═══════════════════════════════════════════════════════════════════════════
   // Conversion des dates (dayjs) — client → serveur / serveur → client
   // ═══════════════════════════════════════════════════════════════════════════

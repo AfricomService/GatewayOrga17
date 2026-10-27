@@ -37,6 +37,10 @@
           <fa-icon icon="file-upload"></fa-icon>
         </button>
 
+        <button class="btn-header-secondary" (click)="openImportSalaireModal(importSalaireModal)" title="Importer des salaires (Excel)">
+          <fa-icon icon="money-bill-wave"></fa-icon>
+        </button>
+
         <button
           class="btn-header-secondary"
           (click)="openKeycloakCreateUser()"
@@ -240,7 +244,7 @@
                   'etat--canceled': personne.etat === 'CANCELED',
                   'etat--inexecution': personne.etat === 'INEXECUTION'
                 }"
-                >{{ personne.etat || '—' }}</span
+                >{{ personne.etat === 'CANCELED' ? 'INACTIF' : personne.etat || '—' }}</span
               >
             </td>
 
@@ -284,4 +288,61 @@
       ></ngb-pagination>
     </div>
   </div>
+  <!-- ══════════════ MODAL IMPORT SALAIRES ══════════════ -->
+  <ng-template #importSalaireModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title"><fa-icon icon="money-bill-wave" class="me-2"></fa-icon>Import en masse des salaires</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body">
+      <p class="text-muted mb-3">
+        Les salaires sont affectés aux personnes via leur <strong>matricule</strong>. La date du salaire est la
+        <strong>date d'aujourd'hui</strong>.
+      </p>
+
+      <!-- Étape 1 : modèle -->
+      <div class="import-step">
+        <div class="import-step__title">1. Télécharger le modèle (colonnes : Matricule ; Salaire)</div>
+        <button type="button" class="btn btn-outline-primary" [disabled]="isDownloadingTemplate" (click)="downloadSalaireTemplate()">
+          <span *ngIf="isDownloadingTemplate" class="spinner-border spinner-border-sm me-1"></span>
+          <fa-icon *ngIf="!isDownloadingTemplate" icon="download" class="me-1"></fa-icon>
+          Télécharger le modèle
+        </button>
+      </div>
+
+      <!-- Étape 2 : fichier -->
+      <div class="import-step">
+        <div class="import-step__title">2. Choisir le fichier rempli (.xlsx)</div>
+        <input type="file" #salaireFileInput accept=".xlsx" style="display: none" (change)="onSalaireFileSelected($event)" />
+        <button type="button" class="btn btn-outline-secondary" (click)="salaireFileInput.click()">
+          <fa-icon icon="file-upload" class="me-1"></fa-icon>
+          Parcourir...
+        </button>
+        <span class="ms-2 import-file-name" *ngIf="salaireFile">{{ salaireFile.name }}</span>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="salaireImportError" class="alert alert-danger mt-3 mb-0">{{ salaireImportError }}</div>
+
+      <div *ngIf="salaireImportResult" class="mt-3">
+        <div class="alert mb-2" [ngClass]="salaireImportResult.errors.length === 0 ? 'alert-success' : 'alert-warning'">
+          {{ salaireImportResult.imported }} / {{ salaireImportResult.total }} salaire(s) importé(s).
+          <span *ngIf="salaireImportResult.errors.length > 0">{{ salaireImportResult.errors.length }} ligne(s) en erreur :</span>
+        </div>
+        <ul class="import-errors" *ngIf="salaireImportResult.errors.length > 0">
+          <li *ngFor="let e of salaireImportResult.errors">{{ e }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Fermer</button>
+      <button type="button" class="btn btn-primary" [disabled]="!salaireFile || isImportingSalaire" (click)="importSalaires()">
+        <span *ngIf="isImportingSalaire" class="spinner-border spinner-border-sm me-1"></span>
+        <fa-icon *ngIf="!isImportingSalaire" icon="file-upload" class="me-1"></fa-icon>
+        Importer
+      </button>
+    </div>
+  </ng-template>
 </div>

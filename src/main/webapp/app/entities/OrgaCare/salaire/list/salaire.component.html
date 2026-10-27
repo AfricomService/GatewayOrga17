@@ -1,0 +1,82 @@
+<div>
+  <h2 id="page-heading" data-cy="SalaireHeading">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.home.title">Salaires</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info mr-2" (click)="loadAll()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.home.refreshListLabel">Refresh List</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-salaire"
+        [routerLink]="['/salaire/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.home.createLabel"> Create a new Salaire </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="salaires?.length === 0">
+    <span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.home.notFound">No salaires found</span>
+  </div>
+
+  <div class="table-responsive" id="entities" *ngIf="salaires && salaires.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr>
+          <th scope="col"><span jhiTranslate="global.field.id">ID</span></th>
+          <th scope="col"><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.valeur">Valeur</span></th>
+          <th scope="col"><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.date">Date</span></th>
+          <th scope="col"><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.personneId">Personne Id</span></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let salaire of salaires; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/salaire', salaire.id, 'view']">{{ salaire.id }}</a>
+          </td>
+          <td>{{ salaire.valeur }}</td>
+          <td>{{ salaire.date | formatMediumDatetime }}</td>
+          <td>{{ salaire.personneId }}</td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/salaire', salaire.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/salaire', salaire.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+              </button>
+
+              <button type="submit" (click)="delete(salaire)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

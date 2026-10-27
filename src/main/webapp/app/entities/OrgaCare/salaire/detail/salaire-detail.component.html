@@ -1,0 +1,40 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="salaire">
+      <h2 data-cy="salaireDetailsHeading"><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.detail.title">Salaire</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ salaire.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.valeur">Valeur</span></dt>
+        <dd>
+          <span>{{ salaire.valeur }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.date">Date</span></dt>
+        <dd>
+          <span>{{ salaire.date | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="orgacaregatewayApp.orgaCareSalaire.personneId">Personne Id</span></dt>
+        <dd>
+          <span>{{ salaire.personneId }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/salaire', salaire.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

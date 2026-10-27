@@ -36,6 +36,8 @@ import { TypeContratService } from 'app/entities/OrgaCare/type-contrat/service/t
 import { IAbsence } from 'app/entities/OrgaCare/absence/absence.model';
 import { AbsenceService } from 'app/entities/OrgaCare/absence/service/absence.service';
 import { Etat } from 'app/entities/enumerations/etat.model';
+import { ISalaire } from 'app/entities/OrgaCare/salaire/salaire.model';
+import { SalaireService } from 'app/entities/OrgaCare/salaire/service/salaire.service';
 
 @Component({
   selector: 'jhi-personne-update',
@@ -78,6 +80,11 @@ export class PersonneUpdateComponent implements OnInit {
   isSyncing = false;
   syncResult: KeycloakSyncResult | null = null;
   syncError: string | null = null;
+
+  // Bouton activer / désactiver
+  isTogglingEtat = false;
+  etatChangeMessage: string | null = null;
+  etatChangeError: string | null = null;
   // ── Accordéon Affectation ────────────────────────────
   affectationsPersonne: IAffectation[] = [];
   isLoadingAffectations = false;
@@ -155,10 +162,21 @@ export class PersonneUpdateComponent implements OnInit {
   personnesRemplacantFiltered: IPersonne[] = [];
   remplacantSearchKeyword = '';
 
+  // Modal ajout salaire
+  isSalaireSaving = false;
+  salaireSaveError: string | null = null;
+  salaireSaveSuccess = false;
+  salairesPersonne: ISalaire[] = [];
+  isLoadingSalaires = false;
+
+  newSalaireValeur: number | null = null;
+  newSalaireDate: string = dayjs().format('YYYY-MM-DD');
+
   private affectationModalRef?: NgbModalRef;
   private assignModalRef?: NgbModalRef;
   private contratModalRef?: NgbModalRef;
   private absenceModalRef?: NgbModalRef;
+  private salaireModalRef?: NgbModalRef;
 
   constructor(
     protected personneService: PersonneService,
@@ -177,6 +195,7 @@ export class PersonneUpdateComponent implements OnInit {
     protected contratService: ContratService,
     protected typeContratService: TypeContratService,
     protected absenceService: AbsenceService,
+    protected salaireService: SalaireService,
     private router: Router
   ) {}
 
@@ -204,6 +223,7 @@ export class PersonneUpdateComponent implements OnInit {
                 this.loadAffectationsPersonne(personne.id);
                 this.loadContratsPersonne(personne.id);
                 this.loadAbsencesPersonne(personne.id);
+                this.loadSalairesPersonne(personne.id);
               }
               this.cdr.markForCheck();
             });
@@ -339,6 +359,50 @@ export class PersonneUpdateComponent implements OnInit {
       },
       () => {
         this.isAssigning = false;
+      }
+    );
+  }
+
+  // ── Activer / Désactiver la personne ─────────────────
+  get isPersonneActive(): boolean {
+    return this.editForm.get('etat')!.value !== Etat.CANCELED;
+  }
+
+  toggleEtat(): void {
+    const personneId = this.editForm.get('id')!.value as number;
+    if (!personneId) {
+      return;
+    }
+
+    this.isTogglingEtat = true;
+    this.etatChangeMessage = null;
+    this.etatChangeError = null;
+
+    this.personneService.toggleEtat(personneId).subscribe(
+      res => {
+        this.isTogglingEtat = false;
+        if (res.body) {
+          this.editForm.patchValue({ etat: res.body.etat });
+          this.etatChangeMessage =
+            res.body.etat === Etat.CANCELED ? 'La personne a été désactivée avec succès.' : 'La personne a été activée avec succès.';
+        }
+        this.cdr.markForCheck();
+
+        // Disparition automatique après 3 secondes
+        setTimeout(() => {
+          this.etatChangeMessage = null;
+          this.cdr.markForCheck();
+        }, 3000);
+      },
+      () => {
+        this.isTogglingEtat = false;
+        this.etatChangeError = "Erreur lors du changement d'état de la personne.";
+        this.cdr.markForCheck();
+
+        setTimeout(() => {
+          this.etatChangeError = null;
+          this.cdr.markForCheck();
+        }, 3000);
       }
     );
   }
@@ -729,6 +793,74 @@ export class PersonneUpdateComponent implements OnInit {
     );
   }
 
+  // ── Salaires ──────────────────────────────────────────
+  loadSalairesPersonne(personneId: number): void {
+    this.isLoadingSalaires = true;
+    this.salaireService.findByPersonneId(personneId).subscribe(
+      (salaires: ISalaire[]) => {
+        this.salairesPersonne = salaires;
+        this.isLoadingSalaires = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.isLoadingSalaires = false;
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
+  openAjouterSalaireModal(content: unknown): void {
+    this.newSalaireValeur = null;
+    this.newSalaireDate = dayjs().format('YYYY-MM-DD');
+    this.salaireSaveError = null;
+    this.salaireSaveSuccess = false;
+
+    this.salaireModalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  confirmAjouterSalaire(): void {
+    if (this.newSalaireValeur === null || this.newSalaireValeur <= 0) {
+      this.salaireSaveError = 'La valeur du salaire est obligatoire (supérieure à 0).';
+      return;
+    }
+    if (!this.newSalaireDate) {
+      this.salaireSaveError = 'La date est obligatoire.';
+      return;
+    }
+
+    const personneId = this.editForm.get('id')!.value as number;
+    this.isSalaireSaving = true;
+    this.salaireSaveError = null;
+
+    const salaireDTO: ISalaire = {
+      valeur: this.newSalaireValeur,
+      date: dayjs(this.newSalaireDate),
+      personneId,
+    };
+
+    this.salaireService.create(salaireDTO).subscribe(
+      () => {
+        this.isSalaireSaving = false;
+        this.salaireSaveSuccess = true;
+        this.loadSalairesPersonne(personneId);
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.salaireModalRef?.close();
+          this.salaireSaveSuccess = false;
+        }, 1000);
+      },
+      () => {
+        this.isSalaireSaving = false;
+        this.salaireSaveError = "Erreur lors de l'enregistrement du salaire.";
+        this.cdr.markForCheck();
+      }
+    );
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IPersonne>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe(
       (res: HttpResponse<IPersonne>) => this.onSaveSuccess(res.body),
@@ -747,6 +879,7 @@ export class PersonneUpdateComponent implements OnInit {
         this.loadAffectationsPersonne(personne.id);
         this.loadContratsPersonne(personne.id);
         this.loadAbsencesPersonne(personne.id);
+        this.loadSalairesPersonne(personne.id);
       }
     }
     this.cdr.markForCheck();

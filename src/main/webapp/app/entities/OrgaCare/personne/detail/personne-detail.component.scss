@@ -510,6 +510,66 @@ $transition: all 0.2s ease;
   }
 }
 
+// ── Salaires ────────────────────────────────────────
+.salaire-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed $border;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-muted;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.salaire-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.salaire-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1rem;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+
+  .salaire-valeur {
+    font-weight: 700;
+    color: $text-dark;
+    font-size: 0.95rem;
+  }
+
+  .salaire-date {
+    margin-left: auto;
+    font-size: 0.78rem;
+    color: $text-muted;
+  }
+}
+
+.salaire-badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #64748b;
+  flex-shrink: 0;
+
+  &--current {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+}
+
 // ── Responsive ──────────────────────────────────────
 @media (max-width: 768px) {
   .personne-page {
