@@ -52,7 +52,14 @@
           organisation.
         </p>
       </div>
-      <button class="oc-login-card__btn" (click)="login()"><i class="ti ti-login"></i> Se connecter</button>
+      <div *ngIf="isDev">
+        <button type="button" class="btn btn-primary" (click)="login()">Se Connecter</button>
+      </div>
+
+      <div *ngIf="!isDev" class="loading-container">
+        <div class="spinner" role="status" aria-label="Chargement"></div>
+        <p class="loading-text">Chargement en cours...</p>
+      </div>
       <p class="oc-login-card__footer">
         En vous connectant, vous acceptez les <a href="#">conditions d'utilisation</a> et la <a href="#">politique de confidentialité</a>.
       </p>
